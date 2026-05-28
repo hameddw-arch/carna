@@ -92,6 +92,11 @@ export default function Header() {
                     <Link to="/dashboard" style={{ display: 'flex', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: 14, borderBottom: '1px solid var(--border-light)', alignItems: 'center', gap: 8 }}>
                       <User size={14} /> حسابي
                     </Link>
+                    {user.is_admin && (
+                      <Link to="/admin" style={{ display: 'flex', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: 14, borderBottom: '1px solid var(--border-light)', alignItems: 'center', gap: 8, fontWeight: 700 }}>
+                        ⚙️ الإدارة
+                      </Link>
+                    )}
                     <button onClick={() => { logout(); setUserMenuOpen(false) }} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'right', cursor: 'pointer', fontSize: 14, color: 'var(--color-error)', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <LogOut size={14} /> خروج
                     </button>

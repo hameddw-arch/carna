@@ -3,12 +3,14 @@ import { AuthProvider } from './contexts/AuthContext'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 import Home from './pages/Home'
 import ListingPage from './pages/ListingPage'
 import PostAd from './pages/PostAd'
 import Services from './pages/Services'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import AdminPanel from './pages/AdminPanel'
 import NotFound from './pages/NotFound'
 import './index.css'
 
@@ -24,6 +26,7 @@ export default function App() {
           <Route path="/login"         element={<Login />} />
           <Route path="/dashboard"     element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/post"          element={<ProtectedRoute><PostAd /></ProtectedRoute>} />
+          <Route path="/admin"         element={<AdminRoute><AdminPanel /></AdminRoute>} />
           <Route path="*"              element={<NotFound />} />
         </Routes>
         <Footer />
