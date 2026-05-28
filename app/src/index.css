@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Brand Colors */
+    --color-yellow:   #FDB700;
+    --color-black:    #000000;
+    --color-white:    #FFFFFF;
+    --color-blue:     #0053FA;
+    --color-gray:     #ADADAD;
+
+    /* Yellow Scale */
+    --yellow-50:      #FFFBEB;
+    --yellow-100:     #FEF3C7;
+    --yellow-500:     #FDB700;
+    --yellow-600:     #D97706;
+
+    /* Blue Scale */
+    --blue-50:        #EFF6FF;
+    --blue-500:       #0053FA;
+    --blue-600:       #0043CC;
+
+    /* Backgrounds */
+    --bg-base:        #FFFFFF;
+    --bg-subtle:      #F7F7F7;
+    --bg-muted:       #EFEFEF;
+
+    /* Text */
+    --text-primary:   #1A1A1A;
+    --text-secondary: #555555;
+    --text-muted:     #999999;
+
+    /* Borders */
+    --border-light:   #EBEBEB;
+    --border-base:    #DEDEDE;
+
+    /* Shadows */
+    --shadow-xs:    0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-sm:    0 2px 8px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.05);
+    --shadow-md:    0 8px 24px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
+    --shadow-lg:    0 16px 48px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.08);
+    --shadow-brand: 0 4px 16px rgba(253,183,0,.35);
+
+    /* Transitions */
+    --transition-fast:  150ms ease;
+    --transition-base:  250ms ease;
+    --transition-slow:  400ms ease-out;
+
+    /* Radius */
+    --radius-sm:   6px;
+    --radius-md:   10px;
+    --radius-lg:   14px;
+    --radius-xl:   20px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    direction: rtl;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'IBM Plex Arabic', 'Noto Sans Arabic', 'Tahoma', sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  #root {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    background: var(--color-yellow);
+    color: var(--color-black);
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    padding: 10px 20px;
+    box-shadow: var(--shadow-brand);
+    border: none;
+    cursor: pointer;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+    white-space: nowrap;
+  }
+  .btn-primary:hover  { background: var(--yellow-600); transform: translateY(-1px); }
+  .btn-primary:active { transform: scale(0.97); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-primary);
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    padding: 10px 16px;
+    border: 1.5px solid var(--border-base);
+    cursor: pointer;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+  }
+  .btn-ghost:hover { border-color: var(--color-yellow); background: var(--yellow-50); }
+
+  .tag {
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: 9999px;
+    padding: 5px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+  }
+  .tag:hover         { background: var(--yellow-50); border-color: var(--color-yellow); color: var(--text-primary); }
+  .tag.active        { background: var(--color-yellow); border-color: var(--color-yellow); color: #000; font-weight: 600; }
+
+  .card {
+    background: var(--bg-base);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+  }
+  .card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
+
+  .input {
+    background: var(--bg-base);
+    border: 1.5px solid var(--border-base);
+    border-radius: var(--radius-sm);
+    padding: 11px 16px;
+    font-size: 15px;
+    color: var(--text-primary);
+    width: 100%;
+    min-height: 44px;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    font-family: inherit;
+    direction: rtl;
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--color-yellow);
+    box-shadow: 0 0 0 3px rgba(253,183,0,.15);
+  }
+  .input::placeholder { color: var(--text-muted); }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+  }
+}

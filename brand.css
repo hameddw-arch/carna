@@ -1,0 +1,229 @@
+/* ═══════════════════════════════════════════════════════
+   CARNA — Brand & Design System Tokens
+   شخصية: بسيط · أنيق · قوي · ناعم · سهل · فني
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+
+  /* ── Brand Colors ────────────────────────────────── */
+  --color-yellow:   #FDB700;
+  --color-black:    #000000;
+  --color-white:    #FFFFFF;
+  --color-blue:     #0053FA;
+  --color-gray:     #ADADAD;
+
+  /* ── Yellow Scale ───────────────────────────────── */
+  --yellow-50:      #FFFBEB;
+  --yellow-100:     #FEF3C7;
+  --yellow-500:     #FDB700;
+  --yellow-600:     #D97706;
+
+  /* ── Blue Scale ─────────────────────────────────── */
+  --blue-50:        #EFF6FF;
+  --blue-500:       #0053FA;
+  --blue-600:       #0043CC;
+
+  /* ── Backgrounds ────────────────────────────────── */
+  --bg-base:        #FFFFFF;
+  --bg-subtle:      #F7F7F7;
+  --bg-muted:       #EFEFEF;
+
+  /* ── Text ───────────────────────────────────────── */
+  --text-primary:   #1A1A1A;
+  --text-secondary: #555555;
+  --text-muted:     #999999;
+  --text-inverse:   #FFFFFF;
+
+  /* ── Borders ─────────────────────────────────────── */
+  --border-light:   #EBEBEB;
+  --border-base:    #DEDEDE;
+  --border-focus:   #FDB700;
+
+  /* ── Semantic Aliases ───────────────────────────── */
+  --color-brand:    var(--color-yellow);
+  --color-accent:   var(--color-blue);
+  --color-neutral:  var(--color-gray);
+
+  /* ── State Colors ───────────────────────────────── */
+  --color-success:  #16A34A;
+  --color-error:    #DC2626;
+  --color-warning:  #D97706;
+
+  /* ══════════════════════════════════════════════════
+     SPACING — Base 8px
+     ══════════════════════════════════════════════════ */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   24px;
+  --space-6:   32px;
+  --space-8:   48px;
+  --space-10:  64px;
+  --space-12:  80px;
+
+  /* ══════════════════════════════════════════════════
+     BORDER RADIUS — ناعم وأنيق
+     ══════════════════════════════════════════════════ */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
+
+  /* ══════════════════════════════════════════════════
+     SHADOWS — خفيفة وعميقة حسب السياق
+     ══════════════════════════════════════════════════ */
+  --shadow-xs:    0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-sm:    0 2px 8px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.05);
+  --shadow-md:    0 8px 24px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
+  --shadow-lg:    0 16px 48px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.08);
+  --shadow-brand: 0 4px 16px rgba(253,183,0,.35);
+
+  /* ══════════════════════════════════════════════════
+     TRANSITIONS — نعومة الحركة
+     ══════════════════════════════════════════════════ */
+  --transition-fast:   150ms ease;
+  --transition-base:   250ms ease;
+  --transition-slow:   400ms ease-out;
+  --easing-bounce:     cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ══════════════════════════════════════════════════
+     TYPOGRAPHY
+     ══════════════════════════════════════════════════ */
+  --font-display: 'Hacen Beirut Poster', sans-serif;
+  --font-body:    'IBM Plex Arabic', 'Noto Sans Arabic', 'Tahoma', sans-serif;
+
+  --text-xs:    12px;
+  --text-sm:    14px;
+  --text-base:  16px;
+  --text-lg:    18px;
+  --text-xl:    22px;
+  --text-2xl:   28px;
+  --text-3xl:   36px;
+  --text-price: 24px;
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-bold:    700;
+
+  --leading-tight:  1.2;
+  --leading-snug:   1.4;
+  --leading-normal: 1.6;
+  --leading-loose:  1.8;
+
+  /* ══════════════════════════════════════════════════
+     LOGO
+     ══════════════════════════════════════════════════ */
+  --logo-aspect-ratio: calc(356.85 / 425.87);
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   COMPONENT TOKENS
+   ═══════════════════════════════════════════════════════ */
+
+/* CTA Button — الزر الأساسي */
+.btn-primary {
+  background:    var(--color-yellow);
+  color:         var(--color-black);
+  font-weight:   var(--weight-bold);
+  border-radius: var(--radius-md);
+  padding:       var(--space-3) var(--space-5);
+  box-shadow:    var(--shadow-brand);
+  transition:    background var(--transition-fast),
+                 transform  var(--transition-fast),
+                 box-shadow var(--transition-fast);
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+}
+.btn-primary:hover  { background: var(--yellow-600); transform: translateY(-1px); }
+.btn-primary:active { transform: scale(0.97); }
+
+/* Card — بطاقة الإعلان */
+.listing-card {
+  background:    var(--bg-base);
+  border-radius: var(--radius-lg);
+  box-shadow:    var(--shadow-sm);
+  overflow:      hidden;
+  transition:    box-shadow var(--transition-base),
+                 transform  var(--transition-base);
+}
+.listing-card:hover {
+  box-shadow: var(--shadow-md);
+  transform:  translateY(-4px);
+}
+.listing-card__image {
+  aspect-ratio: 16 / 9;
+  object-fit:   cover;
+  width:        100%;
+  display:      block;
+}
+.listing-card__price {
+  font-size:   var(--text-price);
+  font-weight: var(--weight-bold);
+  color:       var(--text-primary);
+}
+.listing-card__title {
+  font-size: var(--text-lg);
+  color:     var(--text-primary);
+}
+.listing-card__meta {
+  font-size: var(--text-sm);
+  color:     var(--text-secondary);
+}
+
+/* Tag / وسم */
+.tag {
+  background:    var(--bg-subtle);
+  color:         var(--text-secondary);
+  border:        1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  padding:       var(--space-1) var(--space-3);
+  font-size:     var(--text-sm);
+  cursor:        pointer;
+  transition:    background   var(--transition-fast),
+                 border-color var(--transition-fast),
+                 color        var(--transition-fast),
+                 box-shadow   var(--transition-fast);
+}
+.tag:hover {
+  background:    var(--yellow-50);
+  border-color:  var(--color-yellow);
+  color:         var(--text-primary);
+}
+.tag.active {
+  background:    var(--color-yellow);
+  border-color:  var(--color-yellow);
+  color:         var(--color-black);
+  box-shadow:    0 0 0 3px rgba(253,183,0,.2);
+}
+
+/* Input */
+.input {
+  background:    var(--bg-base);
+  border:        1.5px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  padding:       var(--space-3) var(--space-4);
+  font-size:     var(--text-base);
+  color:         var(--text-primary);
+  transition:    border-color var(--transition-fast),
+                 box-shadow   var(--transition-fast);
+  min-height: 44px;
+  width: 100%;
+}
+.input:focus {
+  outline:      none;
+  border-color: var(--color-yellow);
+  box-shadow:   0 0 0 3px rgba(253,183,0,.15);
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   LOGO USAGE
+   ───────────────────────────────────────────────────────
+   logo.svg        → على #FDB700 أو #FFFFFF
+   logo white.svg  → على #000000، #0053FA، #FDB700
+   الأصفر هو لون الخلفية — غير مدمج داخل SVG
+   ═══════════════════════════════════════════════════════ */
