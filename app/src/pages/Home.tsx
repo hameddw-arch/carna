@@ -155,7 +155,7 @@ export default function Home() {
     loadListings({ city })
   }
 
-  function filterByBodyType(bodyType: string) {
+  function filterByBodyType(_bodyType: string) {
     loadListings({ make: '' })
   }
 
