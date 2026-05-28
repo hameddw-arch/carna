@@ -4,7 +4,7 @@ import ListingCard from '../components/ListingCard'
 import { fetchListings, fetchDistinctMakes } from '../lib/queries'
 import { TAGS } from '../data/mock'
 
-const CITIES     = ['كل المدن', 'دمشق', 'حلب', 'حمص', 'اللاذقية', 'طرطوس', 'حماة', 'دير الزور']
+const CITIES     = ['كل المدن', 'دمشق', 'ريف دمشق', 'حلب', 'اللاذقية', 'طرطوس', 'حماة', 'حمص', 'دير الزور', 'الرقة', 'درعا', 'السويداء', 'إدلب', 'القنيطرة']
 const ALL_BRANDS = ['تويوتا','كيا','هيونداي','هوندا','نيسان','سوزوكي','BMW','مرسيدس']
 const TABS       = ['الكل', 'مستعملة', 'جديدة', 'قطع غيار']
 
