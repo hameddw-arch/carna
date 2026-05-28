@@ -27,8 +27,8 @@ export default function Login() {
       const code = await requestOTP(phone.trim())
       setDevCode(code)   // سيُحذف عند ربط SMS
       setStep('otp')
-    } catch {
-      setError('صار في مشكلة بسيطة — جرب مرة ثانية')
+    } catch (e: any) {
+      setError(e?.message ?? JSON.stringify(e) ?? 'unknown error')
     } finally {
       setLoading(false)
     }
