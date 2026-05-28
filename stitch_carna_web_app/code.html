@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AUTO-BRUTAL | NO GAMES. JUST CARS.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@0,400..800;1,400..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neo-shadow-sm { box-shadow: 4px 4px 0px 0px #1c1b1b; }
+        .neo-shadow-md { box-shadow: 8px 8px 0px 0px #1c1b1b; }
+        .active-press:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px 0px #1c1b1b; }
+        .active-press-lg:active { transform: translate(8px, 8px); box-shadow: 0px 0px 0px 0px #1c1b1b; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#1c1b1b",
+                      "inverse-on-surface": "#f3f0ef",
+                      "on-tertiary-container": "#4f5151",
+                      "primary": "#7c5800",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "tertiary-fixed-dim": "#c6c6c7",
+                      "inverse-primary": "#ffbb1c",
+                      "surface-container-highest": "#e5e2e1",
+                      "surface-variant": "#e5e2e1",
+                      "outline-variant": "#d5c4ac",
+                      "primary-fixed-dim": "#ffbb1c",
+                      "on-primary-fixed": "#271900",
+                      "tertiary": "#5d5f5f",
+                      "on-secondary-container": "#fefcff",
+                      "on-secondary-fixed": "#001a41",
+                      "on-primary-fixed-variant": "#5e4200",
+                      "primary-container": "#fdb700",
+                      "on-surface": "#1c1b1b",
+                      "surface-tint": "#7c5800",
+                      "surface": "#fcf9f8",
+                      "error-container": "#ffdad6",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "surface-container-low": "#f6f3f2",
+                      "secondary-container": "#1471e6",
+                      "secondary-fixed-dim": "#adc7ff",
+                      "tertiary-container": "#c3c3c3",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "secondary": "#0058bb",
+                      "error": "#ba1a1a",
+                      "surface-bright": "#fcf9f8",
+                      "on-surface-variant": "#504532",
+                      "surface-container": "#f0eded",
+                      "secondary-fixed": "#d8e2ff",
+                      "surface-container-high": "#eae7e7",
+                      "on-primary-container": "#6a4b00",
+                      "primary-fixed": "#ffdea7",
+                      "background": "#fcf9f8",
+                      "on-tertiary": "#ffffff",
+                      "inverse-surface": "#313030",
+                      "outline": "#837560",
+                      "tertiary-fixed": "#e2e2e2",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-dim": "#dcd9d9",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed-variant": "#004493"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "24px",
+                      "margin-mobile": "16px",
+                      "xl": "64px",
+                      "lg": "48px",
+                      "gutter": "24px",
+                      "sm": "12px",
+                      "base": "8px",
+                      "margin-desktop": "40px",
+                      "xs": "4px"
+              },
+              "fontFamily": {
+                      "display": ["Archivo Narrow"],
+                      "body-md": ["Archivo Narrow"],
+                      "headline-md": ["Archivo Narrow"],
+                      "headline-lg": ["Archivo Narrow"],
+                      "label-lg": ["Archivo Narrow"],
+                      "headline-lg-mobile": ["Archivo Narrow"],
+                      "body-lg": ["Archivo Narrow"],
+                      "label-md": ["Archivo Narrow"]
+              },
+              "fontSize": {
+                      "display": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "headline-lg": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                      "label-md": ["12px", {"lineHeight": "1", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-primary-container text-on-background font-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-on-background border-b-2 border-on-background dark:border-surface-variant fixed top-0 w-full z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface dark:text-inverse-on-surface">menu</span>
+<h1 class="font-display text-headline-md font-black text-on-background dark:text-inverse-on-surface italic uppercase tracking-tighter">AUTO-BRUTAL</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-lg text-label-lg text-secondary dark:text-secondary-fixed-dim font-bold" href="#">Browse</a>
+<a class="font-label-lg text-label-lg text-on-surface dark:text-surface-variant hover:text-secondary transition-all" href="#">Search</a>
+<a class="font-label-lg text-label-lg text-on-surface dark:text-surface-variant hover:text-secondary transition-all" href="#">Marketplace</a>
+</nav>
+<button class="bg-secondary-container text-on-secondary-container px-6 py-2 border-2 border-on-background neo-shadow-sm active-press font-display font-bold uppercase tracking-widest text-sm">
+                ADD AD
+            </button>
+</div>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="bg-on-background py-xl px-margin-mobile md:px-margin-desktop">
+<div class="max-w-7xl mx-auto grid md:grid-cols-12 gap-gutter items-center">
+<div class="md:col-span-7">
+<h2 class="font-display text-headline-lg-mobile md:text-headline-lg text-surface mb-md italic uppercase leading-none">
+                        GET THE CAR. <br/> <span class="text-primary-container">STOP THE GAMES.</span>
+</h2>
+<p class="text-surface-variant font-body-lg mb-lg max-w-lg">
+                        The world's most aggressive car marketplace. Direct sales, heavy specs, and absolutely zero fluff. Just raw automotive power.
+                    </p>
+</div>
+<!-- Search Form -->
+<div class="md:col-span-5 bg-surface border-2 border-on-background p-6 neo-shadow-md">
+<h3 class="font-display text-headline-md mb-md uppercase">QUICK SEARCH</h3>
+<div class="space-y-4">
+<div>
+<label class="block font-label-lg mb-xs uppercase">Make</label>
+<select class="w-full border-2 border-on-background p-3 focus:bg-primary-fixed outline-none appearance-none">
+<option>ALL MAKES</option>
+<option>BMW</option>
+<option>PORSCHE</option>
+<option>MERCEDES</option>
+</select>
+</div>
+<div>
+<label class="block font-label-lg mb-xs uppercase">Model</label>
+<input class="w-full border-2 border-on-background p-3 focus:bg-primary-fixed outline-none placeholder:opacity-50" placeholder="e.g. M3 COMPETITION" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label-lg mb-xs uppercase">Min Price</label>
+<input class="w-full border-2 border-on-background p-3 focus:bg-primary-fixed outline-none" placeholder="$0" type="number"/>
+</div>
+<div>
+<label class="block font-label-lg mb-xs uppercase">Max Price</label>
+<input class="w-full border-2 border-on-background p-3 focus:bg-primary-fixed outline-none" placeholder="$500k" type="number"/>
+</div>
+</div>
+<button class="w-full bg-primary-container border-2 border-on-background py-4 font-display font-black text-headline-md neo-shadow-sm active-press uppercase mt-4">
+                            Find Machine
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Brand Grid -->
+<section class="bg-surface py-lg border-b-2 border-on-background">
+<div class="max-w-7xl mx-auto px-margin-mobile flex overflow-x-auto md:justify-between items-center gap-xl no-scrollbar py-2">
+<div class="flex flex-col items-center min-w-[100px] grayscale hover:grayscale-0 transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[48px]" data-weight="fill">directions_car</span>
+<span class="font-label-lg mt-2 uppercase">Porsche</span>
+</div>
+<div class="flex flex-col items-center min-w-[100px] grayscale hover:grayscale-0 transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[48px]" data-weight="fill">minor_crash</span>
+<span class="font-label-lg mt-2 uppercase">BMW</span>
+</div>
+<div class="flex flex-col items-center min-w-[100px] grayscale hover:grayscale-0 transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[48px]" data-weight="fill">electric_car</span>
+<span class="font-label-lg mt-2 uppercase">Tesla</span>
+</div>
+<div class="flex flex-col items-center min-w-[100px] grayscale hover:grayscale-0 transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[48px]" data-weight="fill">car_rental</span>
+<span class="font-label-lg mt-2 uppercase">Audi</span>
+</div>
+<div class="flex flex-col items-center min-w-[100px] grayscale hover:grayscale-0 transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[48px]" data-weight="fill">airport_shuttle</span>
+<span class="font-label-lg mt-2 uppercase">Mercedes</span>
+</div>
+<div class="flex flex-col items-center min-w-[100px] grayscale hover:grayscale-0 transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[48px]" data-weight="fill">toys</span>
+<span class="font-label-lg mt-2 uppercase">Ferrari</span>
+</div>
+</div>
+</section>
+<!-- Listings Section -->
+<section class="py-xl max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h2 class="font-display text-headline-lg uppercase leading-none">LATEST <br/> ARRIVALS</h2>
+</div>
+<button class="bg-surface border-2 border-on-background px-6 py-2 font-label-lg neo-shadow-sm active-press uppercase">
+                    View All
+                </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="group bg-surface border-2 border-on-background rounded-lg overflow-hidden relative transition-transform hover:-translate-y-1">
+<div class="absolute top-4 right-4 z-10 bg-primary-container border-2 border-on-background px-3 py-1 font-display font-black text-headline-md italic">
+                        $89,500
+                    </div>
+<div class="aspect-video bg-surface-container-high relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-performance black sports car parked on a gritty urban street at dusk. The lighting is dramatic and high-contrast, highlighting the sharp aerodynamic lines and metallic finish of the vehicle. The overall mood is intense and authoritative, reflecting a neo-brutalist aesthetic with deep blacks and sharp reflections." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLQ7GHdc3Ij94ec0xl7rx9EM8uAExoibyGN1umRQq4o6PrXOfIbu86TnNqtBm5YWpWxzfiilK7n-WzJN1mlsR7lwUnLnGPW86e1r96qsPsraNUGy8DjRWdwvOc2mg4VCsCqLSwb1ktQmpP9-F6I7m2uD68QdTiNZETxaPFuf5RMSr8qQwMxHOIpnt_hMwSjM7a2gxkwI1qZj547vt7yk1ZRD83RF02rfq-jpVQlODTQ4vq-_QAW95WO2FE1JD54Ay-rGVO-ZaFvT0q"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-display text-headline-md uppercase">Porsche 911 Carrera</h3>
+<p class="text-on-surface-variant font-label-md">2021 • 12,400 MILES</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface border-2 border-on-background px-2 py-1 rounded text-label-md uppercase">Automatic</span>
+<span class="bg-surface border-2 border-on-background px-2 py-1 rounded text-label-md uppercase">Petrol</span>
+<span class="bg-surface border-2 border-on-background px-2 py-1 rounded text-label-md uppercase">RWD</span>
+</div>
+<button class="w-full bg-secondary text-on-secondary border-2 border-on-background py-3 font-display font-bold uppercase tracking-widest neo-shadow-sm active-press">
+                            Inspect Machine
+                        </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface border-2 border-on-background rounded-lg overflow-hidden relative transition-transform hover:-translate-y-1">
+<div class="absolute top-4 right-4 z-10 bg-primary-container border-2 border-on-background px-3 py-1 font-display font-black text-headline-md italic">
+                        $64,900
+                    </div>
+<div class="aspect-video bg-surface-container-high relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A pristine white luxury sedan showcased in a minimalist concrete architectural space. The image features strong vertical lines and hard shadows, emphasizing the car's bold structural design. The lighting is bright and clean, typical of a modern neo-brutalist photo shoot with high-energy contrast between the white car and raw grey concrete." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6M4u98Zp70v8oiJ_roLCv3XLiRD53pZmkCnjWV2RpgCIa-tHvCW-JpJxgoSjVbTjpirLGUZZAsKT0Z9n1vBBJUAuUHr5Xs9RmAtuNGsNHIpDsx8qPVNNQt7cicCaLb5j5UhEZKW3dRSAMS_82qgvF5qHGqj6HbWJafY_66P-ne1YhPaOD3uXn10gJQfx600p0qMOnmcg2rH5LIe9FWOUUnVQASCuEEWV52GxDXL-TljhFgbvR6TnUGIpNxERM02znhQO_Dl4gV3Uz"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-display text-headline-md uppercase">BMW M4 Competition</h3>
+<p class="text-on-surface-variant font-label-md">2022 • 5,200 MILES</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface border-2 border-on-background px-2 py-1 rounded text-label-md uppercase">DCT</span>
+<span class="bg-surface border-2 border-on-background px-2 py-1 rounded text-label-md uppercase">Petrol</span>
+<span class="bg-surface border-2 border-on-background px-2 py-1 rounded text-label-md uppercase">xDrive</span>
+</div>
+<button class="w-full bg-secondary text-on-secondary border-2 border-on-background py-3 font-display font-bold uppercase tracking-widest neo-shadow-sm active-press">
+                            Inspect Machine
+                        </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface border-2 border-on-background rounded-lg overflow-hidden relative transition-transform hover:-translate-y-1">
+<div class="absolute top-4 right-4 z-10 bg-primary-container border-2 border-on-background px-3 py-1 font-display font-black text-headline-md italic">
+                        $125,000
+                    </div>
+<div class="aspect-video bg-surface-container-high relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A vibrant red exotic supercar parked against a stark yellow background. The composition is aggressive and flat, with no soft gradients, focusing on the saturated colors and the sharp black detailing of the vehicle's vents and wheels. The mood is energetic and kinetic, perfectly matching the bold neo-brutalist design system of the marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnBsYVw0cKxc2M5rVUDMyYc8NwlFHMRDmyd9PSO9gb0ky0wElh6tn5AzkItu7Z-lyybDy8S1iSv7jjEdy4LJhNTBT0RTu41PdMvIKFqixSqV17F5r34gZEECELxLg6IX3ngrR9CICvsVgRJhhGqvOJ9FX-DzZK9_L74TuaNAyQYVq4976QjmG67Tra2GpaTxJJlRAJPwfP46Ha5tPrE6DSDOrSOvP6eAnrafdVWTLLLRT8YuxD0hv_klAjD0GzVrR6p3FQY1ZcqCS9"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-display text-headline-md uppercase">Ferrari F8 Tributo</h3>
+<p class="text-on-surface-variant font-label-md">2020 • 2,800 MILES</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface border-2 border-on-background px-2 py-1 rounded text-label-md uppercase">Semi-Auto</span>
+<span class="bg-surface border-2 border-on-background px-2 py-1 rounded text-label-md uppercase">Petrol</span>
+<span class="bg-surface border-2 border-on-background px-2 py-1 rounded text-label-md uppercase">RWD</span>
+</div>
+<button class="w-full bg-secondary text-on-secondary border-2 border-on-background py-3 font-display font-bold uppercase tracking-widest neo-shadow-sm active-press">
+                            Inspect Machine
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter / CTA -->
+<section class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop pb-xl">
+<div class="bg-secondary-container border-4 border-on-background p-md md:p-lg flex flex-col md:flex-row items-center justify-between neo-shadow-md">
+<div class="mb-lg md:mb-0">
+<h2 class="font-display text-headline-lg text-on-secondary-container uppercase italic leading-tight">JOIN THE <br/> INVENTORY FEED</h2>
+<p class="text-on-secondary-container font-body-lg">Get notified the second a new beast hits the market.</p>
+</div>
+<div class="flex w-full md:w-auto gap-4">
+<input class="flex-grow md:w-80 border-2 border-on-background p-4 outline-none focus:bg-primary-fixed" placeholder="YOUR EMAIL" type="email"/>
+<button class="bg-on-background text-surface border-2 border-on-background px-8 py-4 font-display font-bold uppercase neo-shadow-sm active-press">
+                        Join
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-on-background dark:bg-surface-container-lowest border-t-4 border-primary-container">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-xl max-w-7xl mx-auto">
+<div class="mb-md md:mb-0">
+<h2 class="font-display text-headline-lg text-primary-container uppercase italic font-black">AUTO-BRUTAL</h2>
+<p class="text-inverse-on-surface dark:text-on-background font-label-md mt-2">© 2024 AUTO-BRUTAL. NO GAMES. JUST CARS.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-inverse-on-surface dark:text-on-background font-label-md uppercase hover:text-primary-container transition-colors" href="#">Terms</a>
+<a class="text-inverse-on-surface dark:text-on-background font-label-md uppercase hover:text-primary-container transition-colors" href="#">Privacy</a>
+<a class="text-inverse-on-surface dark:text-on-background font-label-md uppercase hover:text-primary-container transition-colors" href="#">Cookies</a>
+<a class="text-inverse-on-surface dark:text-on-background font-label-md uppercase hover:text-primary-container transition-colors" href="#">Contact</a>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface dark:bg-on-background border-t-2 border-on-background dark:border-surface-variant">
+<button class="flex flex-col items-center justify-center text-secondary bg-secondary-fixed rounded-lg p-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="directions_car">directions_car</span>
+<span class="font-label-md text-label-md mt-1">Browse</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-md text-label-md mt-1">Search</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-label-md text-label-md mt-1">Sell</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md mt-1">Profile</span>
+</button>
+</nav>
+</body></html>

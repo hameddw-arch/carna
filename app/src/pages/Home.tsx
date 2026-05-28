@@ -7,100 +7,107 @@ import { fetchListings, fetchDistinctMakes } from '../lib/queries'
 const CITIES = ['كل المدن','دمشق','ريف دمشق','حلب','اللاذقية','طرطوس','حماة','حمص','دير الزور','الرقة','درعا','السويداء','إدلب','القنيطرة','الحسكة']
 const TABS   = ['الكل','مستعملة','جديدة','قطع غيار']
 
-// ── Brand data with real brand colors ──────────────────
+// ── Brand data with real logos from /public/brands/ ─────
 const BRAND_DATA = [
-  { name: 'تويوتا',  color: '#EB0A1E', bg: '#FFF0F0' },
-  { name: 'كيا',     color: '#BB162B', bg: '#FFF0F0' },
-  { name: 'هيونداي', color: '#002C5F', bg: '#EEF3FF' },
-  { name: 'هوندا',   color: '#E40521', bg: '#FFF0F0' },
-  { name: 'نيسان',   color: '#C40C3A', bg: '#FFF0F2' },
-  { name: 'سوزوكي',  color: '#1A4B9A', bg: '#EEF3FF' },
-  { name: 'BMW',     color: '#1C69D4', bg: '#EEF3FF' },
-  { name: 'مرسيدس',  color: '#1F1F1F', bg: '#F5F5F5' },
-  { name: 'شيفروليه',color: '#D4AF37', bg: '#FFFBEE' },
-  { name: 'فورد',    color: '#003478', bg: '#EEF3FF' },
+  { name: 'تويوتا',  logo: '/brands/toyota.svg',   color: '#EB0A1E' },
+  { name: 'كيا',     logo: '/brands/kia.svg',       color: '#BB162B' },
+  { name: 'هيونداي', logo: '/brands/hyundai.svg',   color: '#002C5F' },
+  { name: 'هوندا',   logo: '/brands/honda.svg',     color: '#E40521' },
+  { name: 'نيسان',   logo: '/brands/nissan.svg',    color: '#C40C3A' },
+  { name: 'سوزوكي',  logo: '/brands/suzuki.svg',    color: '#1A4B9A' },
+  { name: 'BMW',     logo: '/brands/bmw.svg',        color: '#1C69D4' },
+  { name: 'مرسيدس',  logo: '/brands/mercedes.svg',  color: '#1F1F1F' },
+  { name: 'شيفروليه',logo: '/brands/chevrolet.svg', color: '#C8A200' },
+  { name: 'فورد',    logo: '/brands/ford.svg',       color: '#003478' },
 ]
 
-// ── Body type SVG icons (simple B&W line art) ──────────
-function SedanIcon() {
-  return (
-    <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="17" width="58" height="10" rx="3"/>
-      <path d="M11 17 C13 8 20 6 30 6 L40 6 C49 6 52 10 54 17"/>
-      <circle cx="15" cy="28" r="4"/>
-      <circle cx="49" cy="28" r="4"/>
-      <line x1="15" y1="17" x2="15" y2="24"/>
-      <line x1="49" y1="17" x2="49" y2="24"/>
-      <path d="M22 17 L22 8 M42 17 L42 8" strokeWidth="1"/>
-    </svg>
-  )
-}
-function SuvIcon() {
-  return (
-    <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="15" width="58" height="12" rx="3"/>
-      <path d="M10 15 L12 4 L52 4 L54 15"/>
-      <circle cx="15" cy="28" r="4"/>
-      <circle cx="49" cy="28" r="4"/>
-      <line x1="12" y1="4" x2="12" y2="15"/>
-      <line x1="52" y1="4" x2="52" y2="15"/>
-      <line x1="12" y1="10" x2="52" y2="10" strokeWidth="1"/>
-    </svg>
-  )
-}
-function PickupIcon() {
-  return (
-    <svg width="72" height="32" viewBox="0 0 72 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="17" width="68" height="10" rx="3"/>
-      <path d="M8 17 C10 8 18 6 26 6 L40 6 L40 17"/>
-      <rect x="41" y="9" width="25" height="8" rx="2"/>
-      <circle cx="15" cy="28" r="4"/>
-      <circle cx="57" cy="28" r="4"/>
-    </svg>
-  )
-}
-function VanIcon() {
-  return (
-    <svg width="64" height="34" viewBox="0 0 64 34" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="14" width="58" height="14" rx="3"/>
-      <rect x="5" y="5" width="44" height="9" rx="2"/>
-      <circle cx="14" cy="29" r="4"/>
-      <circle cx="50" cy="29" r="4"/>
-      <line x1="30" y1="5" x2="30" y2="14"/>
-      <line x1="5" y1="14" x2="5" y2="5"/>
-    </svg>
-  )
-}
-function HatchbackIcon() {
-  return (
-    <svg width="60" height="30" viewBox="0 0 60 30" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="15" width="54" height="10" rx="3"/>
-      <path d="M11 15 C13 7 20 5 28 5 L42 5 C50 8 54 13 55 15"/>
-      <circle cx="13" cy="26" r="4"/>
-      <circle cx="47" cy="26" r="4"/>
-      <line x1="13" y1="15" x2="13" y2="22"/>
-      <line x1="47" y1="15" x2="47" y2="22"/>
-    </svg>
-  )
-}
-function CoupeIcon() {
-  return (
-    <svg width="66" height="28" viewBox="0 0 66 28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="14" width="60" height="9" rx="2.5"/>
-      <path d="M12 14 C15 4 22 3 33 3 L45 3 C54 3 58 9 61 14"/>
-      <circle cx="15" cy="24" r="3.5"/>
-      <circle cx="51" cy="24" r="3.5"/>
-    </svg>
-  )
-}
-
+// ── Body type icons — filled silhouettes ────────────────
 const BODY_TYPES = [
-  { name: 'سيدان',   icon: <SedanIcon /> },
-  { name: 'SUV',     icon: <SuvIcon /> },
-  { name: 'بيكاب',  icon: <PickupIcon /> },
-  { name: 'فان',    icon: <VanIcon /> },
-  { name: 'هاتشباك',icon: <HatchbackIcon /> },
-  { name: 'كوبيه',  icon: <CoupeIcon /> },
+  {
+    name: 'سيدان',
+    icon: (
+      <svg viewBox="0 0 80 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 72, height: 32 }}>
+        <path d="M6 22 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L55 30 Q55 24 61 24 Q67 24 67 30 L71 30 Q74 30 74 27 L74 22 L70 14 Q68 11 64 11 L46 8 Q40 5 34 5 L22 5 Q16 5 13 9 Z"/>
+        <circle cx="19" cy="30" r="5" fill="white" opacity="0.9"/>
+        <circle cx="19" cy="30" r="2.5"/>
+        <circle cx="61" cy="30" r="5" fill="white" opacity="0.9"/>
+        <circle cx="61" cy="30" r="2.5"/>
+        <path d="M24 11 L22 5 L34 5 L34 11 Z" fill="white" opacity="0.25"/>
+        <path d="M36 11 L36 5 L46 8 L48 11 Z" fill="white" opacity="0.25"/>
+      </svg>
+    ),
+  },
+  {
+    name: 'SUV',
+    icon: (
+      <svg viewBox="0 0 80 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 72, height: 32 }}>
+        <path d="M6 20 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L55 30 Q55 24 61 24 Q67 24 67 30 L71 30 Q74 30 74 27 L74 20 L72 12 Q70 8 66 8 L14 8 Q10 8 8 12 Z"/>
+        <circle cx="19" cy="30" r="5" fill="white" opacity="0.9"/>
+        <circle cx="19" cy="30" r="2.5"/>
+        <circle cx="61" cy="30" r="5" fill="white" opacity="0.9"/>
+        <circle cx="61" cy="30" r="2.5"/>
+        <path d="M14 8 L14 20 M40 8 L40 20 M66 8 L66 20" stroke="white" strokeWidth="1" opacity="0.3" fill="none"/>
+        <path d="M14 8 L66 8 L66 14 L14 14 Z" fill="white" opacity="0.2"/>
+      </svg>
+    ),
+  },
+  {
+    name: 'بيكاب',
+    icon: (
+      <svg viewBox="0 0 90 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 80, height: 32 }}>
+        <path d="M6 22 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L45 30 L45 18 L42 18 L42 10 Q42 7 39 7 L22 7 Q16 7 13 11 Z"/>
+        <rect x="45" y="14" width="30" height="16" rx="2"/>
+        <path d="M67 14 L67 30 L71 30 Q74 30 74 27 L74 22 Q74 18 71 16 Z"/>
+        <circle cx="19" cy="30" r="5" fill="white" opacity="0.9"/>
+        <circle cx="19" cy="30" r="2.5"/>
+        <circle cx="63" cy="30" r="5" fill="white" opacity="0.9"/>
+        <circle cx="63" cy="30" r="2.5"/>
+        <path d="M25 13 L22 7 L33 7 L33 13 Z" fill="white" opacity="0.25"/>
+      </svg>
+    ),
+  },
+  {
+    name: 'فان',
+    icon: (
+      <svg viewBox="0 0 80 38" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 72, height: 34 }}>
+        <path d="M8 22 L8 29 Q8 32 11 32 L14 32 Q14 26 20 26 Q26 26 26 32 L54 32 Q54 26 60 26 Q66 26 66 32 L69 32 Q72 32 72 29 L72 18 L70 10 Q68 6 64 6 L18 6 Q10 6 9 14 Z"/>
+        <circle cx="20" cy="32" r="5" fill="white" opacity="0.9"/>
+        <circle cx="20" cy="32" r="2.5"/>
+        <circle cx="60" cy="32" r="5" fill="white" opacity="0.9"/>
+        <circle cx="60" cy="32" r="2.5"/>
+        <path d="M18 6 L18 22 M44 6 L44 22" stroke="white" strokeWidth="1" opacity="0.3" fill="none"/>
+        <rect x="10" y="6" width="22" height="10" rx="1" fill="white" opacity="0.25"/>
+      </svg>
+    ),
+  },
+  {
+    name: 'هاتشباك',
+    icon: (
+      <svg viewBox="0 0 76 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 68, height: 32 }}>
+        <path d="M6 22 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L51 30 Q51 24 57 24 Q63 24 63 30 L67 30 Q70 30 70 27 L70 22 L68 16 Q64 10 56 8 L32 5 Q20 5 16 10 Z"/>
+        <circle cx="19" cy="30" r="5" fill="white" opacity="0.9"/>
+        <circle cx="19" cy="30" r="2.5"/>
+        <circle cx="57" cy="30" r="5" fill="white" opacity="0.9"/>
+        <circle cx="57" cy="30" r="2.5"/>
+        <path d="M22 11 L20 5 L32 5 L32 11 Z" fill="white" opacity="0.25"/>
+        <path d="M34 11 L34 5 L44 7 L46 11 Z" fill="white" opacity="0.25"/>
+      </svg>
+    ),
+  },
+  {
+    name: 'كوبيه',
+    icon: (
+      <svg viewBox="0 0 82 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 74, height: 28 }}>
+        <path d="M4 20 L4 25 Q4 28 7 28 L12 28 Q12 22 18 22 Q24 22 24 28 L58 28 Q58 22 64 22 Q70 22 70 28 L74 28 Q77 28 77 25 L77 20 L75 14 Q70 7 60 6 L36 4 Q24 4 18 8 Q10 12 6 17 Z"/>
+        <circle cx="18" cy="28" r="5" fill="white" opacity="0.9"/>
+        <circle cx="18" cy="28" r="2.5"/>
+        <circle cx="64" cy="28" r="5" fill="white" opacity="0.9"/>
+        <circle cx="64" cy="28" r="2.5"/>
+        <path d="M26 12 L24 4 L36 4 L36 12 Z" fill="white" opacity="0.25"/>
+        <path d="M38 12 L38 4 L52 5 L54 12 Z" fill="white" opacity="0.25"/>
+      </svg>
+    ),
+  },
 ]
 
 const TOP_CITIES = ['دمشق','حلب','اللاذقية','حمص','طرطوس','حماة']
@@ -117,7 +124,7 @@ export default function Home() {
     loadListings()
     fetchDistinctMakes().then(makes => {
       if (makes.length) {
-        const updated = makes.map(name => BRAND_DATA.find(b => b.name === name) ?? { name, color: '#555', bg: '#f5f5f5' })
+        const updated = makes.map(name => BRAND_DATA.find(b => b.name === name) ?? { name, logo: '', color: '#555' })
         setBrands(updated.length ? updated : BRAND_DATA)
       }
     })
@@ -248,17 +255,22 @@ export default function Home() {
                     transition: 'all 150ms ease', fontFamily: 'inherit',
                     boxShadow: isActive ? `0 4px 14px ${brand.color}44` : '0 1px 3px rgba(0,0,0,.06)',
                   }}>
-                  {/* Brand color dot */}
+                  {/* Brand logo */}
                   <div style={{
-                    width: 36, height: 36, borderRadius: 10, margin: '0 auto 8px',
-                    background: isActive ? 'rgba(255,255,255,.2)' : brand.bg,
+                    width: 44, height: 44, borderRadius: 10, margin: '0 auto 8px',
+                    background: isActive ? 'rgba(255,255,255,.2)' : brand.color,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    border: `2px solid ${isActive ? 'rgba(255,255,255,.3)' : brand.color}22`,
+                    padding: 8,
                   }}>
-                    <div style={{
-                      width: 14, height: 14, borderRadius: '50%',
-                      background: isActive ? '#fff' : brand.color,
-                    }} />
+                    {brand.logo ? (
+                      <img
+                        src={brand.logo}
+                        alt={brand.name}
+                        style={{ width: 28, height: 28, objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: 13, fontWeight: 800, color: '#fff' }}>{brand.name.slice(0, 2)}</span>
+                    )}
                   </div>
                   {brand.name}
                 </button>
@@ -275,14 +287,14 @@ export default function Home() {
               <button key={bt.name} onClick={() => filterByBodyType(bt.name)}
                 style={{
                   background: '#fff', border: '1.5px solid var(--border-light)',
-                  borderRadius: 14, padding: '18px 8px 14px', cursor: 'pointer', textAlign: 'center',
-                  color: 'var(--text-secondary)', transition: 'all 150ms ease', fontFamily: 'inherit',
+                  borderRadius: 14, padding: '20px 8px 14px', cursor: 'pointer', textAlign: 'center',
+                  color: '#1a1a1a', transition: 'all 150ms ease', fontFamily: 'inherit',
                   boxShadow: '0 1px 4px rgba(0,0,0,.05)',
                 }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10, opacity: 0.75 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
                   {bt.icon}
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>{bt.name}</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>{bt.name}</div>
               </button>
             ))}
           </div>

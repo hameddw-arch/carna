@@ -8,54 +8,43 @@
 @layer base {
   :root {
     /* Brand Colors */
-    --color-yellow:   #FDB700;
-    --color-black:    #000000;
-    --color-white:    #FFFFFF;
-    --color-blue:     #0053FA;
-    --color-gray:     #ADADAD;
-
-    /* Yellow Scale */
-    --yellow-50:      #FFFBEB;
-    --yellow-100:     #FEF3C7;
-    --yellow-500:     #FDB700;
-    --yellow-600:     #D97706;
-
-    /* Blue Scale */
-    --blue-50:        #EFF6FF;
-    --blue-500:       #0053FA;
-    --blue-600:       #0043CC;
+    --color-yellow:  #FDB700;
+    --color-black:   #1A1A1A;
+    --color-white:   #FFFFFF;
+    --color-blue:    #1A73E8;
+    --color-red:     #D93025;
+    --color-green:   #1E8E3E;
+    --color-gray:    #F1F3F4;
 
     /* Backgrounds */
-    --bg-base:        #FFFFFF;
-    --bg-subtle:      #F7F7F7;
-    --bg-muted:       #EFEFEF;
+    --bg-page:       var(--color-yellow);
+    --bg-card:       var(--color-white);
+    --bg-subtle:     var(--color-gray);
 
     /* Text */
-    --text-primary:   #1A1A1A;
-    --text-secondary: #555555;
-    --text-muted:     #999999;
+    --text-primary:  var(--color-black);
+    --text-secondary:#5F6368;
+    --text-inverse:  var(--color-white);
+    --text-price:    24px;
 
     /* Borders */
-    --border-light:   #EBEBEB;
-    --border-base:    #DEDEDE;
+    --border-primary:var(--color-black);
+    --border-subtle: #E0E0E0;
 
     /* Shadows */
-    --shadow-xs:    0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-    --shadow-sm:    0 2px 8px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.05);
-    --shadow-md:    0 8px 24px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
-    --shadow-lg:    0 16px 48px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.08);
-    --shadow-brand: 0 4px 16px rgba(253,183,0,.35);
+    --shadow-solid-sm: 2px 2px 0px #1A1A1A;
+    --shadow-solid-md: 4px 4px 0px #1A1A1A;
+    --shadow-none:     none;
 
     /* Transitions */
-    --transition-fast:  150ms ease;
-    --transition-base:  250ms ease;
-    --transition-slow:  400ms ease-out;
+    --transition-fast: 150ms ease;
 
     /* Radius */
     --radius-sm:   6px;
-    --radius-md:   10px;
-    --radius-lg:   14px;
-    --radius-xl:   20px;
+    --radius-md:   8px;
+    --radius-lg:   12px;
+    --radius-xl:   16px;
+    --radius-full: 9999px;
   }
 
   * {
@@ -70,12 +59,12 @@
   }
 
   body {
-    font-family: 'IBM Plex Arabic', 'Noto Sans Arabic', 'Tahoma', sans-serif;
-    background: var(--bg-base);
+    font-family: 'IBM Plex Sans Arabic', 'Cairo', 'Noto Sans Arabic', 'Tahoma', sans-serif;
+    background: var(--bg-card); /* Fallback, specific pages may use bg-page */
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     font-size: 16px;
-    line-height: 1.6;
+    line-height: 1.7;
   }
 
   #root {
@@ -92,27 +81,11 @@
   .hide-mobile  { display: none !important; }
   .show-mobile  { display: flex !important; }
 
-  /* Hero form — stack vertically */
-  .hero-form {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Main grid — hide sidebar on mobile */
-  .main-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .main-grid aside {
-    display: none !important;
-  }
-
-  /* Listing layout — single column */
-  .listing-layout {
-    grid-template-columns: 1fr !important;
-  }
-  .listing-layout aside {
-    position: static !important;
-    order: -1;
-  }
+  .hero-form { grid-template-columns: 1fr !important; }
+  .main-grid { grid-template-columns: 1fr !important; }
+  .main-grid aside { display: none !important; }
+  .listing-layout { grid-template-columns: 1fr !important; }
+  .listing-layout aside { position: static !important; order: -1; }
 }
 @media (min-width: 769px) {
   .hide-mobile  { display: flex; }
@@ -120,88 +93,112 @@
 }
 
 @layer components {
+  /* Primary Button */
   .btn-primary {
-    background: var(--color-yellow);
-    color: var(--color-black);
+    background: var(--color-blue);
+    color: var(--color-white);
     font-weight: 700;
+    border: 2px solid var(--color-black);
     border-radius: var(--radius-md);
-    padding: 10px 20px;
-    box-shadow: var(--shadow-brand);
-    border: none;
+    padding: 12px 24px;
+    box-shadow: var(--shadow-solid-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
     cursor: pointer;
-    min-height: 44px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    transition: background var(--transition-fast), transform var(--transition-fast);
-    white-space: nowrap;
   }
-  .btn-primary:hover  { background: var(--yellow-600); transform: translateY(-1px); }
-  .btn-primary:active { transform: scale(0.97); }
+  .btn-primary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-solid-md);
+  }
+  .btn-primary:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+  }
 
+  /* Ghost Button */
   .btn-ghost {
     background: transparent;
     color: var(--text-primary);
-    font-weight: 500;
+    font-weight: 700;
+    border: 1px solid var(--border-primary);
     border-radius: var(--radius-md);
-    padding: 10px 16px;
-    border: 1.5px solid var(--border-base);
+    padding: 12px 24px;
+    transition: all var(--transition-fast);
     cursor: pointer;
-    min-height: 44px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    transition: border-color var(--transition-fast), background var(--transition-fast);
   }
-  .btn-ghost:hover { border-color: var(--color-yellow); background: var(--yellow-50); }
+  .btn-ghost:hover {
+    background: var(--bg-subtle);
+    transform: translateY(-2px);
+  }
+  .btn-ghost:active {
+    transform: translateY(2px);
+  }
 
+  /* Listing Card */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: none;
+    overflow: hidden;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border: 1px solid var(--color-blue);
+  }
+
+  /* Tags */
   .tag {
     background: var(--bg-subtle);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-light);
-    border-radius: 9999px;
-    padding: 5px 14px;
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 6px 14px;
     font-size: 14px;
-    cursor: pointer;
+    font-weight: 500;
     transition: all var(--transition-fast);
     white-space: nowrap;
+    cursor: pointer;
   }
-  .tag:hover         { background: var(--yellow-50); border-color: var(--color-yellow); color: var(--text-primary); }
-  .tag.active        { background: var(--color-yellow); border-color: var(--color-yellow); color: #000; font-weight: 600; }
-
-  .card {
-    background: var(--bg-base);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-    transition: box-shadow var(--transition-base), transform var(--transition-base);
+  .tag:hover {
+    background: var(--color-blue);
+    color: var(--color-white);
+    border-color: var(--color-black);
   }
-  .card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
+  .tag:active {
+    transform: translateY(2px);
+  }
 
+  /* Inputs */
   .input {
-    background: var(--bg-base);
-    border: 1.5px solid var(--border-base);
-    border-radius: var(--radius-sm);
-    padding: 11px 16px;
-    font-size: 15px;
+    background: var(--bg-card);
+    border: 2px solid var(--color-black);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    font-size: 16px;
     color: var(--text-primary);
-    width: 100%;
-    min-height: 44px;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    font-family: inherit;
+    transition: border-color var(--transition-fast);
     direction: rtl;
+    width: 100%;
   }
   .input:focus {
+    border-color: var(--color-blue);
     outline: none;
-    border-color: var(--color-yellow);
-    box-shadow: 0 0 0 3px rgba(253,183,0,.15);
   }
-  .input::placeholder { color: var(--text-muted); }
 
+  /* Typography */
   .section-title {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 }

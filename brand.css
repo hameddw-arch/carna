@@ -1,53 +1,32 @@
 /* ═══════════════════════════════════════════════════════
-   CARNA — Brand & Design System Tokens
-   شخصية: بسيط · أنيق · قوي · ناعم · سهل · فني
+   CARNA — Brand & Design System Tokens (Flat Pop / Neo-Brutalism)
+   شخصية: جريء · مسطح · قوي · بسيط · احترافي
    ═══════════════════════════════════════════════════════ */
 
 :root {
 
-  /* ── Brand Colors ────────────────────────────────── */
+  /* ── Flat Pop Colors ─────────────────────────────── */
   --color-yellow:   #FDB700;
-  --color-black:    #000000;
+  --color-black:    #1A1A1A;
   --color-white:    #FFFFFF;
-  --color-blue:     #0053FA;
-  --color-gray:     #ADADAD;
-
-  /* ── Yellow Scale ───────────────────────────────── */
-  --yellow-50:      #FFFBEB;
-  --yellow-100:     #FEF3C7;
-  --yellow-500:     #FDB700;
-  --yellow-600:     #D97706;
-
-  /* ── Blue Scale ─────────────────────────────────── */
-  --blue-50:        #EFF6FF;
-  --blue-500:       #0053FA;
-  --blue-600:       #0043CC;
+  --color-blue:     #1A73E8; /* Google Blue */
+  --color-red:      #D93025;
+  --color-green:    #1E8E3E;
+  --color-gray:     #F1F3F4; /* رمادي مسطح */
 
   /* ── Backgrounds ────────────────────────────────── */
-  --bg-base:        #FFFFFF;
-  --bg-subtle:      #F7F7F7;
-  --bg-muted:       #EFEFEF;
+  --bg-page:        var(--color-yellow);
+  --bg-card:        var(--color-white);
+  --bg-subtle:      var(--color-gray);
 
   /* ── Text ───────────────────────────────────────── */
-  --text-primary:   #1A1A1A;
-  --text-secondary: #555555;
-  --text-muted:     #999999;
-  --text-inverse:   #FFFFFF;
+  --text-primary:   var(--color-black);
+  --text-secondary: #5F6368;
+  --text-inverse:   var(--color-white);
 
   /* ── Borders ─────────────────────────────────────── */
-  --border-light:   #EBEBEB;
-  --border-base:    #DEDEDE;
-  --border-focus:   #FDB700;
-
-  /* ── Semantic Aliases ───────────────────────────── */
-  --color-brand:    var(--color-yellow);
-  --color-accent:   var(--color-blue);
-  --color-neutral:  var(--color-gray);
-
-  /* ── State Colors ───────────────────────────────── */
-  --color-success:  #16A34A;
-  --color-error:    #DC2626;
-  --color-warning:  #D97706;
+  --border-primary: var(--color-black);
+  --border-subtle:  #E0E0E0;
 
   /* ══════════════════════════════════════════════════
      SPACING — Base 8px
@@ -63,30 +42,27 @@
   --space-12:  80px;
 
   /* ══════════════════════════════════════════════════
-     BORDER RADIUS — ناعم وأنيق
+     BORDER RADIUS — حواف حادة نسبياً (Sharp)
      ══════════════════════════════════════════════════ */
   --radius-sm:   6px;
-  --radius-md:   10px;
-  --radius-lg:   14px;
-  --radius-xl:   20px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
   --radius-full: 9999px;
 
   /* ══════════════════════════════════════════════════
-     SHADOWS — خفيفة وعميقة حسب السياق
+     SHADOWS — ظلال صلبة (Solid Offsets)
      ══════════════════════════════════════════════════ */
-  --shadow-xs:    0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-  --shadow-sm:    0 2px 8px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.05);
-  --shadow-md:    0 8px 24px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
-  --shadow-lg:    0 16px 48px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.08);
-  --shadow-brand: 0 4px 16px rgba(253,183,0,.35);
+  --shadow-none:     none;
+  --shadow-solid-sm: 2px 2px 0px #1A1A1A;
+  --shadow-solid-md: 4px 4px 0px #1A1A1A;
 
   /* ══════════════════════════════════════════════════
-     TRANSITIONS — نعومة الحركة
+     TRANSITIONS — حركة مباشرة وسريعة (Snappy)
      ══════════════════════════════════════════════════ */
   --transition-fast:   150ms ease;
   --transition-base:   250ms ease;
-  --transition-slow:   400ms ease-out;
-  --easing-bounce:     cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-snappy: 150ms cubic-bezier(0, 0, 0.2, 1); /* سريعة جداً */
 
   /* ══════════════════════════════════════════════════
      TYPOGRAPHY
@@ -106,18 +82,16 @@
   --weight-regular: 400;
   --weight-medium:  500;
   --weight-bold:    700;
-
-  --leading-tight:  1.2;
-  --leading-snug:   1.4;
-  --leading-normal: 1.6;
-  --leading-loose:  1.8;
-
-  /* ══════════════════════════════════════════════════
-     LOGO
-     ══════════════════════════════════════════════════ */
-  --logo-aspect-ratio: calc(356.85 / 425.87);
 }
 
+/* ═══════════════════════════════════════════════════════
+   GLOBAL DEFAULTS
+   ═══════════════════════════════════════════════════════ */
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
 
 /* ═══════════════════════════════════════════════════════
    COMPONENT TOKENS
@@ -125,40 +99,50 @@
 
 /* CTA Button — الزر الأساسي */
 .btn-primary {
-  background:    var(--color-yellow);
-  color:         var(--color-black);
+  background:    var(--color-blue);
+  color:         var(--color-white);
   font-weight:   var(--weight-bold);
+  border:        2px solid var(--border-primary);
   border-radius: var(--radius-md);
   padding:       var(--space-3) var(--space-5);
-  box-shadow:    var(--shadow-brand);
-  transition:    background var(--transition-fast),
-                 transform  var(--transition-fast),
-                 box-shadow var(--transition-fast);
-  border: none;
-  cursor: pointer;
-  min-height: 44px;
+  box-shadow:    var(--shadow-solid-sm);
+  transition:    transform var(--transition-snappy),
+                 box-shadow var(--transition-snappy);
+  cursor:        pointer;
+  min-height:    44px;
+  display:       inline-flex;
+  align-items:   center;
+  justify-content: center;
 }
-.btn-primary:hover  { background: var(--yellow-600); transform: translateY(-1px); }
-.btn-primary:active { transform: scale(0.97); }
+.btn-primary:hover  { 
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-solid-md);
+}
+.btn-primary:active { 
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
 
 /* Card — بطاقة الإعلان */
 .listing-card {
-  background:    var(--bg-base);
+  background:    var(--bg-card);
+  border:        1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  box-shadow:    var(--shadow-sm);
+  box-shadow:    var(--shadow-none);
   overflow:      hidden;
-  transition:    box-shadow var(--transition-base),
-                 transform  var(--transition-base);
+  transition:    transform var(--transition-snappy),
+                 border-color var(--transition-snappy);
 }
 .listing-card:hover {
-  box-shadow: var(--shadow-md);
-  transform:  translateY(-4px);
+  border-color: var(--color-blue);
+  transform:    translateY(-4px);
 }
 .listing-card__image {
-  aspect-ratio: 16 / 9;
-  object-fit:   cover;
-  width:        100%;
-  display:      block;
+  aspect-ratio:  16 / 9;
+  object-fit:    cover;
+  width:         100%;
+  display:       block;
+  border-bottom: 1px solid var(--border-subtle);
 }
 .listing-card__price {
   font-size:   var(--text-price);
@@ -177,53 +161,44 @@
 /* Tag / وسم */
 .tag {
   background:    var(--bg-subtle);
-  color:         var(--text-secondary);
-  border:        1px solid var(--border-light);
-  border-radius: var(--radius-full);
+  color:         var(--text-primary);
+  border:        1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   padding:       var(--space-1) var(--space-3);
   font-size:     var(--text-sm);
+  font-weight:   var(--weight-medium);
   cursor:        pointer;
-  transition:    background   var(--transition-fast),
-                 border-color var(--transition-fast),
-                 color        var(--transition-fast),
-                 box-shadow   var(--transition-fast);
+  transition:    all var(--transition-fast);
+  display:       inline-flex;
+  align-items:   center;
 }
 .tag:hover {
-  background:    var(--yellow-50);
-  border-color:  var(--color-yellow);
-  color:         var(--text-primary);
+  background:   var(--color-blue);
+  color:        var(--color-white);
+  border-color: var(--border-primary);
+}
+.tag:active {
+  transform: translateY(2px);
 }
 .tag.active {
-  background:    var(--color-yellow);
-  border-color:  var(--color-yellow);
-  color:         var(--color-black);
-  box-shadow:    0 0 0 3px rgba(253,183,0,.2);
+  background:   var(--color-blue);
+  color:        var(--color-white);
+  border-color: var(--border-primary);
 }
 
-/* Input */
+/* Input / حقل بحث */
 .input {
-  background:    var(--bg-base);
-  border:        1.5px solid var(--border-base);
-  border-radius: var(--radius-sm);
+  background:    var(--bg-card);
+  border:        2px solid var(--border-primary);
+  border-radius: var(--radius-md);
   padding:       var(--space-3) var(--space-4);
   font-size:     var(--text-base);
   color:         var(--text-primary);
-  transition:    border-color var(--transition-fast),
-                 box-shadow   var(--transition-fast);
-  min-height: 44px;
-  width: 100%;
+  transition:    border-color var(--transition-fast);
+  min-height:    44px;
+  width:         100%;
 }
 .input:focus {
   outline:      none;
-  border-color: var(--color-yellow);
-  box-shadow:   0 0 0 3px rgba(253,183,0,.15);
+  border-color: var(--color-blue);
 }
-
-
-/* ═══════════════════════════════════════════════════════
-   LOGO USAGE
-   ───────────────────────────────────────────────────────
-   logo.svg        → على #FDB700 أو #FFFFFF
-   logo white.svg  → على #000000، #0053FA، #FDB700
-   الأصفر هو لون الخلفية — غير مدمج داخل SVG
-   ═══════════════════════════════════════════════════════ */
