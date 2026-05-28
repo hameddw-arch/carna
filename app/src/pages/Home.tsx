@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Search, ChevronDown, Loader2 } from 'lucide-react'
 import ListingCard from '../components/ListingCard'
 import { fetchListings, fetchDistinctMakes } from '../lib/queries'
-import { TAGS } from '../data/mock'
 
 const CITIES     = ['كل المدن', 'دمشق', 'ريف دمشق', 'حلب', 'اللاذقية', 'طرطوس', 'حماة', 'حمص', 'دير الزور', 'الرقة', 'درعا', 'السويداء', 'إدلب', 'القنيطرة', 'الحسكة']
 const ALL_BRANDS = ['تويوتا','كيا','هيونداي','هوندا','نيسان','سوزوكي','BMW','مرسيدس']
@@ -10,7 +9,6 @@ const TABS       = ['الكل', 'مستعملة', 'جديدة', 'قطع غيار
 
 export default function Home() {
   const [activeTab,   setActiveTab]   = useState('الكل')
-  const [activeTags,  setActiveTags]  = useState<string[]>([])
   const [listings,    setListings]    = useState<any[]>([])
   const [brands,      setBrands]      = useState<string[]>(ALL_BRANDS)
   const [loading,     setLoading]     = useState(true)
@@ -41,9 +39,6 @@ export default function Home() {
       priceTo:   filters.priceTo   ? Number(filters.priceTo)   : undefined,
     })
   }
-
-  const toggleTag = (tag: string) =>
-    setActiveTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])
 
   return (
     <main style={{ flex: 1 }}>
@@ -102,23 +97,53 @@ export default function Home() {
         {/* Brands */}
         <section style={{ padding: '40px 0 32px' }}>
           <h2 className="section-title">ابحث بالماركة</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 10 }}>
-            {brands.map(brand => (
-              <button key={brand} onClick={() => { setFilters(f => ({...f, make: brand})); loadListings({ make: brand }) }}
-                style={{ background: filters.make === brand ? 'var(--yellow-50)' : 'var(--bg-base)', border: `1.5px solid ${filters.make === brand ? 'var(--color-yellow)' : 'var(--border-light)'}`, borderRadius: 12, padding: '14px 10px', cursor: 'pointer', textAlign: 'center', fontWeight: 600, fontSize: 14, color: 'var(--text-primary)', transition: 'all 150ms ease', fontFamily: 'inherit' }}>
-                <div style={{ fontSize: 28, marginBottom: 6 }}>🚗</div>
-                {brand}
-              </button>
-            ))}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10 }}>
+            {brands.map((brand, idx) => {
+              const isActive = filters.make === brand
+              const colors = ['#E8F4FD','#FFF8E1','#F3E5F5','#E8F5E9','#FBE9E7','#E3F2FD','#FFF3E0','#F9FBE7']
+              const textColors = ['#1565C0','#F57F17','#6A1B9A','#2E7D32','#BF360C','#0277BD','#E65100','#558B2F']
+              return (
+                <button key={brand}
+                  onClick={() => { setFilters(f => ({...f, make: brand})); loadListings({ make: brand }) }}
+                  style={{
+                    background: isActive ? 'var(--color-yellow)' : '#fff',
+                    border: `1.5px solid ${isActive ? 'var(--color-yellow)' : 'var(--border-light)'}`,
+                    borderRadius: 12, padding: '16px 10px', cursor: 'pointer', textAlign: 'center',
+                    fontWeight: 700, fontSize: 14, color: isActive ? '#000' : 'var(--text-primary)',
+                    transition: 'all 150ms ease', fontFamily: 'inherit',
+                    boxShadow: isActive ? '0 4px 12px rgba(253,183,0,.3)' : '0 1px 3px rgba(0,0,0,.06)',
+                  }}>
+                  <div style={{
+                    width: 40, height: 40, borderRadius: 10, margin: '0 auto 10px',
+                    background: isActive ? 'rgba(0,0,0,.08)' : colors[idx % colors.length],
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 15, fontWeight: 800,
+                    color: isActive ? '#000' : textColors[idx % textColors.length],
+                  }}>
+                    {brand.slice(0, 2)}
+                  </div>
+                  {brand}
+                </button>
+              )
+            })}
           </div>
         </section>
 
-        {/* Tags */}
+        {/* Quick filters */}
         <section style={{ paddingBottom: 28 }}>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {TAGS.map(tag => (
-              <button key={tag} className={`tag ${activeTags.includes(tag) ? 'active' : ''}`} onClick={() => toggleTag(tag)}>
-                {tag}
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, marginLeft: 4 }}>بحث سريع:</span>
+            {['دمشق','حلب','اللاذقية','حمص','طرطوس'].map(city => (
+              <button key={city} onClick={() => { setFilters(f => ({...f, city})); loadListings({ city }) }}
+                className="tag" style={{ fontSize: 13 }}>
+                📍 {city}
+              </button>
+            ))}
+            <span style={{ width: 1, height: 20, background: 'var(--border-light)', margin: '0 4px' }} />
+            {['2024','2023','2022','2021','2020'].map(year => (
+              <button key={year} onClick={() => { setFilters(f => ({...f, yearFrom: year, yearTo: year})); loadListings({ yearFrom: Number(year), yearTo: Number(year) }) }}
+                className="tag" style={{ fontSize: 13 }}>
+                {year}
               </button>
             ))}
           </div>
