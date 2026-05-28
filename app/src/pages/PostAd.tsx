@@ -1,5 +1,17 @@
 import { useState } from 'react'
-import { Upload, X, ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import { Upload, X, ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
+
+function dataURLtoBlob(url: string): Blob {
+  const arr = url.split(',')
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+  while (n--) u8arr[n] = bstr.charCodeAt(n)
+  return new Blob([u8arr], { type: 'image/jpeg' })
+}
 
 const STEPS = ['الماركة والموديل', 'الصور', 'التفاصيل والسعر', 'مراجعة ونشر']
 
@@ -8,13 +20,68 @@ const CITIES = ['دمشق', 'حلب', 'حمص', 'اللاذقية', 'طرطوس'
 const YEARS = Array.from({ length: 20 }, (_, i) => String(2024 - i))
 
 export default function PostAd() {
+  const { user }   = useAuth()
+  const navigate   = useNavigate()
   const [step, setStep] = useState(0)
   const [form, setForm] = useState({ make: '', model: '', year: '', city: '', price: '', km: '', fuel: 'بنزين', transmission: 'أوتوماتيك', color: '', description: '' })
-  const [images, setImages] = useState<string[]>([])
-  const [agreed, setAgreed] = useState(false)
+  const [images,   setImages]   = useState<string[]>([])
+  const [agreed,   setAgreed]   = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [saving,   setSaving]   = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
+
+  async function handlePublish() {
+    if (!user) return navigate('/login')
+    setSaving(true)
+    setSaveError('')
+    try {
+      const { data: listing, error: listErr } = await supabase
+        .from('listings')
+        .insert({
+          user_id: user.id,
+          title: `${form.make} ${form.model} ${form.year}`,
+          description: form.description,
+          price: Number(form.price),
+          city: form.city,
+          make: form.make,
+          model: form.model,
+          year: Number(form.year),
+          km: Number(form.km),
+          fuel: form.fuel,
+          transmission: form.transmission,
+          color: form.color,
+          status: 'pending',
+        })
+        .select()
+        .single()
+
+      if (listErr || !listing) throw new Error('صار في مشكلة')
+
+      // Upload images
+      for (let i = 0; i < images.length; i++) {
+        const file = dataURLtoBlob(images[i])
+        const path = `${listing.id}/${i}.jpg`
+        await supabase.storage.from('listing_images').upload(path, file)
+        const { data } = supabase.storage.from('listing_images').getPublicUrl(path)
+        await supabase.from('listing_images').insert({ listing_id: listing.id, url: data.publicUrl, order: i })
+      }
+
+      // Add tags
+      const tags = [`#${form.make}`, `#${form.city}`, `#${form.year}`]
+      await Promise.all(tags.map(tag => supabase.from('listing_tags').insert({ listing_id: listing.id, tag })))
+
+      // Save legal agreement
+      await supabase.from('legal_agreements').insert({ user_id: user.id, version: '1.0' })
+
+      setSubmitted(true)
+    } catch (e: any) {
+      setSaveError(e.message ?? 'صار في مشكلة')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   if (submitted) {
     return (
@@ -191,9 +258,12 @@ export default function PostAd() {
           ? <button className="btn-primary" onClick={() => setStep(s => s + 1)}>
               التالي <ChevronLeft size={16}/>
             </button>
-          : <button className="btn-primary" disabled={!agreed} onClick={() => setSubmitted(true)} style={{ opacity: agreed ? 1 : 0.5 }}>
-              انشر الإعلان ✓
-            </button>
+          : <>
+              {saveError && <p style={{ color: 'var(--color-error)', fontSize: 13 }}>{saveError}</p>}
+              <button className="btn-primary" disabled={!agreed || saving} onClick={handlePublish} style={{ opacity: (agreed && !saving) ? 1 : 0.5, justifyContent: 'center' }}>
+                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : '✓ انشر'}
+              </button>
+            </>
         }
       </div>
     </main>

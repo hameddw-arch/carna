@@ -1,8 +1,12 @@
 import { useState } from 'react'
-import { Search, Menu, X, Plus } from 'lucide-react'
+import { Search, Menu, X, Plus, LogOut, User } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Header() {
+  const { user, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   return (
     <header style={{
@@ -48,11 +52,59 @@ export default function Header() {
           />
         </div>
 
-        {/* CTA */}
-        <a href="/post" className="btn-primary" style={{ marginRight: 'auto', fontSize: 14 }}>
-          <Plus size={16} />
-          أضف إعلانك
-        </a>
+        {/* CTA + Auth */}
+        <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+          {user ? (
+            <>
+              <a href="/post" className="btn-primary" style={{ fontSize: 14 }}>
+                <Plus size={16} />
+                إعلان
+              </a>
+              <div style={{ position: 'relative' }}>
+                <button onClick={() => setUserMenuOpen(!userMenuOpen)} style={{
+                  background: 'var(--color-yellow)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: 36,
+                  height: 36,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontSize: 14,
+                }}>
+                  {(user.name ?? user.phone)[0].toUpperCase()}
+                </button>
+                {userMenuOpen && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    background: '#fff',
+                    border: '1px solid var(--border-light)',
+                    borderRadius: 10,
+                    minWidth: 160,
+                    marginTop: 6,
+                    boxShadow: '0 4px 12px rgba(0,0,0,.1)',
+                    zIndex: 100,
+                  }}>
+                    <Link to="/dashboard" style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: 14, borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <User size={14} /> حسابي
+                    </Link>
+                    <button onClick={() => { logout(); setUserMenuOpen(false) }} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'right', cursor: 'pointer', fontSize: 14, color: 'var(--color-error)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <LogOut size={14} /> خروج
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <Link to="/login" className="btn-primary" style={{ fontSize: 14 }}>
+              دخول
+            </Link>
+          )}
+        </div>
 
         {/* Mobile menu btn */}
         <button
@@ -75,10 +127,22 @@ export default function Header() {
           gap: 8,
         }}>
           <a href="/services" style={{ ...navStyle, padding: '10px 0' }}>الورشات</a>
-          <a href="/post" className="btn-primary" style={{ justifyContent: 'center', fontSize: 14 }}>
-            <Plus size={16} />
-            أضف إعلانك
-          </a>
+          {user ? (
+            <>
+              <Link to="/dashboard" style={{ ...navStyle, padding: '10px 0' }}>حسابي</Link>
+              <a href="/post" className="btn-primary" style={{ justifyContent: 'center', fontSize: 14 }}>
+                <Plus size={16} />
+                إعلان جديد
+              </a>
+              <button onClick={logout} style={{ ...navStyle, padding: '10px 0', textAlign: 'right', color: 'var(--color-error)', border: 'none', background: 'none', cursor: 'pointer' }}>
+                خروج
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="btn-primary" style={{ justifyContent: 'center', fontSize: 14 }}>
+              دخول
+            </Link>
+          )}
         </div>
       )}
     </header>
