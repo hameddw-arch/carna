@@ -1,17 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Check, X, Eye, Users, BarChart2, Clock, RefreshCw } from 'lucide-react'
+import { Check, X, Eye, Users, Clock, RefreshCw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Link } from 'react-router-dom'
 
 const TABS = ['الإعلانات المعلقة', 'نشطة', 'مرفوضة', 'المستخدمون', 'الإحصاءات']
 
-const STATUS_COLOR: Record<string, string> = {
-  pending:  '#D97706',
-  active:   '#16A34A',
-  rejected: '#DC2626',
-  expired:  '#9CA3AF',
-  sold:     '#0053FA',
-}
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('الإعلانات المعلقة')
