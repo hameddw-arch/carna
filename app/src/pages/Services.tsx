@@ -13,8 +13,6 @@ export default function Services() {
       .then(setServices)
   }, [activeCategory])
 
-  const filtered = services
-
   return (
     <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 20px 60px' }}>
 
