@@ -80,6 +80,40 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE UTILITIES
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .hide-mobile  { display: none !important; }
+  .show-mobile  { display: flex !important; }
+
+  /* Hero form — stack vertically */
+  .hero-form {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Main grid — hide sidebar on mobile */
+  .main-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .main-grid aside {
+    display: none !important;
+  }
+
+  /* Listing layout — single column */
+  .listing-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .listing-layout aside {
+    position: static !important;
+    order: -1;
+  }
+}
+@media (min-width: 769px) {
+  .hide-mobile  { display: flex; }
+  .show-mobile  { display: none !important; }
+}
+
 @layer components {
   .btn-primary {
     background: var(--color-yellow);
