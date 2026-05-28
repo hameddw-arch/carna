@@ -1,16 +1,37 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { MapPin, Calendar, Gauge, Fuel, Settings, Palette, User, ChevronRight, ChevronLeft, Share2, Star, Shield, Phone, MessageCircle } from 'lucide-react'
-import { LISTINGS } from '../data/mock'
+import { MapPin, Calendar, Gauge, Fuel, Settings, Palette, User, ChevronRight, ChevronLeft, Share2, Star, Shield, Phone, MessageCircle, Loader2 } from 'lucide-react'
+import { fetchListing, fetchListings } from '../lib/queries'
 
 export default function ListingPage() {
   const { id } = useParams()
-  const listing = LISTINGS.find(l => l.id === id) ?? LISTINGS[0]
+  const [listing,   setListing]   = useState<any>(null)
+  const [related,   setRelated]   = useState<any[]>([])
+  const [loading,   setLoading]   = useState(true)
   const [activeImg, setActiveImg] = useState(0)
-  const [saved, setSaved] = useState(false)
+  const [saved,     setSaved]     = useState(false)
 
-  const images = [listing.image, listing.image, listing.image]
-  const related = LISTINGS.filter(l => l.id !== listing.id).slice(0, 3)
+  useEffect(() => {
+    if (!id) return
+    setLoading(true)
+    setActiveImg(0)
+    fetchListing(id)
+      .then(data => {
+        setListing(data)
+        return fetchListings()
+      })
+      .then(all => setRelated(all.filter(l => l.id !== id).slice(0, 3)))
+      .finally(() => setLoading(false))
+  }, [id])
+
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '100px 0' }}>
+      <Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--text-muted)' }} />
+    </div>
+  )
+  if (!listing) return null
+
+  const images = listing.images?.length ? listing.images : [listing.image]
 
   return (
     <main style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 20px 60px' }}>

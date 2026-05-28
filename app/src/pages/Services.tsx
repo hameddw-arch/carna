@@ -1,24 +1,22 @@
-import { useState } from 'react'
-import { MapPin, Star, Phone, Shield, ChevronLeft } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { MapPin, Star, Phone, Shield, Loader2 } from 'lucide-react'
+import { fetchServices } from '../lib/queries'
 
 const CATEGORIES = ['الكل', 'ميكانيك', 'كهرباء وبرمجة', 'تجليس ودهان', 'عناية سريعة', 'فحص فني']
 
-const SERVICES = [
-  { id: '1', name: 'ورشة أبو علي للميكانيك',     category: 'ميكانيك',         city: 'دمشق',        rating: 4.9, reviews: 48, phone: true, verified: true,  inspection: false },
-  { id: '2', name: 'مركز الشام للكهرباء والبرمجة', category: 'كهرباء وبرمجة',  city: 'دمشق',        rating: 4.7, reviews: 32, phone: true, verified: true,  inspection: false },
-  { id: '3', name: 'مركز الفحص الفني المعتمد',     category: 'فحص فني',        city: 'دمشق',        rating: 4.8, reviews: 91, phone: true, verified: true,  inspection: true  },
-  { id: '4', name: 'ورشة النجم للدهان والتجليس',   category: 'تجليس ودهان',    city: 'حلب',         rating: 4.6, reviews: 27, phone: true, verified: false, inspection: false },
-  { id: '5', name: 'سريع كار للعناية السريعة',     category: 'عناية سريعة',    city: 'حمص',         rating: 4.5, reviews: 19, phone: true, verified: true,  inspection: false },
-  { id: '6', name: 'مركز حلب للفحص الفني',         category: 'فحص فني',        city: 'حلب',         rating: 4.7, reviews: 55, phone: true, verified: true,  inspection: true  },
-]
-
 export default function Services() {
   const [activeCategory, setActiveCategory] = useState('الكل')
+  const [services,       setServices]       = useState<any[]>([])
+  const [loading,        setLoading]        = useState(true)
 
-  const filtered = activeCategory === 'الكل'
-    ? SERVICES
-    : SERVICES.filter(s => s.category === activeCategory)
+  useEffect(() => {
+    setLoading(true)
+    fetchServices(activeCategory)
+      .then(setServices)
+      .finally(() => setLoading(false))
+  }, [activeCategory])
+
+  const filtered = services
 
   const inspections = SERVICES.filter(s => s.inspection)
 
