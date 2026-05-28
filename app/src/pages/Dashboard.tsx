@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Eye, Trash2, Edit2, LogOut, Wallet, Bell, User } from 'lucide-react'
+import { Plus, Eye, Trash2, LogOut, Wallet, Bell } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 

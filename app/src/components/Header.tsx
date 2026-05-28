@@ -89,7 +89,7 @@ export default function Header() {
                     boxShadow: '0 4px 12px rgba(0,0,0,.1)',
                     zIndex: 100,
                   }}>
-                    <Link to="/dashboard" style={{ display: 'block', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: 14, borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Link to="/dashboard" style={{ display: 'flex', padding: '10px 16px', color: 'var(--text-primary)', textDecoration: 'none', fontSize: 14, borderBottom: '1px solid var(--border-light)', alignItems: 'center', gap: 8 }}>
                       <User size={14} /> حسابي
                     </Link>
                     <button onClick={() => { logout(); setUserMenuOpen(false) }} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'right', cursor: 'pointer', fontSize: 14, color: 'var(--color-error)', display: 'flex', alignItems: 'center', gap: 8 }}>

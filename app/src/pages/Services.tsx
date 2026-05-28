@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { MapPin, Star, Phone, Shield, Loader2 } from 'lucide-react'
+import { MapPin, Star, Phone, Shield } from 'lucide-react'
 import { fetchServices } from '../lib/queries'
 
 const CATEGORIES = ['الكل', 'ميكانيك', 'كهرباء وبرمجة', 'تجليس ودهان', 'عناية سريعة', 'فحص فني']
@@ -7,18 +7,13 @@ const CATEGORIES = ['الكل', 'ميكانيك', 'كهرباء وبرمجة', '
 export default function Services() {
   const [activeCategory, setActiveCategory] = useState('الكل')
   const [services,       setServices]       = useState<any[]>([])
-  const [loading,        setLoading]        = useState(true)
 
   useEffect(() => {
-    setLoading(true)
     fetchServices(activeCategory)
       .then(setServices)
-      .finally(() => setLoading(false))
   }, [activeCategory])
 
   const filtered = services
-
-  const inspections = SERVICES.filter(s => s.inspection)
 
   return (
     <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 20px 60px' }}>

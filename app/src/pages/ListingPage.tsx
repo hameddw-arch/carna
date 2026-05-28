@@ -71,7 +71,7 @@ export default function ListingPage() {
 
           {/* Thumbnails */}
           <div style={{ display: 'flex', gap: 8, marginBottom: 28 }}>
-            {images.map((img, i) => (
+            {images.map((img: string, i: number) => (
               <button key={i} onClick={() => setActiveImg(i)} style={{
                 width: 80, height: 54, borderRadius: 8, overflow: 'hidden', border: `2px solid ${activeImg === i ? 'var(--color-yellow)' : 'transparent'}`,
                 padding: 0, cursor: 'pointer', flexShrink: 0,
