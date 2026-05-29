@@ -1,39 +1,35 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { ChevronRight, Check, Loader2, Plus } from 'lucide-react'
+import { ChevronRight, Check, Loader2, Plus, X, Image } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import SEO from '../components/SEO'
 
 const CITIES = ['دمشق','حلب','حمص','حماة','اللاذقية','طرطوس','دير الزور','الرقة','الحسكة','درعا','السويداء','القنيطرة','إدلب','الزبداني','دوما','جرمانا','عدرا','قطنا','يبرود','تدمر']
-
 const SERVICE_TYPES = ['تشخيص إلكتروني','صيانة عامة','فحص ما قبل الشراء','كهرباء سيارات','تكييف','ترميم هيكل','دهان','إطارات وجنوط','ناقل حركة','محرك','فرامل','تعليق وتوجيه','زجاج','ملحقات وإكسسوار']
-
 const TIERS = [
   { id: 'free',    label: 'مجاني',   price: 'مجاناً',     color: '#6B7280', desc: 'ظهور أساسي في القائمة العامة' },
   { id: 'basic',   label: 'أساسي',   price: 'تواصل معنا', color: '#0053FA', desc: 'شعار + قائمة خدمات + أولوية في البحث' },
   { id: 'premium', label: 'مميز ⭐', price: 'تواصل معنا', color: '#FDB700', desc: 'كل مميزات الأساسي + شارة ذهبية + ظهور دائم أعلى' },
 ]
+const STEPS = ['المعلومات الأساسية', 'صور الورشة', 'الخدمات', 'الباقة']
+const MAX_IMAGES = 5
 
 export default function RegisterWorkshop() {
-  const { user }    = useAuth()
-  const navigate    = useNavigate()
+  const { user }   = useAuth()
+  const navigate   = useNavigate()
+  const fileRef    = useRef<HTMLInputElement>(null)
 
-  const [step,     setStep]     = useState(1)
-  const [saving,   setSaving]   = useState(false)
-  const [done,     setDone]     = useState(false)
+  const [step,    setStep]    = useState(1)
+  const [saving,  setSaving]  = useState(false)
+  const [done,    setDone]    = useState(false)
+  const [images,  setImages]  = useState<string[]>([])   // base64 previews
+  const [imgFiles,setImgFiles]= useState<File[]>([])     // actual files
 
   const [form, setForm] = useState({
-    name:          '',
-    city:          '',
-    phone:         '',
-    whatsapp:      '',
-    address:       '',
-    description:   '',
-    opening_hours: '',
-    inspection:    false,
-    service_types: [] as string[],
-    tier:          'free',
+    name: '', city: '', phone: '', whatsapp: '',
+    address: '', description: '', opening_hours: '',
+    inspection: false, service_types: [] as string[], tier: 'free',
   })
 
   function set(k: string, v: any) { setForm(f => ({ ...f, [k]: v })) }
@@ -47,32 +43,75 @@ export default function RegisterWorkshop() {
     }))
   }
 
-  function valid1() { return form.name.trim() && form.city && form.phone.trim() }
-  function valid2() { return form.service_types.length > 0 }
+  function handleFiles(files: FileList | null) {
+    if (!files) return
+    const remaining = MAX_IMAGES - images.length
+    const toAdd = Array.from(files).slice(0, remaining)
+    toAdd.forEach(file => {
+      const reader = new FileReader()
+      reader.onload = e => {
+        setImages(prev => [...prev, e.target?.result as string])
+        setImgFiles(prev => [...prev, file])
+      }
+      reader.readAsDataURL(file)
+    })
+  }
+
+  function removeImage(i: number) {
+    setImages(prev => prev.filter((_, idx) => idx !== i))
+    setImgFiles(prev => prev.filter((_, idx) => idx !== i))
+  }
+
+  async function uploadImages(serviceId: string): Promise<string[]> {
+    const urls: string[] = []
+    for (let i = 0; i < imgFiles.length; i++) {
+      const file = imgFiles[i]
+      const ext  = file.name.split('.').pop() ?? 'jpg'
+      const path = `${serviceId}/${i}.${ext}`
+      const { error } = await supabase.storage.from('workshop-images').upload(path, file, { upsert: true })
+      if (!error) {
+        const { data } = supabase.storage.from('workshop-images').getPublicUrl(path)
+        urls.push(data.publicUrl)
+      }
+    }
+    return urls
+  }
 
   async function submit() {
     if (!user) return navigate('/login')
     setSaving(true)
-    const { error } = await supabase.from('services').insert({
-      name:             form.name.trim(),
-      city:             form.city,
-      phone:            form.phone.trim(),
-      whatsapp:         form.whatsapp.trim() || null,
-      address:          form.address.trim()  || null,
-      description:      form.description.trim() || null,
-      opening_hours:    form.opening_hours.trim() || null,
-      inspection:       form.inspection,
-      service_types:    form.service_types,
+    const { data, error } = await supabase.from('services').insert({
+      name:              form.name.trim(),
+      city:              form.city,
+      phone:             form.phone.trim(),
+      whatsapp:          form.whatsapp.trim() || null,
+      address:           form.address.trim()  || null,
+      description:       form.description.trim() || null,
+      opening_hours:     form.opening_hours.trim() || null,
+      inspection:        form.inspection,
+      service_types:     form.service_types,
       subscription_tier: form.tier,
-      status:           'pending',
-      user_id:          user.id,
-      verified:         false,
-      rating:           0,
-    })
+      status:            'pending',
+      user_id:           user.id,
+      verified:          false,
+      rating:            0,
+      images:            [],
+    }).select('id').single()
+
+    if (!error && data?.id && imgFiles.length > 0) {
+      const urls = await uploadImages(data.id)
+      if (urls.length > 0) {
+        await supabase.from('services').update({ images: urls }).eq('id', data.id)
+      }
+    }
+
     setSaving(false)
     if (!error) setDone(true)
     else alert('حصل خطأ، حاول مرة أخرى')
   }
+
+  function valid1() { return form.name.trim() && form.city && form.phone.trim() }
+  function valid3() { return form.service_types.length > 0 }
 
   if (done) return (
     <main style={{ flex: 1, background: 'var(--off-white)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
@@ -83,9 +122,7 @@ export default function RegisterWorkshop() {
           سيراجع فريق كارنا طلب تسجيل ورشتك خلال 24 ساعة<br/>
           وسيتم التواصل معك على الرقم المُدخل
         </p>
-        <Link to="/services" className="btn btn-yellow" style={{ fontSize: 15 }}>
-          تصفح الورشات
-        </Link>
+        <Link to="/services" className="btn btn-yellow" style={{ fontSize: 15 }}>تصفح الورشات</Link>
       </div>
     </main>
   )
@@ -94,7 +131,6 @@ export default function RegisterWorkshop() {
     <main style={{ flex: 1, background: 'var(--off-white)' }}>
       <SEO title="سجّل ورشتك" url="/register-workshop"/>
 
-      {/* Header */}
       <div style={{ background: 'var(--dark)', padding: '36px 24px 28px' }}>
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'rgba(255,255,255,.4)', marginBottom: 14 }}>
@@ -104,21 +140,20 @@ export default function RegisterWorkshop() {
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 900, color: '#fff', marginBottom: 20 }}>سجّل ورشتك على كارنا</h1>
 
-          {/* Steps */}
-          <div style={{ display: 'flex', gap: 0 }}>
-            {['المعلومات الأساسية','الخدمات','الباقة'].map((label, i) => (
+          <div style={{ display: 'flex', gap: 0, flexWrap: 'wrap' }}>
+            {STEPS.map((label, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{
-                  width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                  width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 12, fontWeight: 800,
-                  background: step > i + 1 ? '#22C55E' : step === i + 1 ? 'var(--yellow)' : 'rgba(255,255,255,.1)',
-                  color: step >= i + 1 ? '#000' : 'rgba(255,255,255,.4)',
+                  fontSize: 11, fontWeight: 800,
+                  background: step > i+1 ? '#22C55E' : step === i+1 ? 'var(--yellow)' : 'rgba(255,255,255,.1)',
+                  color: step >= i+1 ? '#000' : 'rgba(255,255,255,.4)',
                 }}>
-                  {step > i + 1 ? <Check size={13}/> : i + 1}
+                  {step > i+1 ? <Check size={12}/> : i+1}
                 </div>
-                <span style={{ fontSize: 13, color: step === i + 1 ? '#fff' : 'rgba(255,255,255,.4)', fontWeight: step === i + 1 ? 700 : 400 }}>{label}</span>
-                {i < 2 && <div style={{ width: 32, height: 1, background: 'rgba(255,255,255,.15)', margin: '0 8px' }}/>}
+                <span style={{ fontSize: 12, color: step === i+1 ? '#fff' : 'rgba(255,255,255,.4)', fontWeight: step === i+1 ? 700 : 400 }}>{label}</span>
+                {i < STEPS.length-1 && <div style={{ width: 24, height: 1, background: 'rgba(255,255,255,.15)', margin: '0 6px' }}/>}
               </div>
             ))}
           </div>
@@ -127,7 +162,7 @@ export default function RegisterWorkshop() {
 
       <div className="container" style={{ padding: '32px 24px 64px', maxWidth: 640 }}>
 
-        {/* ── Step 1 ── */}
+        {/* ── Step 1: Basic info ── */}
         {step === 1 && (
           <div style={{ background: '#fff', borderRadius: 20, padding: '28px', border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-sm)' }}>
             <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 24 }}>المعلومات الأساسية</h2>
@@ -135,14 +170,12 @@ export default function RegisterWorkshop() {
             <Field label="اسم الورشة *">
               <input className="input" value={form.name} onChange={e => set('name', e.target.value)} placeholder="مثال: ورشة الإخوة الخضري"/>
             </Field>
-
             <Field label="المدينة *">
               <select className="input" value={form.city} onChange={e => set('city', e.target.value)}>
                 <option value="">اختر المدينة</option>
                 {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </Field>
-
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
               <Field label="رقم الهاتف *">
                 <input className="input" value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="09XXXXXXXX" dir="ltr"/>
@@ -151,19 +184,15 @@ export default function RegisterWorkshop() {
                 <input className="input" value={form.whatsapp} onChange={e => set('whatsapp', e.target.value)} placeholder="09XXXXXXXX" dir="ltr"/>
               </Field>
             </div>
-
             <Field label="العنوان التفصيلي">
               <input className="input" value={form.address} onChange={e => set('address', e.target.value)} placeholder="الحي، الشارع، بجانب..."/>
             </Field>
-
             <Field label="أوقات العمل">
               <input className="input" value={form.opening_hours} onChange={e => set('opening_hours', e.target.value)} placeholder="مثال: ٨ص — ٦م · إجازة الجمعة"/>
             </Field>
-
             <Field label="وصف الورشة">
               <textarea className="input" rows={3} value={form.description} onChange={e => set('description', e.target.value)}
-                placeholder="اكتب نبذة عن ورشتك وخبرتك وما يميزك..."
-                style={{ resize: 'vertical' }}/>
+                placeholder="اكتب نبذة عن ورشتك وخبرتك وما يميزك..." style={{ resize: 'vertical' }}/>
             </Field>
 
             <button className="btn btn-yellow" onClick={() => setStep(2)} disabled={!valid1()}
@@ -173,8 +202,81 @@ export default function RegisterWorkshop() {
           </div>
         )}
 
-        {/* ── Step 2 ── */}
+        {/* ── Step 2: Images ── */}
         {step === 2 && (
+          <div style={{ background: '#fff', borderRadius: 20, padding: '28px', border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-sm)' }}>
+            <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 6 }}>صور الورشة</h2>
+            <p style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>
+              أضف حتى {MAX_IMAGES} صور توضّح ورشتك — اختياري لكن يزيد الثقة
+            </p>
+
+            {/* Upload zone */}
+            {images.length < MAX_IMAGES && (
+              <div
+                onClick={() => fileRef.current?.click()}
+                onDragOver={e => e.preventDefault()}
+                onDrop={e => { e.preventDefault(); handleFiles(e.dataTransfer.files) }}
+                style={{
+                  border: '2px dashed var(--gray-300)', borderRadius: 16,
+                  padding: '36px 20px', textAlign: 'center',
+                  cursor: 'pointer', marginBottom: 16,
+                  background: 'var(--gray-50, #F9FAFB)',
+                  transition: 'all 150ms ease',
+                }}>
+                <Image size={32} style={{ color: 'var(--text-4)', marginBottom: 10 }}/>
+                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>اسحب الصور هنا أو اضغط للاختيار</div>
+                <div style={{ fontSize: 12, color: 'var(--text-4)' }}>
+                  JPG، PNG · حتى {MAX_IMAGES} صور · {images.length}/{MAX_IMAGES} محملة
+                </div>
+                <input ref={fileRef} type="file" accept="image/*" multiple hidden
+                  onChange={e => handleFiles(e.target.files)}/>
+              </div>
+            )}
+
+            {/* Previews */}
+            {images.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10, marginBottom: 20 }}>
+                {images.map((src, i) => (
+                  <div key={i} style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', aspectRatio: '4/3' }}>
+                    <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+                    {i === 0 && (
+                      <div style={{ position: 'absolute', top: 6, right: 6, background: 'var(--yellow)', color: '#000', fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 6 }}>
+                        رئيسية
+                      </div>
+                    )}
+                    <button onClick={() => removeImage(i)} style={{
+                      position: 'absolute', top: 6, left: 6,
+                      background: 'rgba(0,0,0,.6)', border: 'none', borderRadius: '50%',
+                      width: 24, height: 24, cursor: 'pointer', color: '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <X size={12}/>
+                    </button>
+                  </div>
+                ))}
+                {images.length < MAX_IMAGES && (
+                  <button onClick={() => fileRef.current?.click()}
+                    style={{ border: '2px dashed var(--gray-300)', borderRadius: 12, aspectRatio: '4/3', background: 'var(--gray-50, #F9FAFB)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6, color: 'var(--text-4)' }}>
+                    <Plus size={20}/>
+                    <span style={{ fontSize: 11 }}>إضافة</span>
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn" onClick={() => setStep(1)} style={{ flex: 1, justifyContent: 'center', background: 'var(--gray-100)', border: 'none', color: 'var(--text-2)' }}>
+                → رجوع
+              </button>
+              <button className="btn btn-yellow" onClick={() => setStep(3)} style={{ flex: 2, justifyContent: 'center', fontSize: 15 }}>
+                {images.length === 0 ? 'تخطّى ←' : 'التالي ←'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Step 3: Services ── */}
+        {step === 3 && (
           <div style={{ background: '#fff', borderRadius: 20, padding: '28px', border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-sm)' }}>
             <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 8 }}>الخدمات المقدَّمة</h2>
             <p style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>اختر كل الخدمات التي تقدمها ورشتك</p>
@@ -198,7 +300,6 @@ export default function RegisterWorkshop() {
               })}
             </div>
 
-            {/* Inspection toggle */}
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               padding: '16px 18px', borderRadius: 12,
@@ -210,34 +311,24 @@ export default function RegisterWorkshop() {
                 <div style={{ fontSize: 14, fontWeight: 700 }}>🔍 خدمة فحص ما قبل الشراء</div>
                 <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>ورشتك تقدم فحص السيارات للمشترين</div>
               </div>
-              <div style={{
-                width: 44, height: 24, borderRadius: 12,
-                background: form.inspection ? '#3B82F6' : 'var(--gray-300)',
-                position: 'relative', transition: 'all 200ms ease', flexShrink: 0,
-              }}>
-                <div style={{
-                  width: 18, height: 18, borderRadius: '50%', background: '#fff',
-                  position: 'absolute', top: 3,
-                  right: form.inspection ? 3 : undefined,
-                  left: form.inspection ? undefined : 3,
-                  transition: 'all 200ms ease',
-                }}/>
+              <div style={{ width: 44, height: 24, borderRadius: 12, background: form.inspection ? '#3B82F6' : 'var(--gray-300)', position: 'relative', transition: 'all 200ms ease', flexShrink: 0 }}>
+                <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#fff', position: 'absolute', top: 3, right: form.inspection ? 3 : undefined, left: form.inspection ? undefined : 3, transition: 'all 200ms ease' }}/>
               </div>
             </div>
 
             <div style={{ display: 'flex', gap: 10 }}>
-              <button className="btn" onClick={() => setStep(1)} style={{ flex: 1, justifyContent: 'center', background: 'var(--gray-100)', border: 'none', color: 'var(--text-2)' }}>
+              <button className="btn" onClick={() => setStep(2)} style={{ flex: 1, justifyContent: 'center', background: 'var(--gray-100)', border: 'none', color: 'var(--text-2)' }}>
                 → رجوع
               </button>
-              <button className="btn btn-yellow" onClick={() => setStep(3)} disabled={!valid2()} style={{ flex: 2, justifyContent: 'center', fontSize: 15 }}>
+              <button className="btn btn-yellow" onClick={() => setStep(4)} disabled={!valid3()} style={{ flex: 2, justifyContent: 'center', fontSize: 15 }}>
                 التالي ←
               </button>
             </div>
           </div>
         )}
 
-        {/* ── Step 3 ── */}
-        {step === 3 && (
+        {/* ── Step 4: Tier ── */}
+        {step === 4 && (
           <div>
             <div style={{ background: '#fff', borderRadius: 20, padding: '28px', border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-sm)', marginBottom: 16 }}>
               <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 20 }}>اختر الباقة</h2>
@@ -249,15 +340,9 @@ export default function RegisterWorkshop() {
                     padding: '16px 18px', borderRadius: 14, cursor: 'pointer', textAlign: 'right',
                     border: `2px solid ${form.tier === t.id ? t.color : 'var(--gray-200)'}`,
                     background: form.tier === t.id ? t.color + '10' : '#fff',
-                    fontFamily: 'var(--font)', width: '100%',
-                    transition: 'all 150ms ease',
+                    fontFamily: 'var(--font)', width: '100%', transition: 'all 150ms ease',
                   }}>
-                    <div style={{
-                      width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
-                      border: `2px solid ${form.tier === t.id ? t.color : 'var(--gray-300)'}`,
-                      background: form.tier === t.id ? t.color : 'transparent',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
+                    <div style={{ width: 20, height: 20, borderRadius: '50%', flexShrink: 0, border: `2px solid ${form.tier === t.id ? t.color : 'var(--gray-300)'}`, background: form.tier === t.id ? t.color : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {form.tier === t.id && <Check size={10} color="#fff"/>}
                     </div>
                     <div style={{ flex: 1 }}>
@@ -276,15 +361,15 @@ export default function RegisterWorkshop() {
                 <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>ملخص الطلب:</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 5, fontSize: 13, color: 'var(--text-2)' }}>
                   <span>🏪 {form.name}</span>
-                  <span>📍 {form.city}</span>
-                  <span>📞 {form.phone}</span>
-                  <span>🔧 {form.service_types.slice(0, 3).join('، ')}{form.service_types.length > 3 ? ` +${form.service_types.length - 3}` : ''}</span>
+                  <span>📍 {form.city} · 📞 {form.phone}</span>
+                  <span>🔧 {form.service_types.slice(0,3).join('، ')}{form.service_types.length > 3 ? ` +${form.service_types.length-3}` : ''}</span>
+                  {images.length > 0 && <span>📷 {images.length} صورة</span>}
                   {form.inspection && <span>🔍 يقدم خدمة الفحص</span>}
                 </div>
               </div>
 
               <div style={{ display: 'flex', gap: 10 }}>
-                <button className="btn" onClick={() => setStep(2)} style={{ flex: 1, justifyContent: 'center', background: 'var(--gray-100)', border: 'none', color: 'var(--text-2)' }}>
+                <button className="btn" onClick={() => setStep(3)} style={{ flex: 1, justifyContent: 'center', background: 'var(--gray-100)', border: 'none', color: 'var(--text-2)' }}>
                   → رجوع
                 </button>
                 <button className="btn btn-yellow" onClick={submit} disabled={saving} style={{ flex: 2, justifyContent: 'center', fontSize: 15 }}>
@@ -293,7 +378,6 @@ export default function RegisterWorkshop() {
                 </button>
               </div>
             </div>
-
             <p style={{ fontSize: 12, color: 'var(--text-4)', textAlign: 'center', lineHeight: 1.7 }}>
               سيراجع فريق كارنا طلبك خلال 24 ساعة وسيتواصل معك على رقمك المُدخل
             </p>

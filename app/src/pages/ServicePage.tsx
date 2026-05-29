@@ -153,6 +153,24 @@ export default function ServicePage() {
               </div>
             </div>
 
+            {/* Images gallery */}
+            {service.images?.length > 0 && (
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ borderRadius: 20, overflow: 'hidden', marginBottom: 8, aspectRatio: '16/7' }}>
+                  <img src={service.images[0]} alt={service.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+                </div>
+                {service.images.length > 1 && (
+                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(service.images.length - 1, 4)}, 1fr)`, gap: 8 }}>
+                    {service.images.slice(1, 5).map((img: string, i: number) => (
+                      <div key={i} style={{ borderRadius: 12, overflow: 'hidden', aspectRatio: '1' }}>
+                        <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Services */}
             {serviceTypes.length > 0 && (
               <div style={{ background: '#fff', borderRadius: 20, padding: '24px', border: '1px solid var(--gray-200)', marginBottom: 20, boxShadow: 'var(--shadow-sm)' }}>
