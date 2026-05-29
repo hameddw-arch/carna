@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Search, ChevronDown, Loader2, ChevronLeft, CheckCircle, Shield, Zap, Users, Phone, Star, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ListingCard from '../components/ListingCard'
@@ -58,6 +58,23 @@ export default function Home() {
   const [filters,    setFilters]    = useState({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '', sellerType: '' })
   const [workshops,  setWorkshops]  = useState<any[]>([])
   const [siteAds,    setSiteAds]    = useState<any[]>([])
+  const [activeFilters, setActiveFilters] = useState<any>({})
+  const [hasMore,    setHasMore]    = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  const PAGE = 12
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      entries => { if (entries[0].isIntersecting) loadMore() },
+      { rootMargin: '300px' }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [listings, hasMore, loadingMore, activeFilters])
 
   useEffect(() => {
     load()
@@ -85,11 +102,24 @@ export default function Home() {
 
   async function load(extra?: object) {
     setLoading(true)
+    const f = extra ?? {}
+    setActiveFilters(f)
     try {
-      const data = await fetchListings(extra)
+      const data = await fetchListings({ ...f, offset: 0, limit: PAGE })
       setListings(data)
+      setHasMore(data.length === PAGE)
       setFeatured(data.filter((l: any) => l.featured).slice(0, 4))
     } finally { setLoading(false) }
+  }
+
+  async function loadMore() {
+    if (loadingMore || !hasMore) return
+    setLoadingMore(true)
+    try {
+      const data = await fetchListings({ ...activeFilters, offset: listings.length, limit: PAGE })
+      setListings(prev => [...prev, ...data])
+      setHasMore(data.length === PAGE)
+    } finally { setLoadingMore(false) }
   }
 
   function apply() {
@@ -591,9 +621,23 @@ export default function Home() {
                   </button>
                 </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(265px, 1fr))', gap: 16 }}>
-                  {listings.map(l => <ListingCard key={l.id} listing={l}/>)}
-                </div>
+                <>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(265px, 1fr))', gap: 16 }}>
+                    {listings.map(l => <ListingCard key={l.id} listing={l}/>)}
+                  </div>
+                  {/* Infinite scroll sentinel */}
+                  <div ref={sentinelRef} style={{ height: 1 }}/>
+                  {loadingMore && (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '28px 0' }}>
+                      <Loader2 size={24} style={{ animation: 'spin 1s linear infinite', color: 'var(--text-4)' }}/>
+                    </div>
+                  )}
+                  {!hasMore && listings.length > PAGE && (
+                    <div style={{ textAlign: 'center', padding: '28px 0', color: 'var(--text-4)', fontSize: 13 }}>
+                      وصلت لنهاية القائمة — {listings.length} إعلان
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

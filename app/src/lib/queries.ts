@@ -11,7 +11,11 @@ export async function fetchListings(filters?: {
   priceTo?: number
   tag?: string
   sellerType?: 'individual' | 'dealer'
+  offset?: number
+  limit?: number
 }) {
+  const offset = filters?.offset ?? 0
+  const limit  = filters?.limit  ?? 12
   let query = supabase
     .from('listings')
     .select(`*, listing_images(url, "order"), listing_tags(tag), users(name, phone, rating, rating_count)`)
@@ -25,6 +29,8 @@ export async function fetchListings(filters?: {
   if (filters?.priceFrom)  query = query.gte('price', filters.priceFrom)
   if (filters?.priceTo)    query = query.lte('price', filters.priceTo)
   if (filters?.sellerType) query = query.eq('seller_type', filters.sellerType)
+
+  query = query.range(offset, offset + limit - 1)
 
   const { data, error } = await query
   if (error) throw error
