@@ -22,12 +22,13 @@ export default function Messages() {
     fetchThreads(user.id).then(t => { setThreads(t); setLoading(false) })
   }, [user, key])
 
-  // refresh thread list when a new message arrives anywhere
+  // refresh thread list when a new message arrives, or when I send one
   useEffect(() => {
     if (!user) return
-    return subscribeToInbox(user.id, () => {
-      fetchThreads(user.id).then(setThreads)
-    })
+    const refresh = () => fetchThreads(user.id).then(setThreads)
+    const unsub = subscribeToInbox(user.id, refresh)
+    window.addEventListener('chat-sent', refresh)
+    return () => { unsub(); window.removeEventListener('chat-sent', refresh) }
   }, [user])
 
   if (!user) return null
@@ -166,8 +167,10 @@ function Thread({ threadK, userId, onBack }: { threadK: string; userId: string; 
       listing_id: listingId, body, read_at: null, created_at: new Date().toISOString(),
     }
     setMessages(prev => [...prev, optimistic])
-    try { await sendMessage(listingId, userId, otherId, body) }
-    finally { setSending(false) }
+    try {
+      await sendMessage(listingId, userId, otherId, body)
+      window.dispatchEvent(new Event('chat-sent'))
+    } finally { setSending(false) }
   }
 
   if (loading) return (
