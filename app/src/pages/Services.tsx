@@ -275,12 +275,12 @@ export default function Services() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <a href="mailto:info@carna.online" className="btn btn-yellow" style={{ fontSize: 14, padding: '12px 24px' }}>
+            <Link to="/register-workshop" className="btn btn-yellow" style={{ fontSize: 14, padding: '12px 24px' }}>
               سجّل ورشتك الآن
-            </a>
-            <button className="btn" style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.12)', color: '#fff', fontSize: 14, padding: '12px 24px' }}>
-              عرض الباقات
-            </button>
+            </Link>
+            <Link to="/contact" className="btn" style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.12)', color: '#fff', fontSize: 14, padding: '12px 24px', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+              تواصل معنا
+            </Link>
           </div>
         </div>
 
