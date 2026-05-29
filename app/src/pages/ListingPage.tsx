@@ -156,14 +156,29 @@ export default function ListingPage() {
               </div>
 
               {/* CTA buttons */}
-              <button className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginBottom: 14, fontSize: 16, padding: '14px 20px' }}>
-                <MessageCircle size={20} />
+              <button className="btn btn-yellow" style={{ width: '100%', justifyContent: 'center', marginBottom: 10, fontSize: 15, padding: '13px 20px' }}>
+                <MessageCircle size={18} />
                 راسل البائع
               </button>
-              <button className="btn-ghost" style={{ width: '100%', justifyContent: 'center', fontSize: 16, padding: '14px 20px' }}>
-                <Phone size={18} />
+              <button className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', marginBottom: 10, fontSize: 15, padding: '13px 20px' }}>
+                <Phone size={16} />
                 اطلب رقم الهاتف
               </button>
+
+              {/* Inspection CTA */}
+              <a href={`/services?city=${encodeURIComponent(listing.city ?? '')}&category=فحص فني`}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '12px 16px', borderRadius: 12, marginTop: 6,
+                  background: '#ECFDF5', border: '1px solid #A7F3D0',
+                  textDecoration: 'none', color: '#065F46', fontSize: 13, fontWeight: 600,
+                }}>
+                <span style={{ fontSize: 18 }}>🔍</span>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 13 }}>احجز فحصاً قبل الشراء</div>
+                  <div style={{ fontSize: 12, fontWeight: 400, opacity: .75 }}>مراكز فحص معتمدة في {listing.city}</div>
+                </div>
+              </a>
             </div>
 
             {/* Seller */}

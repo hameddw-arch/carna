@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import ListingPage from './pages/ListingPage'
 import PostAd from './pages/PostAd'
 import Services from './pages/Services'
+import ServicePage from './pages/ServicePage'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import AdminPanel from './pages/AdminPanel'
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/"              element={<Home />} />
           <Route path="/listing/:id"   element={<ListingPage />} />
           <Route path="/services"      element={<Services />} />
+          <Route path="/services/:id"  element={<ServicePage />} />
           <Route path="/login"         element={<Login />} />
           <Route path="/dashboard"     element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/post"          element={<ProtectedRoute><PostAd /></ProtectedRoute>} />

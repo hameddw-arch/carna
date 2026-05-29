@@ -70,20 +70,28 @@ export async function fetchDistinctMakes() {
   return unique.slice(0, 8)
 }
 
-export async function fetchServices(category?: string) {
+export async function fetchServices(filters?: {
+  category?: string
+  city?: string
+  tier?: string
+  sortBy?: 'rating' | 'inspections' | 'newest'
+}) {
   let query = supabase
     .from('services')
     .select(`*, service_categories(name)`)
-    .order('rating', { ascending: false })
 
-  if (category && category !== 'الكل') {
+  const sortBy = filters?.sortBy ?? 'rating'
+  if (sortBy === 'rating')     query = query.order('rating', { ascending: false })
+  else if (sortBy === 'inspections') query = query.order('inspections_count', { ascending: false })
+  else query = query.order('created_at', { ascending: false })
+
+  if (filters?.category && filters.category !== 'الكل') {
     const { data: cats } = await supabase
-      .from('service_categories')
-      .select('id')
-      .eq('name', category)
-      .single()
+      .from('service_categories').select('id').eq('name', filters.category).single()
     if (cats) query = query.eq('category_id', cats.id)
   }
+  if (filters?.city && filters.city !== 'كل المدن') query = query.eq('city', filters.city)
+  if (filters?.tier && filters.tier !== 'الكل')     query = query.eq('subscription_tier', filters.tier)
 
   const { data, error } = await query
   if (error) throw error
@@ -91,4 +99,14 @@ export async function fetchServices(category?: string) {
     ...s,
     category: s.service_categories?.name ?? '',
   }))
+}
+
+export async function fetchService(id: string) {
+  const { data, error } = await supabase
+    .from('services')
+    .select(`*, service_categories(name)`)
+    .eq('id', id)
+    .single()
+  if (error) throw error
+  return { ...data, category: data.service_categories?.name ?? '' }
 }
