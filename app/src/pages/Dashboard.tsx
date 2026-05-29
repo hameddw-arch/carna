@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Eye, Trash2, LogOut, Wallet, Star, Loader2, Settings, Package } from 'lucide-react'
+import { Plus, Eye, Trash2, LogOut, Wallet, Star, Loader2, Settings, Package, MessageCircle } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { updateProfile } from '../lib/auth'
@@ -88,6 +88,9 @@ export default function Dashboard() {
             <div style={{ display: 'flex', gap: 10 }}>
               <Link to="/post" className="btn btn-yellow" style={{ fontSize: 13, gap: 6 }}>
                 <Plus size={14}/> إعلان جديد
+              </Link>
+              <Link to="/messages" className="btn" style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.12)', color: '#fff', fontSize: 13, gap: 6 }}>
+                <MessageCircle size={14}/> الرسائل
               </Link>
               <button onClick={logout} className="btn" style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.12)', color: '#fff', fontSize: 13, gap: 6 }}>
                 <LogOut size={14}/> خروج

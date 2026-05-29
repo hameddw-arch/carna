@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { MapPin, Calendar, Gauge, Fuel, Settings, Palette, User, ChevronRight, ChevronLeft, Share2, Star, Shield, Phone, MessageCircle, Loader2 } from 'lucide-react'
 import { fetchListing, fetchListings } from '../lib/queries'
+import { threadKey } from '../lib/chat'
+import { useAuth } from '../contexts/AuthContext'
 import SEO from '../components/SEO'
 
 export default function ListingPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   const [listing,   setListing]   = useState<any>(null)
   const [related,   setRelated]   = useState<any[]>([])
   const [loading,   setLoading]   = useState(true)
   const [activeImg, setActiveImg] = useState(0)
   const [saved,     setSaved]     = useState(false)
+
+  function startChat() {
+    if (!user) return navigate('/login')
+    if (!listing?.user_id) return
+    if (user.id === listing.user_id) return alert('لا يمكنك مراسلة نفسك — هذا إعلانك')
+    navigate(`/messages/${threadKey(listing.id, listing.user_id)}`)
+  }
 
   useEffect(() => {
     if (!id) return
@@ -164,7 +175,7 @@ export default function ListingPage() {
               </div>
 
               {/* CTA buttons */}
-              <button className="btn btn-yellow" style={{ width: '100%', justifyContent: 'center', marginBottom: 10, fontSize: 15, padding: '13px 20px' }}>
+              <button onClick={startChat} className="btn btn-yellow" style={{ width: '100%', justifyContent: 'center', marginBottom: 10, fontSize: 15, padding: '13px 20px' }}>
                 <MessageCircle size={18} />
                 راسل البائع
               </button>

@@ -22,6 +22,7 @@ import NotFound from './pages/NotFound'
 import InstallPrompt from './components/InstallPrompt'
 import CompareBar from './components/CompareBar'
 import Compare from './pages/Compare'
+import Messages from './pages/Messages'
 import './index.css'
 
 export default function App() {
@@ -44,6 +45,8 @@ export default function App() {
           <Route path="/dashboard"           element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/post"                element={<ProtectedRoute><PostAd /></ProtectedRoute>} />
           <Route path="/compare"             element={<Compare />} />
+          <Route path="/messages"            element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+          <Route path="/messages/:key"       element={<ProtectedRoute><Messages /></ProtectedRoute>} />
           <Route path="/admin"               element={<AdminRoute><AdminPanel /></AdminRoute>} />
           <Route path="*"                    element={<NotFound />} />
         </Routes>
