@@ -101,9 +101,11 @@ export async function sendMessage(listingId: string, senderId: string, receiverI
 }
 
 // اشتراك Realtime — أي رسالة جديدة موجّهة للمستخدم
+// اسم القناة فريد حتى لا تتعارض اشتراكات متعددة (القائمة + المحادثة المفتوحة)
 export function subscribeToInbox(userId: string, onInsert: (m: ChatMessage) => void) {
+  const uniq = Math.random().toString(36).slice(2)
   const channel = supabase
-    .channel(`inbox:${userId}`)
+    .channel(`inbox:${userId}:${uniq}`)
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'messages', filter: `receiver_id=eq.${userId}` },
