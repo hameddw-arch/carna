@@ -1,148 +1,82 @@
 import { useState, useEffect } from 'react'
-import { Search, ChevronDown, Loader2, ChevronLeft } from 'lucide-react'
+import { Search, ChevronDown, Loader2, ChevronLeft, CheckCircle, Shield, Zap, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ListingCard from '../components/ListingCard'
 import { fetchListings, fetchDistinctMakes } from '../lib/queries'
 
+// ── Constants ─────────────────────────────────────────────────────────────────
+
 const CITIES = ['كل المدن','دمشق','ريف دمشق','حلب','اللاذقية','طرطوس','حماة','حمص','دير الزور','الرقة','درعا','السويداء','إدلب','القنيطرة','الحسكة']
 const TABS   = ['الكل','مستعملة','جديدة','قطع غيار']
 
-// ── Brand data with real logos from /public/brands/ ─────
 const BRAND_DATA = [
-  { name: 'تويوتا',  logo: '/brands/toyota.svg',   color: '#EB0A1E' },
-  { name: 'كيا',     logo: '/brands/kia.svg',       color: '#BB162B' },
-  { name: 'هيونداي', logo: '/brands/hyundai.svg',   color: '#002C5F' },
-  { name: 'هوندا',   logo: '/brands/honda.svg',     color: '#E40521' },
-  { name: 'نيسان',   logo: '/brands/nissan.svg',    color: '#C40C3A' },
-  { name: 'سوزوكي',  logo: '/brands/suzuki.svg',    color: '#1A4B9A' },
-  { name: 'BMW',     logo: '/brands/bmw.svg',        color: '#1C69D4' },
-  { name: 'مرسيدس',  logo: '/brands/mercedes.svg',  color: '#1F1F1F' },
-  { name: 'شيفروليه',logo: '/brands/chevrolet.svg', color: '#C8A200' },
-  { name: 'فورد',    logo: '/brands/ford.svg',       color: '#003478' },
+  { name: 'تويوتا',   logo: '/brands/toyota.svg',   color: '#EB0A1E' },
+  { name: 'كيا',      logo: '/brands/kia.svg',       color: '#BB162B' },
+  { name: 'هيونداي',  logo: '/brands/hyundai.svg',   color: '#002C5F' },
+  { name: 'هوندا',    logo: '/brands/honda.svg',     color: '#E40521' },
+  { name: 'نيسان',    logo: '/brands/nissan.svg',    color: '#C40C3A' },
+  { name: 'سوزوكي',   logo: '/brands/suzuki.svg',    color: '#1A4B9A' },
+  { name: 'BMW',      logo: '/brands/bmw.svg',        color: '#1C69D4' },
+  { name: 'مرسيدس',   logo: '/brands/mercedes.svg',  color: '#1F1F1F' },
+  { name: 'شيفروليه', logo: '/brands/chevrolet.svg', color: '#C8A200' },
+  { name: 'فورد',     logo: '/brands/ford.svg',       color: '#003478' },
 ]
 
-// ── Body type icons — filled silhouettes ────────────────
 const BODY_TYPES = [
-  {
-    name: 'سيدان',
-    icon: (
-      <svg viewBox="0 0 80 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 72, height: 32 }}>
-        <path d="M6 22 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L55 30 Q55 24 61 24 Q67 24 67 30 L71 30 Q74 30 74 27 L74 22 L70 14 Q68 11 64 11 L46 8 Q40 5 34 5 L22 5 Q16 5 13 9 Z"/>
-        <circle cx="19" cy="30" r="5" fill="white" opacity="0.9"/>
-        <circle cx="19" cy="30" r="2.5"/>
-        <circle cx="61" cy="30" r="5" fill="white" opacity="0.9"/>
-        <circle cx="61" cy="30" r="2.5"/>
-        <path d="M24 11 L22 5 L34 5 L34 11 Z" fill="white" opacity="0.25"/>
-        <path d="M36 11 L36 5 L46 8 L48 11 Z" fill="white" opacity="0.25"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'SUV',
-    icon: (
-      <svg viewBox="0 0 80 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 72, height: 32 }}>
-        <path d="M6 20 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L55 30 Q55 24 61 24 Q67 24 67 30 L71 30 Q74 30 74 27 L74 20 L72 12 Q70 8 66 8 L14 8 Q10 8 8 12 Z"/>
-        <circle cx="19" cy="30" r="5" fill="white" opacity="0.9"/>
-        <circle cx="19" cy="30" r="2.5"/>
-        <circle cx="61" cy="30" r="5" fill="white" opacity="0.9"/>
-        <circle cx="61" cy="30" r="2.5"/>
-        <path d="M14 8 L14 20 M40 8 L40 20 M66 8 L66 20" stroke="white" strokeWidth="1" opacity="0.3" fill="none"/>
-        <path d="M14 8 L66 8 L66 14 L14 14 Z" fill="white" opacity="0.2"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'بيكاب',
-    icon: (
-      <svg viewBox="0 0 90 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 80, height: 32 }}>
-        <path d="M6 22 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L45 30 L45 18 L42 18 L42 10 Q42 7 39 7 L22 7 Q16 7 13 11 Z"/>
-        <rect x="45" y="14" width="30" height="16" rx="2"/>
-        <path d="M67 14 L67 30 L71 30 Q74 30 74 27 L74 22 Q74 18 71 16 Z"/>
-        <circle cx="19" cy="30" r="5" fill="white" opacity="0.9"/>
-        <circle cx="19" cy="30" r="2.5"/>
-        <circle cx="63" cy="30" r="5" fill="white" opacity="0.9"/>
-        <circle cx="63" cy="30" r="2.5"/>
-        <path d="M25 13 L22 7 L33 7 L33 13 Z" fill="white" opacity="0.25"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'فان',
-    icon: (
-      <svg viewBox="0 0 80 38" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 72, height: 34 }}>
-        <path d="M8 22 L8 29 Q8 32 11 32 L14 32 Q14 26 20 26 Q26 26 26 32 L54 32 Q54 26 60 26 Q66 26 66 32 L69 32 Q72 32 72 29 L72 18 L70 10 Q68 6 64 6 L18 6 Q10 6 9 14 Z"/>
-        <circle cx="20" cy="32" r="5" fill="white" opacity="0.9"/>
-        <circle cx="20" cy="32" r="2.5"/>
-        <circle cx="60" cy="32" r="5" fill="white" opacity="0.9"/>
-        <circle cx="60" cy="32" r="2.5"/>
-        <path d="M18 6 L18 22 M44 6 L44 22" stroke="white" strokeWidth="1" opacity="0.3" fill="none"/>
-        <rect x="10" y="6" width="22" height="10" rx="1" fill="white" opacity="0.25"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'هاتشباك',
-    icon: (
-      <svg viewBox="0 0 76 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 68, height: 32 }}>
-        <path d="M6 22 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L51 30 Q51 24 57 24 Q63 24 63 30 L67 30 Q70 30 70 27 L70 22 L68 16 Q64 10 56 8 L32 5 Q20 5 16 10 Z"/>
-        <circle cx="19" cy="30" r="5" fill="white" opacity="0.9"/>
-        <circle cx="19" cy="30" r="2.5"/>
-        <circle cx="57" cy="30" r="5" fill="white" opacity="0.9"/>
-        <circle cx="57" cy="30" r="2.5"/>
-        <path d="M22 11 L20 5 L32 5 L32 11 Z" fill="white" opacity="0.25"/>
-        <path d="M34 11 L34 5 L44 7 L46 11 Z" fill="white" opacity="0.25"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'كوبيه',
-    icon: (
-      <svg viewBox="0 0 82 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ width: 74, height: 28 }}>
-        <path d="M4 20 L4 25 Q4 28 7 28 L12 28 Q12 22 18 22 Q24 22 24 28 L58 28 Q58 22 64 22 Q70 22 70 28 L74 28 Q77 28 77 25 L77 20 L75 14 Q70 7 60 6 L36 4 Q24 4 18 8 Q10 12 6 17 Z"/>
-        <circle cx="18" cy="28" r="5" fill="white" opacity="0.9"/>
-        <circle cx="18" cy="28" r="2.5"/>
-        <circle cx="64" cy="28" r="5" fill="white" opacity="0.9"/>
-        <circle cx="64" cy="28" r="2.5"/>
-        <path d="M26 12 L24 4 L36 4 L36 12 Z" fill="white" opacity="0.25"/>
-        <path d="M38 12 L38 4 L52 5 L54 12 Z" fill="white" opacity="0.25"/>
-      </svg>
-    ),
-  },
+  { name: 'سيدان',    icon: <BodySvg d="M6 22 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L55 30 Q55 24 61 24 Q67 24 67 30 L71 30 Q74 30 74 27 L74 22 L70 14 Q68 11 64 11 L46 8 Q40 5 34 5 L22 5 Q16 5 13 9 Z" w={80} h={36} /> },
+  { name: 'SUV',      icon: <BodySvg d="M6 20 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L55 30 Q55 24 61 24 Q67 24 67 30 L71 30 Q74 30 74 27 L74 20 L72 12 Q70 8 66 8 L14 8 Q10 8 8 12 Z" w={80} h={36} />},
+  { name: 'بيكاب',   icon: <BodySvg d="M6 22 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L45 30 L45 18 L42 18 L42 10 Q42 7 39 7 L22 7 Q16 7 13 11 Z M45 15 L72 15 L72 27 Q72 30 69 30 L65 30 Q65 24 59 24 Q53 24 53 30 L47 30 L47 15" w={90} h={36} />},
+  { name: 'فان',      icon: <BodySvg d="M8 22 L8 29 Q8 32 11 32 L14 32 Q14 26 20 26 Q26 26 26 32 L54 32 Q54 26 60 26 Q66 26 66 32 L69 32 Q72 32 72 29 L72 18 L70 10 Q68 6 64 6 L18 6 Q10 6 9 14 Z" w={80} h={38} />},
+  { name: 'هاتشباك',  icon: <BodySvg d="M6 22 L6 27 Q6 30 9 30 L13 30 Q13 24 19 24 Q25 24 25 30 L51 30 Q51 24 57 24 Q63 24 63 30 L67 30 Q70 30 70 27 L70 22 L68 16 Q64 10 56 8 L32 5 Q20 5 16 10 Z" w={76} h={36} />},
+  { name: 'كوبيه',    icon: <BodySvg d="M4 20 L4 25 Q4 28 7 28 L12 28 Q12 22 18 22 Q24 22 24 28 L58 28 Q58 22 64 22 Q70 22 70 28 L74 28 Q77 28 77 25 L77 20 L75 14 Q70 7 60 6 L36 4 Q24 4 18 8 Q10 12 6 17 Z" w={82} h={32} />},
 ]
 
-const TOP_CITIES = ['دمشق','حلب','اللاذقية','حمص','طرطوس','حماة']
+const WHY_ITEMS = [
+  { icon: <CheckCircle size={24}/>, title: 'شفافية كاملة', desc: 'كل تفاصيل السيارة واضحة — لا مفاجآت بعد الشراء' },
+  { icon: <Users size={24}/>,       title: 'تواصل مباشر',  desc: 'اتصل بالبائع مباشرة بدون وسيط أو عمولة' },
+  { icon: <Shield size={24}/>,      title: 'ورشات معتمدة', desc: 'مراكز فحص فني في كل المحافظات قبل ما تشتري' },
+  { icon: <Zap size={24}/>,         title: 'نشر في دقيقتين', desc: 'أضف إعلانك بسهولة والقي المشترين يتواصلوا معك' },
+]
 
+// ── Body type SVG helper ──────────────────────────────────────────────────────
+function BodySvg({ d, w = 80, h = 36 }: { d: string; w?: number; h?: number }) {
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} fill="currentColor" style={{ width: w * 0.85, height: h * 0.85, display: 'block' }}>
+      <path d={d}/>
+    </svg>
+  )
+}
+
+// ── Main Component ─────────────────────────────────────────────────────────────
 export default function Home() {
-  const [activeTab,   setActiveTab]   = useState('الكل')
-  const [listings,    setListings]    = useState<any[]>([])
-  const [featured,    setFeatured]    = useState<any[]>([])
-  const [brands,      setBrands]      = useState(BRAND_DATA)
-  const [loading,     setLoading]     = useState(true)
-  const [filters,     setFilters]     = useState({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '' })
+  const [activeTab,  setActiveTab]  = useState('الكل')
+  const [listings,   setListings]   = useState<any[]>([])
+  const [featured,   setFeatured]   = useState<any[]>([])
+  const [brands,     setBrands]     = useState(BRAND_DATA)
+  const [loading,    setLoading]    = useState(true)
+  const [filters,    setFilters]    = useState({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '' })
 
   useEffect(() => {
-    loadListings()
+    load()
     fetchDistinctMakes().then(makes => {
       if (makes.length) {
-        const updated = makes.map(name => BRAND_DATA.find(b => b.name === name) ?? { name, logo: '', color: '#555' })
-        setBrands(updated.length ? updated : BRAND_DATA)
+        const updated = makes.map(n => BRAND_DATA.find(b => b.name === n) ?? { name: n, logo: '', color: '#555' })
+        setBrands(updated)
       }
     })
   }, [])
 
-  async function loadListings(extra?: object) {
+  async function load(extra?: object) {
     setLoading(true)
     try {
       const data = await fetchListings(extra)
       setListings(data)
       setFeatured(data.filter((l: any) => l.featured).slice(0, 4))
-    } finally {
-      setLoading(false)
-    }
+    } finally { setLoading(false) }
   }
 
-  function applyFilters() {
-    loadListings({
+  function apply() {
+    load({
       city:      filters.city      || undefined,
       make:      filters.make      || undefined,
       yearFrom:  filters.yearFrom  ? Number(filters.yearFrom)  : undefined,
@@ -152,324 +86,434 @@ export default function Home() {
     })
   }
 
-  function filterByMake(make: string) {
-    setFilters(f => ({ ...f, make }))
-    loadListings({ make })
-  }
+  const f = (k: string, v: string) => setFilters(p => ({ ...p, [k]: v }))
 
-  function filterByCity(city: string) {
-    setFilters(f => ({ ...f, city }))
-    loadListings({ city })
-  }
-
-  function filterByBodyType(_bodyType: string) {
-    loadListings({ make: '' })
-  }
-
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <main style={{ flex: 1 }}>
 
-      {/* ── HERO ────────────────────────────────────── */}
-      <section style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 55%, #0f3460 100%)',
-        padding: '56px 20px 44px',
-        textAlign: 'center',
-      }}>
-        <div style={{ maxWidth: 720, margin: '0 auto' }}>
-          <h1 style={{ color: '#fff', fontSize: 'clamp(28px, 5vw, 50px)', fontWeight: 800, marginBottom: 8, lineHeight: 1.2 }}>
-            سيارتك الجاية — هون
-          </h1>
-          <p style={{ color: 'rgba(255,255,255,.65)', fontSize: 16, marginBottom: 28 }}>
-            آلاف الإعلانات من كل سوريا
-          </p>
+      {/* ══════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════ */}
+      <section style={{ position: 'relative', minHeight: 580, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+
+        {/* Background image */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'url(https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80)',
+          backgroundSize: 'cover', backgroundPosition: 'center 40%',
+          zIndex: 0,
+        }} />
+        {/* Overlay gradient */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(100deg, rgba(10,10,10,.92) 40%, rgba(10,10,10,.55) 100%)',
+          zIndex: 1,
+        }} />
+
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 1240, margin: '0 auto', padding: '80px 24px 60px', width: '100%' }}>
+
+          {/* Headline */}
+          <div style={{ marginBottom: 36, maxWidth: 600 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: 'rgba(253,183,0,.15)', border: '1px solid rgba(253,183,0,.3)',
+              borderRadius: 'var(--r-full)', padding: '5px 14px',
+              fontSize: 12, fontWeight: 700, color: 'var(--yellow)',
+              letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 20,
+            }}>
+              منصة إعلانات السيارات السورية
+            </div>
+            <h1 style={{
+              fontSize: 'clamp(32px, 5.5vw, 58px)',
+              fontWeight: 900, color: '#fff',
+              lineHeight: 1.1, marginBottom: 16,
+            }}>
+              سيارتك الجاية —
+              <br/>
+              <span style={{ color: 'var(--yellow)' }}>هون</span>
+            </h1>
+            <p style={{ fontSize: 17, color: 'rgba(255,255,255,.65)', lineHeight: 1.7 }}>
+              آلاف الإعلانات من كل سوريا. ابحث، قارن، واشتري بثقة.
+            </p>
+          </div>
 
           {/* Tabs */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginBottom: 20, background: 'rgba(255,255,255,.1)', borderRadius: 12, padding: 4, width: 'fit-content', margin: '0 auto 20px' }}>
+          <div style={{
+            display: 'inline-flex', gap: 4, marginBottom: 20,
+            background: 'rgba(255,255,255,.08)',
+            border: '1px solid rgba(255,255,255,.12)',
+            borderRadius: 12, padding: 4,
+          }}>
             {TABS.map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                padding: '8px 22px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                fontWeight: 600, fontSize: 14, fontFamily: 'inherit',
+                padding: '7px 20px', borderRadius: 9, border: 'none',
+                cursor: 'pointer', fontWeight: 700, fontSize: 14,
+                fontFamily: 'var(--font)', transition: 'all 150ms ease',
                 background: activeTab === tab ? '#fff' : 'transparent',
-                color: activeTab === tab ? '#1a1a1a' : 'rgba(255,255,255,.8)',
-                transition: 'all 150ms ease',
+                color: activeTab === tab ? 'var(--dark)' : 'rgba(255,255,255,.75)',
               }}>{tab}</button>
             ))}
           </div>
 
-          {/* Search form */}
-          <div style={{ background: '#fff', borderRadius: 16, padding: 14, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 10, boxShadow: '0 20px 60px rgba(0,0,0,.35)' }} className="hero-form">
-            <SelectField options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make} onChange={v => setFilters(f => ({ ...f, make: v === 'كل الماركات' ? '' : v }))} />
-            <SelectField options={CITIES} value={filters.city} onChange={v => setFilters(f => ({ ...f, city: v === 'كل المدن' ? '' : v }))} />
+          {/* Search card */}
+          <div style={{
+            background: '#fff', borderRadius: 16, padding: '18px 20px',
+            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 10,
+            boxShadow: '0 24px 64px rgba(0,0,0,.4)',
+            maxWidth: 780,
+          }} className="hero-form">
+            <SelectF options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make}
+              onChange={v => f('make', v === 'كل الماركات' ? '' : v)} />
+            <SelectF options={CITIES} value={filters.city}
+              onChange={v => f('city', v === 'كل المدن' ? '' : v)} />
             <div style={{ position: 'relative' }}>
-              <select className="input" style={{ appearance: 'none', paddingLeft: 36 }} onChange={e => {
-                const [from, to] = e.target.value.split('-').map(Number)
-                setFilters(f => ({ ...f, priceFrom: from ? String(from) : '', priceTo: to ? String(to) : '' }))
-              }}>
+              <select className="input" style={{ appearance: 'none', paddingLeft: 32 }}
+                onChange={e => {
+                  const [from, to] = e.target.value.split('-').map(Number)
+                  setFilters(p => ({ ...p, priceFrom: from ? String(from) : '', priceTo: to ? String(to) : '' }))
+                }}>
                 <option value="">نطاق السعر</option>
                 <option value="0-3000000">أقل من 3 مليون</option>
                 <option value="3000000-7000000">3 – 7 مليون</option>
                 <option value="7000000-15000000">7 – 15 مليون</option>
                 <option value="15000000-999999999">أكثر من 15 مليون</option>
               </select>
-              <ChevronDown size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+              <ChevronDown size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-4)', pointerEvents: 'none' }}/>
             </div>
-            <button className="btn-primary" onClick={applyFilters} style={{ borderRadius: 10, gap: 8, whiteSpace: 'nowrap' }}>
-              <Search size={16} /> دوّر
+            <button className="btn btn-yellow" onClick={apply} style={{ gap: 8, paddingLeft: 20, paddingRight: 20 }}>
+              <Search size={16}/> ابحث
             </button>
-          </div>
-
-          {/* Stats */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 40, marginTop: 32 }}>
-            {[['١٤', 'محافظة'], ['٢٤٠+', 'إعلان نشط'], ['٥٠٠+', 'مستخدم']].map(([num, label]) => (
-              <div key={label} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-yellow)' }}>{num}</div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,.55)', marginTop: 2 }}>{label}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
+      {/* ══════════════════════════════════════════
+          STATS BAR
+      ══════════════════════════════════════════ */}
+      <div style={{ background: 'var(--yellow)', borderBottom: '1px solid var(--yellow-dark)' }}>
+        <div style={{ maxWidth: 1240, margin: '0 auto', padding: '18px 24px', display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: 12 }}>
+          {[
+            { n: listings.length || '٢٤٠+', l: 'إعلان متاح' },
+            { n: '١٤',  l: 'محافظة' },
+            { n: '٥٠+', l: 'ورشة معتمدة' },
+            { n: '١٠٠٠+', l: 'مستخدم مسجّل' },
+          ].map(s => (
+            <div key={s.l} style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--dark)', lineHeight: 1 }}>{s.n}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(0,0,0,.55)', marginTop: 3 }}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        {/* ── BRANDS ──────────────────────────────────── */}
-        <section style={{ padding: '36px 0 28px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-            <h2 className="section-title" style={{ marginBottom: 0 }}>ابحث بالماركة</h2>
-            <button onClick={() => { setFilters(f => ({ ...f, make: '' })); loadListings() }}
-              style={{ background: 'none', border: 'none', color: 'var(--color-blue)', cursor: 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', gap: 4 }}>
-              كل الماركات <ChevronLeft size={14} />
+      {/* ══════════════════════════════════════════
+          BRANDS
+      ══════════════════════════════════════════ */}
+      <section style={{ padding: '56px 0 48px', background: 'var(--white)' }}>
+        <div className="container">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
+            <div>
+              <div className="section-eyebrow">ابحث بالماركة</div>
+              <h2 className="section-title">كل الماركات، مكان واحد</h2>
+            </div>
+            <button className="btn btn-ghost" onClick={() => { f('make',''); load() }} style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 4 }}>
+              كل الماركات <ChevronLeft size={14}/>
             </button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(104px, 1fr))', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: 10 }}>
             {brands.map(brand => {
-              const isActive = filters.make === brand.name
+              const active = filters.make === brand.name
               return (
                 <button key={brand.name}
-                  onClick={() => filterByMake(brand.name)}
+                  onClick={() => { f('make', brand.name); load({ make: brand.name }) }}
                   style={{
-                    background: isActive ? brand.color : '#fff',
-                    border: `1.5px solid ${isActive ? brand.color : 'var(--border-light)'}`,
-                    borderRadius: 12, padding: '14px 8px 12px', cursor: 'pointer', textAlign: 'center',
-                    fontWeight: 700, fontSize: 13, color: isActive ? '#fff' : 'var(--text-primary)',
-                    transition: 'all 150ms ease', fontFamily: 'inherit',
-                    boxShadow: isActive ? `0 4px 14px ${brand.color}44` : '0 1px 3px rgba(0,0,0,.06)',
+                    background: active ? brand.color : 'var(--white)',
+                    border: `1.5px solid ${active ? brand.color : 'var(--gray-200)'}`,
+                    borderRadius: 14, padding: '14px 8px 12px',
+                    cursor: 'pointer', textAlign: 'center',
+                    fontFamily: 'var(--font)', fontWeight: 700, fontSize: 12,
+                    color: active ? '#fff' : 'var(--text)',
+                    transition: 'all 200ms ease',
+                    boxShadow: active ? `0 6px 18px ${brand.color}55` : 'var(--shadow-sm)',
                   }}>
-                  {/* Brand logo */}
                   <div style={{
-                    width: 44, height: 44, borderRadius: 10, margin: '0 auto 8px',
-                    background: isActive ? 'rgba(255,255,255,.2)' : brand.color,
+                    width: 40, height: 40, borderRadius: 10, margin: '0 auto 8px',
+                    background: active ? 'rgba(255,255,255,.18)' : brand.color,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    padding: 8,
+                    padding: 7,
                   }}>
-                    {brand.logo ? (
-                      <img
-                        src={brand.logo}
-                        alt={brand.name}
-                        style={{ width: 28, height: 28, objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
-                      />
-                    ) : (
-                      <span style={{ fontSize: 13, fontWeight: 800, color: '#fff' }}>{brand.name.slice(0, 2)}</span>
-                    )}
+                    {brand.logo
+                      ? <img src={brand.logo} alt={brand.name} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}/>
+                      : <span style={{ fontSize: 11, color: '#fff', fontWeight: 800 }}>{brand.name.slice(0,2)}</span>
+                    }
                   </div>
                   {brand.name}
                 </button>
               )
             })}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── BODY TYPE ───────────────────────────────── */}
-        <section style={{ paddingBottom: 28, borderBottom: '1px solid var(--border-light)' }}>
-          <h2 className="section-title" style={{ marginBottom: 16 }}>تصفح بنوع الهيكل</h2>
+      {/* ══════════════════════════════════════════
+          BODY TYPES
+      ══════════════════════════════════════════ */}
+      <section style={{ padding: '48px 0', background: 'var(--off-white)', borderTop: '1px solid var(--gray-200)', borderBottom: '1px solid var(--gray-200)' }}>
+        <div className="container">
+          <div style={{ marginBottom: 24 }}>
+            <div className="section-eyebrow">تصفح بنوع الهيكل</div>
+            <h2 className="section-title">اختر نوع السيارة</h2>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10 }}>
             {BODY_TYPES.map(bt => (
-              <button key={bt.name} onClick={() => filterByBodyType(bt.name)}
+              <button key={bt.name}
+                onClick={() => load({})}
                 style={{
-                  background: '#fff', border: '1.5px solid var(--border-light)',
-                  borderRadius: 14, padding: '20px 8px 14px', cursor: 'pointer', textAlign: 'center',
-                  color: '#1a1a1a', transition: 'all 150ms ease', fontFamily: 'inherit',
-                  boxShadow: '0 1px 4px rgba(0,0,0,.05)',
+                  background: 'var(--white)', border: '1.5px solid var(--gray-200)',
+                  borderRadius: 14, padding: '20px 8px 14px',
+                  cursor: 'pointer', textAlign: 'center', fontFamily: 'var(--font)',
+                  color: 'var(--text)', transition: 'all 200ms ease',
+                  boxShadow: 'var(--shadow-sm)',
                 }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10, color: 'var(--dark)' }}>
                   {bt.icon}
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 700 }}>{bt.name}</div>
               </button>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── FEATURED ADS ────────────────────────────── */}
-        {(featured.length > 0 || !loading) && (
-          <section style={{ padding: '32px 0 24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-              <h2 className="section-title" style={{ marginBottom: 0 }}>
-                <span style={{ background: 'var(--color-yellow)', borderRadius: 6, padding: '2px 10px', marginLeft: 8, fontSize: 12 }}>⭐ مميز</span>
-                إعلانات مميزة
-              </h2>
-              <Link to="/?featured=1" style={{ color: 'var(--color-blue)', fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
-                عرض الكل <ChevronLeft size={14} />
+      {/* ══════════════════════════════════════════
+          FEATURED LISTINGS
+      ══════════════════════════════════════════ */}
+      {featured.length > 0 && (
+        <section style={{ padding: '56px 0', background: 'var(--white)' }}>
+          <div className="container">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
+              <div>
+                <div className="section-eyebrow">مميزة</div>
+                <h2 className="section-title">
+                  <span style={{ background: 'var(--yellow)', borderRadius: 8, padding: '2px 10px', marginLeft: 10, fontSize: 14 }}>⭐</span>
+                  إعلانات مميزة
+                </h2>
+              </div>
+              <Link to="/?featured=1" className="btn btn-outline" style={{ fontSize: 13, gap: 4 }}>
+                عرض الكل <ChevronLeft size={14}/>
               </Link>
             </div>
-            {loading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
-                <Loader2 size={24} style={{ animation: 'spin 1s linear infinite', color: 'var(--text-muted)' }} />
-              </div>
-            ) : featured.length === 0 ? (
-              <div style={{ background: 'var(--bg-subtle)', borderRadius: 14, padding: '32px 20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 14 }}>
-                لا توجد إعلانات مميزة حالياً — <Link to="/post" style={{ color: 'var(--color-blue)' }}>ميّز إعلانك</Link>
-              </div>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 18 }}>
-                {featured.map(l => <ListingCard key={l.id} listing={l} />)}
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ── BROWSE BY CITY ──────────────────────────── */}
-        <section style={{ paddingBottom: 32, borderBottom: '1px solid var(--border-light)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h2 className="section-title" style={{ marginBottom: 0 }}>تصفح بالمدينة</h2>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10 }}>
-            {TOP_CITIES.map((city, i) => {
-              const cityColors = ['#1a1a2e','#0f3460','#16213e','#1a2e1a','#2e1a1a','#1a1a1a']
-              return (
-                <button key={city} onClick={() => filterByCity(city)}
-                  style={{
-                    background: cityColors[i], color: '#fff', border: 'none',
-                    borderRadius: 12, padding: '18px 10px', cursor: 'pointer', textAlign: 'center',
-                    fontWeight: 700, fontSize: 15, fontFamily: 'inherit',
-                    transition: 'all 150ms ease', position: 'relative', overflow: 'hidden',
-                  }}>
-                  <div style={{ fontSize: 22, marginBottom: 6 }}>📍</div>
-                  {city}
-                </button>
-              )
-            })}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: 18 }}>
+              {featured.map(l => <ListingCard key={l.id} listing={l}/>)}
+            </div>
           </div>
         </section>
+      )}
 
-        {/* ── MAIN CONTENT: Sidebar (RIGHT in RTL) + Listings ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 28, padding: '28px 0 60px' }} className="main-grid">
+      {/* ══════════════════════════════════════════
+          MAIN LISTINGS + SIDEBAR
+      ══════════════════════════════════════════ */}
+      <section style={{ padding: '56px 0 64px', background: 'var(--off-white)', borderTop: '1px solid var(--gray-200)' }}>
+        <div className="container">
+          <div className="main-grid">
 
-          {/* Sidebar — first in DOM = RIGHT in RTL ── */}
-          <aside>
-            <div style={{ background: '#fff', border: '1.5px solid var(--border-light)', borderRadius: 14, padding: 20, position: 'sticky', top: 80 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <span style={{ fontWeight: 700, fontSize: 16 }}>الفلاتر</span>
-                <button onClick={() => { setFilters({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '' }); loadListings() }}
-                  style={{ color: 'var(--color-blue)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13 }}>
-                  مسح الكل
-                </button>
-              </div>
-              <FilterGroup label="المدينة">
-                <SelectField options={CITIES} value={filters.city} onChange={v => setFilters(f => ({ ...f, city: v === 'كل المدن' ? '' : v }))} />
-              </FilterGroup>
-              <FilterGroup label="الماركة">
-                <SelectField options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make} onChange={v => setFilters(f => ({ ...f, make: v === 'كل الماركات' ? '' : v }))} />
-              </FilterGroup>
-              <FilterGroup label="سنة الصنع">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                  <input className="input" placeholder="من" style={{ fontSize: 14 }} value={filters.yearFrom} onChange={e => setFilters(f => ({ ...f, yearFrom: e.target.value }))} />
-                  <input className="input" placeholder="إلى" style={{ fontSize: 14 }} value={filters.yearTo} onChange={e => setFilters(f => ({ ...f, yearTo: e.target.value }))} />
-                </div>
-              </FilterGroup>
-              <FilterGroup label="السعر (مليون ل.س)" last>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                  <input className="input" placeholder="من" style={{ fontSize: 14 }} value={filters.priceFrom} onChange={e => setFilters(f => ({ ...f, priceFrom: e.target.value }))} />
-                  <input className="input" placeholder="إلى" style={{ fontSize: 14 }} value={filters.priceTo} onChange={e => setFilters(f => ({ ...f, priceTo: e.target.value }))} />
-                </div>
-              </FilterGroup>
-              <button className="btn-primary" onClick={applyFilters} style={{ width: '100%', justifyContent: 'center', marginTop: 4 }}>
-                <Search size={15} /> تطبيق الفلاتر
-              </button>
-            </div>
-          </aside>
-
-          {/* Listings ── */}
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 className="section-title" style={{ marginBottom: 0 }}>
-                أحدث الإعلانات
-                <span style={{ fontSize: 14, fontWeight: 400, color: 'var(--text-muted)', marginRight: 8 }}>
-                  ({listings.length} إعلان)
-                </span>
-              </h2>
-              {/* Quick city filters */}
-              <div style={{ display: 'flex', gap: 6 }}>
-                {['دمشق','حلب','اللاذقية'].map(city => (
-                  <button key={city} onClick={() => filterByCity(city)}
-                    className="tag" style={{ fontSize: 12 }}>
-                    {city}
+            {/* Sidebar — RIGHT in RTL */}
+            <aside>
+              <div style={{
+                background: 'var(--white)', border: '1px solid var(--gray-200)',
+                borderRadius: 20, padding: '22px 20px',
+                position: 'sticky', top: 80, boxShadow: 'var(--shadow-sm)',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }}>
+                  <span style={{ fontWeight: 800, fontSize: 16 }}>الفلاتر</span>
+                  <button onClick={() => { setFilters({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '' }); load() }}
+                    style={{ color: 'var(--blue)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: 'var(--font)' }}>
+                    مسح الكل
                   </button>
-                ))}
-              </div>
-            </div>
-
-            {loading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
-                <Loader2 size={28} style={{ animation: 'spin 1s linear infinite', color: 'var(--text-muted)' }} />
-              </div>
-            ) : listings.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-                <div style={{ fontSize: 48, marginBottom: 12 }}>🔍</div>
-                <p style={{ fontSize: 16 }}>ما لقينا شي — جرب بحثاً ثاني</p>
-                <button onClick={() => { setFilters({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '' }); loadListings() }}
-                  className="btn-primary" style={{ marginTop: 16 }}>
-                  عرض كل الإعلانات
+                </div>
+                <FGroup label="المدينة">
+                  <SelectF options={CITIES} value={filters.city} onChange={v => f('city', v === 'كل المدن' ? '' : v)}/>
+                </FGroup>
+                <FGroup label="الماركة">
+                  <SelectF options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make}
+                    onChange={v => f('make', v === 'كل الماركات' ? '' : v)}/>
+                </FGroup>
+                <FGroup label="سنة الصنع">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                    <input className="input" placeholder="من" style={{ fontSize: 13 }} value={filters.yearFrom} onChange={e => f('yearFrom', e.target.value)}/>
+                    <input className="input" placeholder="إلى" style={{ fontSize: 13 }} value={filters.yearTo} onChange={e => f('yearTo', e.target.value)}/>
+                  </div>
+                </FGroup>
+                <FGroup label="السعر (مليون ل.س)" last>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                    <input className="input" placeholder="من" style={{ fontSize: 13 }} value={filters.priceFrom} onChange={e => f('priceFrom', e.target.value)}/>
+                    <input className="input" placeholder="إلى" style={{ fontSize: 13 }} value={filters.priceTo} onChange={e => f('priceTo', e.target.value)}/>
+                  </div>
+                </FGroup>
+                <button className="btn btn-yellow" onClick={apply} style={{ width: '100%', marginTop: 4 }}>
+                  <Search size={15}/> تطبيق الفلاتر
                 </button>
               </div>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: 18 }}>
-                {listings.map(l => <ListingCard key={l.id} listing={l} />)}
+            </aside>
+
+            {/* Listings */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }}>
+                <div>
+                  <div className="section-eyebrow">أحدث الإعلانات</div>
+                  <h2 className="section-title" style={{ marginBottom: 0 }}>
+                    {listings.length > 0 ? `${listings.length} إعلان` : 'الإعلانات'}
+                  </h2>
+                </div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  {['دمشق','حلب','اللاذقية'].map(city => (
+                    <button key={city} className="tag" onClick={() => { f('city', city); load({ city }) }} style={{ fontSize: 12 }}>
+                      {city}
+                    </button>
+                  ))}
+                </div>
               </div>
-            )}
+
+              {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
+                  <Loader2 size={30} style={{ animation: 'spin 1s linear infinite', color: 'var(--text-4)' }}/>
+                </div>
+              ) : listings.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--text-4)' }}>
+                  <div style={{ fontSize: 52, marginBottom: 14 }}>🔍</div>
+                  <p style={{ fontSize: 16, marginBottom: 20 }}>ما لقينا شي — جرب بحثاً ثاني</p>
+                  <button className="btn btn-yellow" onClick={() => { setFilters({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '' }); load() }}>
+                    عرض كل الإعلانات
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(265px, 1fr))', gap: 16 }}>
+                  {listings.map(l => <ListingCard key={l.id} listing={l}/>)}
+                </div>
+              )}
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* ── CTA BANNER ──────────────────────────────── */}
-        <section style={{
-          background: 'linear-gradient(135deg, #1a1a2e, #0f3460)',
-          borderRadius: 20, padding: '36px 40px', marginBottom: 60,
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          flexWrap: 'wrap', gap: 20,
-        }}>
-          <div>
-            <h3 style={{ color: '#fff', fontSize: 22, fontWeight: 800, marginBottom: 6 }}>
-              عندك سيارة للبيع؟
-            </h3>
-            <p style={{ color: 'rgba(255,255,255,.65)', fontSize: 15 }}>
-              أضف إعلانك مجاناً وانتظر المشترين يتواصلوا معك
+      {/* ══════════════════════════════════════════
+          WHY CARNA
+      ══════════════════════════════════════════ */}
+      <section style={{ padding: '72px 0', background: 'var(--dark)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              color: 'var(--yellow)', fontSize: 11, fontWeight: 700,
+              letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: 12,
+            }}>
+              <span style={{ display: 'block', width: 18, height: 2, background: 'var(--yellow)' }}/>
+              لماذا كارنا
+              <span style={{ display: 'block', width: 18, height: 2, background: 'var(--yellow)' }}/>
+            </div>
+            <h2 style={{ fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 900, color: '#fff', lineHeight: 1.2 }}>
+              المنصة اللي بتفهم السوق السوري
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
+            {WHY_ITEMS.map((item, i) => (
+              <div key={i} style={{
+                background: 'var(--dark-3)',
+                border: '1px solid rgba(255,255,255,.07)',
+                borderRadius: 18, padding: '28px 24px',
+                transition: 'all 250ms ease',
+              }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: 12,
+                  background: 'var(--yellow-glow)',
+                  border: '1px solid rgba(253,183,0,.2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'var(--yellow)', marginBottom: 18,
+                }}>
+                  {item.icon}
+                </div>
+                <h3 style={{ fontSize: 17, fontWeight: 800, color: '#fff', marginBottom: 8 }}>{item.title}</h3>
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,.5)', lineHeight: 1.7 }}>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          WORKSHOPS CTA
+      ══════════════════════════════════════════ */}
+      <section style={{ padding: '64px 0', background: '#0A1628' }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 28 }}>
+          <div style={{ maxWidth: 520 }}>
+            <div style={{
+              display: 'inline-flex', gap: 8, alignItems: 'center',
+              color: '#7CA3E8', fontSize: 11, fontWeight: 700,
+              letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 14,
+            }}>
+              <Shield size={13}/> ورشات وخدمات
+            </div>
+            <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 900, color: '#fff', marginBottom: 12, lineHeight: 1.25 }}>
+              سجّل ورشتك على كارنا
+            </h2>
+            <p style={{ fontSize: 15, color: 'rgba(255,255,255,.5)', lineHeight: 1.7, marginBottom: 0 }}>
+              وصول مباشر لآلاف المشترين والبائعين. اشترك بسعر رمزي وابدأ تستقبل طلبات الفحص والصيانة اليوم.
             </p>
           </div>
-          <Link to="/post" className="btn-primary" style={{ fontSize: 16, padding: '12px 28px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <Link to="/services" className="btn btn-yellow" style={{ fontSize: 15, padding: '13px 28px' }}>
+              استعرض الورشات
+            </Link>
+            <Link to="/post" className="btn" style={{
+              background: 'rgba(255,255,255,.07)',
+              border: '1px solid rgba(255,255,255,.12)',
+              color: '#fff', fontSize: 15, padding: '13px 28px',
+            }}>
+              سجّل ورشتك
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          POST AD CTA
+      ══════════════════════════════════════════ */}
+      <section style={{ padding: '64px 0', background: 'var(--yellow)' }}>
+        <div className="container" style={{ textAlign: 'center' }}>
+          <h2 style={{ fontSize: 'clamp(24px, 4vw, 40px)', fontWeight: 900, color: 'var(--dark)', marginBottom: 12, lineHeight: 1.2 }}>
+            عندك سيارة للبيع؟
+          </h2>
+          <p style={{ fontSize: 16, color: 'rgba(0,0,0,.6)', marginBottom: 32, maxWidth: 420, margin: '0 auto 32px' }}>
+            أضف إعلانك مجاناً في أقل من دقيقتين — ومن بكرا المشترين بيتواصلوا معك
+          </p>
+          <Link to="/post" className="btn btn-dark" style={{ fontSize: 16, padding: '14px 36px', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}>
             + أضف إعلانك مجاناً
           </Link>
-        </section>
+        </div>
+      </section>
 
-      </div>
     </main>
   )
 }
 
-function SelectField({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function SelectF({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
   return (
     <div style={{ position: 'relative' }}>
-      <select className="input" style={{ appearance: 'none', paddingLeft: 32 }} value={value || options[0]} onChange={e => onChange(e.target.value)}>
-        {options.map(opt => <option key={opt}>{opt}</option>)}
+      <select className="input" style={{ appearance: 'none', paddingLeft: 28 }} value={value || options[0]} onChange={e => onChange(e.target.value)}>
+        {options.map(o => <option key={o}>{o}</option>)}
       </select>
-      <ChevronDown size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+      <ChevronDown size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-4)', pointerEvents: 'none' }}/>
     </div>
   )
 }
 
-function FilterGroup({ label, children, last }: { label: string; children: React.ReactNode; last?: boolean }) {
+function FGroup({ label, children, last }: { label: string; children: React.ReactNode; last?: boolean }) {
   return (
-    <div style={{ marginBottom: 20, paddingBottom: last ? 0 : 20, borderBottom: last ? 'none' : '1px solid var(--border-light)' }}>
-      <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 10 }}>{label}</div>
+    <div style={{ marginBottom: 18, paddingBottom: last ? 0 : 18, borderBottom: last ? 'none' : '1px solid var(--gray-100)' }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)', marginBottom: 8 }}>{label}</div>
       {children}
     </div>
   )

@@ -1,97 +1,126 @@
-import { MapPin, Calendar, Gauge, Fuel, Star } from 'lucide-react'
+import { MapPin, Gauge, Fuel, Heart, Clock } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 
-export default function ListingCard({ listing }: { listing: any }) {
+interface Listing {
+  id: string
+  title: string
+  price: number | string
+  city: string
+  km: number | string
+  fuel: string
+  year: number
+  image: string
+  images?: string[]
+  hours: number
+  seller?: string
+  featured?: boolean
+  make?: string
+}
+
+export default function ListingCard({ listing }: { listing: Listing }) {
   const [saved, setSaved] = useState(false)
 
+  const timeLabel = listing.hours < 1
+    ? 'الآن'
+    : listing.hours < 24
+    ? `منذ ${listing.hours} ${listing.hours === 1 ? 'ساعة' : 'ساعات'}`
+    : `منذ ${Math.floor(listing.hours / 24)} يوم`
+
+  const price = typeof listing.price === 'number'
+    ? listing.price.toLocaleString('ar-SY')
+    : listing.price
+
   return (
-    <div style={{ position: 'relative' }}>
-      <Link to={`/listing/${listing.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-        <div className="card">
-          {/* Image */}
-          <div style={{ position: 'relative', borderBottom: '1px solid var(--border-subtle)' }}>
-            <img 
-              src={listing.image} 
-              alt={listing.title} 
-              style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} 
-            />
-            {listing.featured && (
-              <span style={{ 
-                position: 'absolute', top: 12, right: 12, 
-                background: 'var(--color-yellow)', color: 'var(--color-black)', 
-                fontSize: 12, fontWeight: 700, padding: '4px 10px', 
-                borderRadius: 'var(--radius-sm)'
-              }}>
-                مميز
-              </span>
-            )}
+    <Link to={`/listing/${listing.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+      <article className="card" style={{ cursor: 'pointer' }}>
+
+        {/* Image */}
+        <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '4/3' }}>
+          <img
+            src={listing.image}
+            alt={listing.title}
+            className="listing-card__image"
+            loading="lazy"
+          />
+          {/* Price badge */}
+          <div style={{
+            position: 'absolute', top: 10, right: 10,
+            background: 'var(--yellow)', color: 'var(--dark)',
+            padding: '5px 11px', borderRadius: 8,
+            fontSize: 14, fontWeight: 800,
+            boxShadow: '0 2px 10px rgba(0,0,0,.2)',
+            lineHeight: 1.3,
+          }}>
+            {price}
+            <span style={{ fontSize: 10, fontWeight: 600, marginRight: 3 }}>ل.س</span>
           </div>
-
-          {/* Content */}
-          <div style={{ padding: 16 }}>
-            <div style={{ 
-              fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 
+          {listing.featured && (
+            <div style={{
+              position: 'absolute', top: 10, left: 10,
+              background: 'var(--dark)', color: 'var(--yellow)',
+              padding: '4px 9px', borderRadius: 6,
+              fontSize: 11, fontWeight: 700,
             }}>
-              {listing.price} <span style={{ fontSize: 13, fontWeight: 400, color: 'var(--text-secondary)' }}>ل.س</span>
+              ⭐ مميز
             </div>
-            
-            <h3 style={{ 
-              fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', 
-              marginBottom: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' 
-            }}>
-              {listing.title}
-            </h3>
+          )}
+          <button
+            onClick={e => { e.preventDefault(); setSaved(s => !s) }}
+            style={{
+              position: 'absolute', bottom: 10, left: 10,
+              background: 'rgba(255,255,255,.92)', border: 'none',
+              borderRadius: '50%', width: 32, height: 32,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,.12)',
+            }}
+          >
+            <Heart size={14} fill={saved ? 'var(--yellow)' : 'none'} color={saved ? 'var(--yellow-dark)' : '#666'} strokeWidth={2} />
+          </button>
+        </div>
 
-            {/* Specs */}
-            <div style={{ 
-              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, 
-              fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Calendar size={14} /> {listing.year}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Gauge size={14} /> {listing.km} كم
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Fuel size={14} /> {listing.fuel}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <MapPin size={14} /> {listing.city}
-              </div>
+        {/* Content */}
+        <div style={{ padding: '14px 16px 16px' }}>
+          <div style={{
+            fontSize: 15, fontWeight: 700, color: 'var(--text)',
+            marginBottom: 10, lineHeight: 1.4,
+          }}>
+            {listing.title}
+          </div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
+            <Chip icon={<MapPin size={11}/>} text={listing.city} />
+            <Chip icon={<Gauge size={11}/>}  text={`${typeof listing.km === 'number' ? listing.km.toLocaleString() : listing.km} كم`} />
+            <Chip icon={<Fuel size={11}/>}   text={listing.fuel} />
+          </div>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            borderTop: '1px solid var(--gray-100)', paddingTop: 10,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--text-4)' }}>
+              <Clock size={11}/> {timeLabel}
             </div>
-
-            {/* Footer */}
-            <div style={{ 
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-              fontSize: 12, color: 'var(--text-secondary)', 
-              borderTop: '1px solid var(--border-subtle)', paddingTop: 12 
+            <div style={{
+              fontSize: 12, fontWeight: 600, color: 'var(--text-3)',
+              background: 'var(--gray-100)', padding: '2px 8px', borderRadius: 6,
             }}>
-              <span>منذ {listing.hours} ساعات</span>
+              {listing.year}
             </div>
           </div>
         </div>
-      </Link>
+      </article>
+    </Link>
+  )
+}
 
-      {/* Save Button */}
-      <button 
-        onClick={(e) => {
-          e.preventDefault()
-          setSaved(!saved)
-        }}
-        style={{
-          position: 'absolute', bottom: 16, left: 16, zIndex: 10,
-          background: saved ? 'var(--color-yellow)' : 'var(--bg-subtle)',
-          color: saved ? 'var(--color-black)' : 'var(--text-secondary)',
-          border: '1px solid var(--border-subtle)',
-          width: 32, height: 32, borderRadius: '50%',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', transition: 'all var(--transition-fast)'
-        }}
-      >
-        <Star size={16} fill={saved ? 'currentColor' : 'none'} />
-      </button>
-    </div>
+function Chip({ icon, text }: { icon: React.ReactNode; text: string }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 4,
+      fontSize: 12, color: 'var(--text-2)',
+      background: 'var(--gray-100)', padding: '3px 9px',
+      borderRadius: 'var(--r-full)', fontWeight: 500,
+    }}>
+      {icon} {text}
+    </span>
   )
 }
