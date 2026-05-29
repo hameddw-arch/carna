@@ -146,6 +146,12 @@ export default function ServicePage() {
             <div style={{ background: '#fff', borderRadius: 20, padding: '24px', border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-md)' }}>
               <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 20 }}>تواصل مع الورشة</h3>
 
+              {!service.phone && !service.whatsapp && (
+                <div style={{ textAlign: 'center', padding: '12px 0', color: 'var(--text-4)', fontSize: 13 }}>
+                  تواصل عبر <a href="/contact" style={{ color: 'var(--blue)' }}>صفحة التواصل</a>
+                </div>
+              )}
+
               {/* Phone */}
               {service.phone && (
                 <a href={`tel:${service.phone}`} className="btn btn-dark"
