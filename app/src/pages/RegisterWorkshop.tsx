@@ -29,6 +29,7 @@ export default function RegisterWorkshop() {
   const [form, setForm] = useState({
     name: '', city: '', phone: '', whatsapp: '',
     address: '', description: '', opening_hours: '',
+    maps_url: '',
     inspection: false, service_types: [] as string[], tier: 'free',
   })
 
@@ -88,6 +89,7 @@ export default function RegisterWorkshop() {
       address:           form.address.trim()  || null,
       description:       form.description.trim() || null,
       opening_hours:     form.opening_hours.trim() || null,
+      maps_url:          form.maps_url.trim() || null,
       inspection:        form.inspection,
       service_types:     form.service_types,
       subscription_tier: form.tier,
@@ -193,6 +195,14 @@ export default function RegisterWorkshop() {
             <Field label="وصف الورشة">
               <textarea className="input" rows={3} value={form.description} onChange={e => set('description', e.target.value)}
                 placeholder="اكتب نبذة عن ورشتك وخبرتك وما يميزك..." style={{ resize: 'vertical' }}/>
+            </Field>
+
+            <Field label="رابط موقعك على Google Maps (اختياري)">
+              <input className="input" value={(form as any).maps_url ?? ''} onChange={e => set('maps_url', e.target.value)}
+                placeholder="https://maps.google.com/..." dir="ltr"/>
+              <div style={{ fontSize: 11, color: 'var(--text-4)', marginTop: 5 }}>
+                افتح Google Maps ← ابحث عن ورشتك ← اضغط Share ← انسخ الرابط
+              </div>
             </Field>
 
             <button className="btn btn-yellow" onClick={() => setStep(2)} disabled={!valid1()}

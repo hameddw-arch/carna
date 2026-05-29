@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { MapPin, Phone, Shield, Clock, ChevronRight, CheckCircle, Loader2, Star } from 'lucide-react'
+import { MapPin, Phone, Shield, Clock, ChevronRight, CheckCircle, Loader2, Star, ExternalLink } from 'lucide-react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { fetchService } from '../lib/queries'
 import { supabase } from '../lib/supabase'
@@ -194,6 +194,29 @@ export default function ServicePage() {
               </div>
             )}
 
+            {/* Google Maps */}
+            {service.maps_url && (
+              <div style={{ background: '#fff', borderRadius: 20, padding: '24px', border: '1px solid var(--gray-200)', marginBottom: 20, boxShadow: 'var(--shadow-sm)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <h2 style={{ fontSize: 17, fontWeight: 800 }}>الموقع على الخريطة</h2>
+                  <a href={service.maps_url} target="_blank" rel="noopener noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: 'var(--blue)', textDecoration: 'none', fontWeight: 600 }}>
+                    <ExternalLink size={13}/> فتح في Google Maps
+                  </a>
+                </div>
+                <div style={{ borderRadius: 14, overflow: 'hidden', height: 280 }}>
+                  <iframe
+                    src={toEmbedUrl(service.maps_url)}
+                    width="100%" height="100%"
+                    style={{ border: 0, display: 'block' }}
+                    allowFullScreen loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title={`موقع ${service.name}`}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* ── REVIEWS ────────────────────────── */}
             <div style={{ background: '#fff', borderRadius: 20, padding: '24px', border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-sm)' }}>
               <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 20 }}>
@@ -336,6 +359,23 @@ export default function ServicePage() {
       </div>
     </main>
   )
+}
+
+function toEmbedUrl(url: string): string {
+  try {
+    const u = new URL(url)
+    // Already an embed URL
+    if (u.searchParams.get('output') === 'embed') return url
+    // maps.google.com/maps?q=...  → add output=embed
+    if (u.hostname.includes('google.com') && u.pathname.startsWith('/maps')) {
+      u.searchParams.set('output', 'embed')
+      return u.toString()
+    }
+    // Short URLs (goo.gl, maps.app.goo.gl) → wrap in q= embed
+    return `https://maps.google.com/maps?q=${encodeURIComponent(url)}&output=embed`
+  } catch {
+    return `https://maps.google.com/maps?q=${encodeURIComponent(url)}&output=embed`
+  }
 }
 
 function Stat({ label, value }: { label: string; value: string | number }) {
