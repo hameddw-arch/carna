@@ -4,13 +4,16 @@ import { supabase } from '../lib/supabase'
 import { Link } from 'react-router-dom'
 import { emailSellerListingApproved, emailSellerListingRejected } from '../lib/emails'
 
-const TABS = ['الإعلانات المعلقة', 'نشطة', 'مرفوضة', 'الورشات', 'المستخدمون', 'الإحصاءات']
+const TABS = ['الإعلانات المعلقة', 'نشطة', 'مرفوضة', 'الورشات', 'الإعلانات', 'المستخدمون', 'الإحصاءات']
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('الإعلانات المعلقة')
   const [listings,  setListings]  = useState<any[]>([])
   const [workshops, setWorkshops] = useState<any[]>([])
   const [users,     setUsers]     = useState<any[]>([])
+  const [ads,       setAds]       = useState<any[]>([])
+  const [adForm,    setAdForm]    = useState({ title: '', body_text: '', link_url: '', cta_text: 'تعرف أكثر', image_url: '', position: 'home_middle' })
+  const [savingAd,  setSavingAd]  = useState(false)
   const [stats,     setStats]     = useState({ pending: 0, active: 0, rejected: 0, total_users: 0, pending_workshops: 0 })
   const [loading,   setLoading]   = useState(true)
   const [rejectId,  setRejectId]  = useState<string | null>(null)
@@ -24,6 +27,7 @@ export default function AdminPanel() {
       if      (activeTab === 'الإحصاءات')       await loadStats()
       else if (activeTab === 'المستخدمون')      await loadUsers()
       else if (activeTab === 'الورشات')         await loadWorkshops()
+      else if (activeTab === 'الإعلانات')       await loadAds()
       else {
         const statusMap: Record<string, string> = {
           'الإعلانات المعلقة': 'pending',
@@ -47,6 +51,31 @@ export default function AdminPanel() {
       .from('services').select('*')
       .eq('status', 'pending').order('created_at', { ascending: false })
     setWorkshops(data ?? [])
+  }
+
+  async function loadAds() {
+    const { data } = await supabase.from('site_ads').select('*').order('created_at', { ascending: false })
+    setAds(data ?? [])
+  }
+
+  async function saveAd() {
+    if (!adForm.title.trim()) return
+    setSavingAd(true)
+    await supabase.from('site_ads').insert({ ...adForm, active: true })
+    setAdForm({ title: '', body_text: '', link_url: '', cta_text: 'تعرف أكثر', image_url: '', position: 'home_middle' })
+    await loadAds()
+    setSavingAd(false)
+  }
+
+  async function toggleAd(id: string, active: boolean) {
+    await supabase.from('site_ads').update({ active: !active }).eq('id', id)
+    setAds(a => a.map(x => x.id === id ? { ...x, active: !active } : x))
+  }
+
+  async function deleteAd(id: string) {
+    if (!confirm('حذف هذا الإعلان؟')) return
+    await supabase.from('site_ads').delete().eq('id', id)
+    setAds(a => a.filter(x => x.id !== id))
   }
 
   async function loadUsers() {
@@ -241,6 +270,92 @@ export default function AdminPanel() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Ads */}
+          {activeTab === 'الإعلانات' && (
+            <div>
+              {/* Add form */}
+              <div style={{ background: '#fff', borderRadius: 16, padding: '24px', border: '1px solid var(--gray-200)', marginBottom: 24 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 18 }}>إضافة إعلان جديد</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', display: 'block', marginBottom: 5 }}>عنوان الإعلان *</label>
+                    <input className="input" value={adForm.title} onChange={e => setAdForm(f => ({ ...f, title: e.target.value }))} placeholder="مثال: تأمين السيارات - الوطنية"/>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', display: 'block', marginBottom: 5 }}>نص زر الدعوة</label>
+                    <input className="input" value={adForm.cta_text} onChange={e => setAdForm(f => ({ ...f, cta_text: e.target.value }))} placeholder="تعرف أكثر"/>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', display: 'block', marginBottom: 5 }}>رابط الإعلان</label>
+                    <input className="input" value={adForm.link_url} onChange={e => setAdForm(f => ({ ...f, link_url: e.target.value }))} placeholder="https://" dir="ltr"/>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', display: 'block', marginBottom: 5 }}>رابط الصورة (اختياري)</label>
+                    <input className="input" value={adForm.image_url} onChange={e => setAdForm(f => ({ ...f, image_url: e.target.value }))} placeholder="https://..." dir="ltr"/>
+                  </div>
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', display: 'block', marginBottom: 5 }}>النص التوضيحي</label>
+                  <input className="input" value={adForm.body_text} onChange={e => setAdForm(f => ({ ...f, body_text: e.target.value }))} placeholder="وصف قصير للإعلان"/>
+                </div>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <select className="input" style={{ width: 200 }} value={adForm.position} onChange={e => setAdForm(f => ({ ...f, position: e.target.value }))}>
+                    <option value="home_middle">الصفحة الرئيسية — وسط</option>
+                    <option value="home_bottom">الصفحة الرئيسية — أسفل</option>
+                  </select>
+                  <button className="btn btn-yellow" onClick={saveAd} disabled={savingAd || !adForm.title.trim()} style={{ fontSize: 14 }}>
+                    {savingAd ? 'جارٍ الحفظ...' : '+ نشر الإعلان'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Ads list */}
+              {ads.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-4)', background: '#fff', borderRadius: 16, border: '1px solid var(--gray-200)' }}>
+                  لا يوجد إعلانات بعد — أضف أول إعلان أعلاه
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {ads.map(ad => (
+                    <div key={ad.id} style={{
+                      background: '#fff', borderRadius: 14, border: `1px solid ${ad.active ? 'var(--gray-200)' : 'var(--gray-100)'}`,
+                      padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 16,
+                      opacity: ad.active ? 1 : 0.5,
+                    }}>
+                      {ad.image_url && (
+                        <img src={ad.image_url} alt="" style={{ width: 80, height: 52, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}/>
+                      )}
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 3 }}>{ad.title}</div>
+                        {ad.body_text && <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 3 }}>{ad.body_text}</div>}
+                        <div style={{ fontSize: 11, color: 'var(--text-4)' }}>
+                          {ad.position === 'home_middle' ? 'الرئيسية - وسط' : 'الرئيسية - أسفل'}
+                          {ad.link_url && <span style={{ marginRight: 8, direction: 'ltr', display: 'inline-block' }}>{ad.link_url.slice(0, 40)}...</span>}
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                        <button onClick={() => toggleAd(ad.id, ad.active)} style={{
+                          padding: '7px 14px', borderRadius: 8, border: '1px solid var(--gray-200)',
+                          background: ad.active ? '#DCFCE7' : 'var(--gray-100)',
+                          color: ad.active ? '#16A34A' : 'var(--text-4)',
+                          fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'var(--font)',
+                        }}>
+                          {ad.active ? '● نشط' : '○ موقوف'}
+                        </button>
+                        <button onClick={() => deleteAd(ad.id)} style={{
+                          padding: '7px 10px', borderRadius: 8, background: '#FEE2E2',
+                          border: '1px solid #FCA5A5', cursor: 'pointer', color: '#DC2626',
+                        }}>
+                          <X size={14}/>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

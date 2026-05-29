@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Search, ChevronDown, Loader2, ChevronLeft, CheckCircle, Shield, Zap, Users } from 'lucide-react'
+import { Search, ChevronDown, Loader2, ChevronLeft, CheckCircle, Shield, Zap, Users, Phone, Star, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ListingCard from '../components/ListingCard'
 import { fetchListings, fetchDistinctMakes } from '../lib/queries'
+import { supabase } from '../lib/supabase'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -55,6 +56,8 @@ export default function Home() {
   const [brands,     setBrands]     = useState(BRAND_DATA)
   const [loading,    setLoading]    = useState(true)
   const [filters,    setFilters]    = useState({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '', sellerType: '' })
+  const [workshops,  setWorkshops]  = useState<any[]>([])
+  const [siteAds,    setSiteAds]    = useState<any[]>([])
 
   useEffect(() => {
     load()
@@ -64,6 +67,20 @@ export default function Home() {
         setBrands(updated)
       }
     })
+    // ورشات مميزة
+    supabase.from('services')
+      .select('id,name,city,phone,whatsapp,rating,inspection,service_types,subscription_tier,logo_url,verified')
+      .in('subscription_tier', ['premium','basic'])
+      .eq('status', 'active')
+      .order('subscription_tier')
+      .limit(4)
+      .then(({ data }) => setWorkshops(data ?? []))
+    // إعلانات الموقع
+    supabase.from('site_ads')
+      .select('*')
+      .eq('active', true)
+      .eq('position', 'home_middle')
+      .then(({ data }) => setSiteAds(data ?? []))
   }, [])
 
   async function load(extra?: object) {
@@ -308,6 +325,136 @@ export default function Home() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', gap: 18 }}>
               {featured.map(l => <ListingCard key={l.id} listing={l}/>)}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════════
+          PREMIUM WORKSHOPS
+      ══════════════════════════════════════════ */}
+      {workshops.length > 0 && (
+        <section style={{ padding: '52px 0', background: '#fff', borderTop: '1px solid var(--gray-200)' }}>
+          <div className="container">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
+              <div>
+                <div className="section-eyebrow">ورشات وخدمات</div>
+                <h2 className="section-title">🏆 ورشات موصى بها</h2>
+              </div>
+              <Link to="/services" className="btn btn-outline" style={{ fontSize: 13, gap: 4 }}>
+                كل الورشات <ChevronLeft size={14}/>
+              </Link>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+              {workshops.map(ws => (
+                <Link key={ws.id} to={`/services/${ws.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div style={{
+                    background: ws.subscription_tier === 'premium' ? 'var(--dark)' : '#fff',
+                    border: `2px solid ${ws.subscription_tier === 'premium' ? 'var(--yellow)' : 'var(--gray-200)'}`,
+                    borderRadius: 18, padding: '20px',
+                    transition: 'transform 150ms ease, box-shadow 150ms ease',
+                    cursor: 'pointer',
+                  }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-lg)' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '' }}
+                  >
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 14 }}>
+                      <div style={{
+                        width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                        background: ws.subscription_tier === 'premium' ? 'rgba(253,183,0,.15)' : 'var(--gray-100)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 20, fontWeight: 800,
+                        color: ws.subscription_tier === 'premium' ? 'var(--yellow)' : 'var(--text-3)',
+                        overflow: 'hidden',
+                      }}>
+                        {ws.logo_url
+                          ? <img src={ws.logo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+                          : ws.name[0]
+                        }
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: ws.subscription_tier === 'premium' ? '#fff' : 'var(--text)', marginBottom: 2 }}>
+                          {ws.name}
+                        </div>
+                        <div style={{ fontSize: 12, color: ws.subscription_tier === 'premium' ? 'rgba(255,255,255,.5)' : 'var(--text-4)' }}>
+                          📍 {ws.city}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+                      {ws.inspection && (
+                        <span style={{ fontSize: 11, fontWeight: 700, background: '#ECFDF5', color: '#065F46', padding: '3px 8px', borderRadius: 6 }}>
+                          🔍 فحص
+                        </span>
+                      )}
+                      {ws.service_types?.slice(0, 2).map((s: string) => (
+                        <span key={s} style={{ fontSize: 11, background: ws.subscription_tier === 'premium' ? 'rgba(255,255,255,.08)' : 'var(--gray-100)', color: ws.subscription_tier === 'premium' ? 'rgba(255,255,255,.6)' : 'var(--text-3)', padding: '3px 8px', borderRadius: 6 }}>
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      {ws.rating > 0 && (
+                        <span style={{ fontSize: 13, fontWeight: 700, color: ws.subscription_tier === 'premium' ? 'var(--yellow)' : '#D97706' }}>
+                          <Star size={12} style={{ display: 'inline', marginLeft: 3 }} fill="currentColor"/>
+                          {ws.rating}
+                        </span>
+                      )}
+                      {(ws.phone || ws.whatsapp) && (
+                        <a href={ws.whatsapp ? `https://wa.me/${ws.whatsapp}` : `tel:${ws.phone}`}
+                          onClick={e => e.stopPropagation()}
+                          target={ws.whatsapp ? '_blank' : undefined}
+                          rel="noopener noreferrer"
+                          className="btn btn-yellow"
+                          style={{ fontSize: 12, padding: '6px 12px', gap: 5, marginRight: 'auto' }}>
+                          <Phone size={12}/> اتصل
+                        </a>
+                      )}
+                      <ExternalLink size={14} style={{ color: ws.subscription_tier === 'premium' ? 'rgba(255,255,255,.3)' : 'var(--text-4)', marginRight: ws.phone || ws.whatsapp ? 8 : 'auto' }}/>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════════
+          SITE ADS BANNER
+      ══════════════════════════════════════════ */}
+      {siteAds.length > 0 && (
+        <section style={{ padding: '32px 0', background: 'var(--off-white)' }}>
+          <div className="container">
+            {siteAds.map(ad => (
+              <a key={ad.id} href={ad.link_url ?? '#'} target="_blank" rel="noopener noreferrer"
+                style={{ display: 'block', textDecoration: 'none', borderRadius: 20, overflow: 'hidden', boxShadow: 'var(--shadow-md)', marginBottom: 16 }}>
+                {ad.image_url ? (
+                  <div style={{ position: 'relative' }}>
+                    <img src={ad.image_url} alt={ad.title} style={{ width: '100%', maxHeight: 160, objectFit: 'cover', display: 'block' }}/>
+                    <div style={{ position: 'absolute', top: 10, right: 14, background: 'rgba(0,0,0,.5)', color: '#fff', fontSize: 10, padding: '2px 8px', borderRadius: 6 }}>إعلان</div>
+                  </div>
+                ) : (
+                  <div style={{
+                    background: 'linear-gradient(135deg, var(--dark) 0%, #1a1a2e 100%)',
+                    padding: '28px 32px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16,
+                  }}>
+                    <div style={{ position: 'absolute', top: 10, right: 14, background: 'rgba(255,255,255,.1)', color: 'rgba(255,255,255,.5)', fontSize: 10, padding: '2px 8px', borderRadius: 6 }}>إعلان</div>
+                    <div>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: '#fff', marginBottom: 6 }}>{ad.title}</div>
+                      {ad.body_text && <div style={{ fontSize: 14, color: 'rgba(255,255,255,.6)', maxWidth: 500 }}>{ad.body_text}</div>}
+                    </div>
+                    {ad.link_url && (
+                      <div className="btn btn-yellow" style={{ fontSize: 14, flexShrink: 0 }}>
+                        {ad.cta_text} <ExternalLink size={13}/>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </a>
+            ))}
           </div>
         </section>
       )}
