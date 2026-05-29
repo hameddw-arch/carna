@@ -35,7 +35,7 @@ export default function ListingPage() {
   const images = listing.images?.length ? listing.images : [listing.image]
 
   return (
-    <div style={{ background: 'var(--color-yellow)', minHeight: 'calc(100vh - 68px)' }}>
+    <div style={{ background: 'var(--off-white)', minHeight: 'calc(100vh - 68px)' }}>
       <SEO
         title={listing.title}
         description={`${listing.make} ${listing.model} ${listing.year} — ${listing.city} — ${Number(listing.price).toLocaleString()} ل.س`}
