@@ -192,12 +192,14 @@ export default function ListingPage() {
             {/* Seller */}
             <div className="card" style={{ padding: 24, marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
-                <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--bg-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 24, color: 'var(--text-primary)' }}>
-                  {listing.seller[0]}
+                <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--gray-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 24, color: 'var(--text)' }}>
+                  {(listing.users?.name ?? listing.users?.phone ?? 'م')[0]}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 16 }}>{listing.seller}</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>بائع منذ 2023</div>
+                  <div style={{ fontWeight: 700, fontSize: 16 }}>{listing.users?.name ?? 'مستخدم كارنا'}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>
+                    {listing.seller_type === 'dealer' ? '🏢 وكيل / معرض' : '👤 مالك مباشر'}
+                  </div>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 4, alignItems: 'center', fontSize: 14, color: 'var(--text-primary)' }}>
