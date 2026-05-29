@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { ChevronRight, Check, Loader2, Plus, X, Image } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -18,6 +18,7 @@ const MAX_IMAGES = 5
 export default function RegisterWorkshop() {
   const { user }   = useAuth()
   const navigate   = useNavigate()
+  const [params]   = useSearchParams()
   const fileRef    = useRef<HTMLInputElement>(null)
 
   const [step,    setStep]    = useState(1)
@@ -30,7 +31,8 @@ export default function RegisterWorkshop() {
     name: '', city: '', phone: '', whatsapp: '',
     address: '', description: '', opening_hours: '',
     maps_url: '',
-    inspection: false, service_types: [] as string[], tier: 'free',
+    inspection: false, service_types: [] as string[],
+    tier: (['basic','premium'].includes(params.get('tier') ?? '') ? params.get('tier')! : 'free'),
   })
 
   function set(k: string, v: any) { setForm(f => ({ ...f, [k]: v })) }

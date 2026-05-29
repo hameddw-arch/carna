@@ -164,10 +164,14 @@ export default function Services() {
                     </div>
                   ))}
                 </div>
-                <button className={`btn ${tier.highlight ? 'btn-yellow' : 'btn-outline'}`}
-                  style={{ width: '100%', fontSize: 14 }}>
+                <Link
+                  to={tier.key === 'free'
+                    ? '/register-workshop'
+                    : `/register-workshop?tier=${tier.key}`}
+                  className={`btn ${tier.highlight ? 'btn-yellow' : 'btn-outline'}`}
+                  style={{ width: '100%', fontSize: 14, justifyContent: 'center', textDecoration: 'none' }}>
                   {tier.cta}
-                </button>
+                </Link>
               </div>
             ))}
           </div>
