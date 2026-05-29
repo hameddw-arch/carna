@@ -69,7 +69,7 @@ export default function Home() {
     })
     // ورشات مميزة
     supabase.from('services')
-      .select('id,name,city,phone,whatsapp,rating,inspection,service_types,subscription_tier,logo_url,verified')
+      .select('id,name,city,phone,whatsapp,rating,inspection,service_types,subscription_tier,logo_url,verified,images')
       .in('subscription_tier', ['premium','basic'])
       .eq('status', 'active')
       .order('subscription_tier')
@@ -344,78 +344,109 @@ export default function Home() {
                 كل الورشات <ChevronLeft size={14}/>
               </Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
-              {workshops.map(ws => (
-                <Link key={ws.id} to={`/services/${ws.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16, alignItems: 'stretch' }}>
+              {workshops.map(ws => {
+                const isPremium = ws.subscription_tier === 'premium'
+                const cover = ws.images?.[0] ?? ws.logo_url ?? null
+                return (
+                <Link key={ws.id} to={`/services/${ws.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
                   <div style={{
-                    background: ws.subscription_tier === 'premium' ? 'var(--dark)' : '#fff',
-                    border: `2px solid ${ws.subscription_tier === 'premium' ? 'var(--yellow)' : 'var(--gray-200)'}`,
-                    borderRadius: 18, padding: '20px',
+                    height: '100%',
+                    display: 'flex', flexDirection: 'column',
+                    background: '#fff',
+                    border: `2px solid ${isPremium ? 'var(--yellow)' : 'var(--gray-200)'}`,
+                    borderRadius: 18, overflow: 'hidden',
                     transition: 'transform 150ms ease, box-shadow 150ms ease',
                     cursor: 'pointer',
                   }}
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-lg)' }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '' }}
                   >
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 14 }}>
+                    {/* Header — image cover or gradient fallback */}
+                    <div style={{
+                      position: 'relative', height: 120, flexShrink: 0,
+                      background: cover
+                        ? `url(${cover}) center/cover no-repeat`
+                        : isPremium
+                          ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
+                          : 'linear-gradient(135deg, var(--gray-100) 0%, #E2E4E8 100%)',
+                    }}>
+                      {/* dark gradient overlay for text readability */}
                       <div style={{
-                        width: 48, height: 48, borderRadius: 12, flexShrink: 0,
-                        background: ws.subscription_tier === 'premium' ? 'rgba(253,183,0,.15)' : 'var(--gray-100)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 20, fontWeight: 800,
-                        color: ws.subscription_tier === 'premium' ? 'var(--yellow)' : 'var(--text-3)',
-                        overflow: 'hidden',
-                      }}>
-                        {ws.logo_url
-                          ? <img src={ws.logo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
-                          : ws.name[0]
-                        }
-                      </div>
-                      <div>
-                        <div style={{ fontSize: 15, fontWeight: 800, color: ws.subscription_tier === 'premium' ? '#fff' : 'var(--text)', marginBottom: 2 }}>
+                        position: 'absolute', inset: 0,
+                        background: cover
+                          ? 'linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.15) 60%, rgba(0,0,0,.05) 100%)'
+                          : 'transparent',
+                      }}/>
+
+                      {/* Premium badge */}
+                      {isPremium && (
+                        <span style={{
+                          position: 'absolute', top: 10, right: 10,
+                          background: 'var(--yellow)', color: 'var(--dark)',
+                          fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 'var(--r-full)',
+                        }}>🏆 مميز</span>
+                      )}
+
+                      {/* No-image fallback: big initial */}
+                      {!cover && (
+                        <div style={{
+                          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 40, fontWeight: 900,
+                          color: isPremium ? 'rgba(253,183,0,.5)' : 'var(--gray-400)',
+                        }}>{ws.name[0]}</div>
+                      )}
+
+                      {/* Name + city overlaid at bottom */}
+                      <div style={{ position: 'absolute', bottom: 0, right: 0, left: 0, padding: '10px 14px' }}>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: cover ? '#fff' : (isPremium ? '#fff' : 'var(--text)'), marginBottom: 2, lineHeight: 1.3 }}>
                           {ws.name}
                         </div>
-                        <div style={{ fontSize: 12, color: ws.subscription_tier === 'premium' ? 'rgba(255,255,255,.5)' : 'var(--text-4)' }}>
+                        <div style={{ fontSize: 12, color: cover ? 'rgba(255,255,255,.75)' : (isPremium ? 'rgba(255,255,255,.6)' : 'var(--text-4)') }}>
                           📍 {ws.city}
                         </div>
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
-                      {ws.inspection && (
-                        <span style={{ fontSize: 11, fontWeight: 700, background: '#ECFDF5', color: '#065F46', padding: '3px 8px', borderRadius: 6 }}>
-                          🔍 فحص
-                        </span>
-                      )}
-                      {ws.service_types?.slice(0, 2).map((s: string) => (
-                        <span key={s} style={{ fontSize: 11, background: ws.subscription_tier === 'premium' ? 'rgba(255,255,255,.08)' : 'var(--gray-100)', color: ws.subscription_tier === 'premium' ? 'rgba(255,255,255,.6)' : 'var(--text-3)', padding: '3px 8px', borderRadius: 6 }}>
-                          {s}
-                        </span>
-                      ))}
-                    </div>
+                    {/* Body */}
+                    <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14, minHeight: 22 }}>
+                        {ws.inspection && (
+                          <span style={{ fontSize: 11, fontWeight: 700, background: '#ECFDF5', color: '#065F46', padding: '3px 8px', borderRadius: 6 }}>
+                            🔍 فحص
+                          </span>
+                        )}
+                        {ws.service_types?.slice(0, 2).map((s: string) => (
+                          <span key={s} style={{ fontSize: 11, background: 'var(--gray-100)', color: 'var(--text-3)', padding: '3px 8px', borderRadius: 6 }}>
+                            {s}
+                          </span>
+                        ))}
+                      </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      {ws.rating > 0 && (
-                        <span style={{ fontSize: 13, fontWeight: 700, color: ws.subscription_tier === 'premium' ? 'var(--yellow)' : '#D97706' }}>
-                          <Star size={12} style={{ display: 'inline', marginLeft: 3 }} fill="currentColor"/>
-                          {ws.rating}
-                        </span>
-                      )}
-                      {(ws.phone || ws.whatsapp) && (
-                        <a href={ws.whatsapp ? `https://wa.me/${ws.whatsapp}` : `tel:${ws.phone}`}
-                          onClick={e => e.stopPropagation()}
-                          target={ws.whatsapp ? '_blank' : undefined}
-                          rel="noopener noreferrer"
-                          className="btn btn-yellow"
-                          style={{ fontSize: 12, padding: '6px 12px', gap: 5, marginRight: 'auto' }}>
-                          <Phone size={12}/> اتصل
-                        </a>
-                      )}
-                      <ExternalLink size={14} style={{ color: ws.subscription_tier === 'premium' ? 'rgba(255,255,255,.3)' : 'var(--text-4)', marginRight: ws.phone || ws.whatsapp ? 8 : 'auto' }}/>
+                      {/* Bottom row pinned */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                        {ws.rating > 0 ? (
+                          <span style={{ fontSize: 13, fontWeight: 700, color: '#D97706' }}>
+                            <Star size={12} style={{ display: 'inline', marginLeft: 3 }} fill="currentColor"/>
+                            {ws.rating}
+                          </span>
+                        ) : <span/>}
+                        {(ws.phone || ws.whatsapp) && (
+                          <a href={ws.whatsapp ? `https://wa.me/${ws.whatsapp}` : `tel:${ws.phone}`}
+                            onClick={e => e.stopPropagation()}
+                            target={ws.whatsapp ? '_blank' : undefined}
+                            rel="noopener noreferrer"
+                            className="btn btn-yellow"
+                            style={{ fontSize: 12, padding: '6px 12px', gap: 5 }}>
+                            <Phone size={12}/> اتصل
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </Link>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>
