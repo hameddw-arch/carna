@@ -6,6 +6,7 @@ import {
   fetchNotifications, countUnread, markAllRead, markRead,
   subscribeToNotifications, NOTIF_META, type Notification,
 } from '../lib/notifications'
+import { requestPushPermission } from '../lib/push'
 
 export default function NotificationBell() {
   const { user }  = useAuth()
@@ -46,6 +47,7 @@ export default function NotificationBell() {
     const next = !open
     setOpen(next)
     if (next) {
+      requestPushPermission() // إيماءة مستخدم — اطلب إذن إشعارات المتصفح مرة واحدة
       await load()
       if (user && unread > 0) { await markAllRead(user.id); setUnread(0) }
     }

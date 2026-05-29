@@ -21,6 +21,7 @@ import AdminPanel from './pages/AdminPanel'
 import NotFound from './pages/NotFound'
 import InstallPrompt from './components/InstallPrompt'
 import CompareBar from './components/CompareBar'
+import PushNotifier from './components/PushNotifier'
 import Compare from './pages/Compare'
 import Messages from './pages/Messages'
 import EditListing from './pages/EditListing'
@@ -54,6 +55,7 @@ export default function App() {
         </Routes>
         <Footer />
         <CompareBar />
+        <PushNotifier />
         <InstallPrompt />
       </div>
     </AuthProvider>
