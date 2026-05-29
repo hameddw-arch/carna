@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { MapPin, Calendar, Gauge, Fuel, Settings, Palette, User, ChevronRight, ChevronLeft, Share2, Star, Shield, Phone, MessageCircle, Loader2 } from 'lucide-react'
 import { fetchListing, fetchListings } from '../lib/queries'
+import { supabase } from '../lib/supabase'
 import { threadKey } from '../lib/chat'
 import { useAuth } from '../contexts/AuthContext'
 import SEO from '../components/SEO'
@@ -27,6 +28,12 @@ export default function ListingPage() {
     if (!id) return
     setLoading(true)
     setActiveImg(0)
+    // عدّاد المشاهدات — مرة واحدة لكل جلسة لكل إعلان
+    const seenKey = `viewed_${id}`
+    if (!sessionStorage.getItem(seenKey)) {
+      sessionStorage.setItem(seenKey, '1')
+      supabase.rpc('increment_listing_views', { lid: id }).then(() => {})
+    }
     fetchListing(id)
       .then(data => {
         setListing(data)
@@ -53,6 +60,26 @@ export default function ListingPage() {
         image={listing.images?.[0]}
         url={`/listing/${listing.id}`}
         type="article"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Car',
+          name: listing.title,
+          brand: { '@type': 'Brand', name: listing.make },
+          model: listing.model,
+          vehicleModelDate: String(listing.year),
+          mileageFromOdometer: { '@type': 'QuantitativeValue', value: listing.km, unitCode: 'KMT' },
+          fuelType: listing.fuel,
+          color: listing.color,
+          image: listing.images,
+          description: listing.description,
+          offers: {
+            '@type': 'Offer',
+            price: listing.price,
+            priceCurrency: 'SYP',
+            availability: 'https://schema.org/InStock',
+            areaServed: listing.city,
+          },
+        }}
       />
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 20px 60px' }}>
 

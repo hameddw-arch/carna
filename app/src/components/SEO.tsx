@@ -6,6 +6,7 @@ interface SEOProps {
   image?: string
   url?: string
   type?: 'website' | 'article'
+  jsonLd?: object
 }
 
 const SITE = 'كارنا — CARNA'
@@ -13,7 +14,7 @@ const BASE_URL = 'https://carna.online'
 const DEFAULT_IMG = `${BASE_URL}/og-default.jpg`
 const DEFAULT_DESC = 'سيارتك الجاية — هون. آلاف الإعلانات من كل سوريا. ابحث، قارن، واشتري بثقة.'
 
-export default function SEO({ title, description, image, url, type = 'website' }: SEOProps) {
+export default function SEO({ title, description, image, url, type = 'website', jsonLd }: SEOProps) {
   const fullTitle = title ? `${title} | ${SITE}` : SITE
   const desc      = description ?? DEFAULT_DESC
   const img       = image ?? DEFAULT_IMG
@@ -39,6 +40,11 @@ export default function SEO({ title, description, image, url, type = 'website' }
       <meta name="twitter:title"       content={fullTitle}/>
       <meta name="twitter:description" content={desc}/>
       <meta name="twitter:image"       content={img}/>
+
+      {/* Schema.org structured data */}
+      {jsonLd && (
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      )}
     </Helmet>
   )
 }

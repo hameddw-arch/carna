@@ -23,6 +23,7 @@ import InstallPrompt from './components/InstallPrompt'
 import CompareBar from './components/CompareBar'
 import Compare from './pages/Compare'
 import Messages from './pages/Messages'
+import EditListing from './pages/EditListing'
 import './index.css'
 
 export default function App() {
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/login"               element={<Login />} />
           <Route path="/dashboard"           element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/post"                element={<ProtectedRoute><PostAd /></ProtectedRoute>} />
+          <Route path="/edit/:id"            element={<ProtectedRoute><EditListing /></ProtectedRoute>} />
           <Route path="/compare"             element={<Compare />} />
           <Route path="/messages"            element={<ProtectedRoute><Messages /></ProtectedRoute>} />
           <Route path="/messages/:key"       element={<ProtectedRoute><Messages /></ProtectedRoute>} />

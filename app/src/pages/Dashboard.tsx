@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Eye, Trash2, LogOut, Wallet, Star, Loader2, Settings, Package, MessageCircle } from 'lucide-react'
+import { Plus, Eye, Trash2, LogOut, Wallet, Star, Loader2, Settings, Package, MessageCircle, Pencil } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { updateProfile } from '../lib/auth'
@@ -195,6 +195,10 @@ export default function Dashboard() {
                         <Link to={`/listing/${listing.id}`}
                           style={{ display: 'flex', alignItems: 'center', padding: '7px 10px', borderRadius: 9, border: '1px solid var(--gray-200)', color: 'var(--text-3)', textDecoration: 'none' }}>
                           <Eye size={14}/>
+                        </Link>
+                        <Link to={`/edit/${listing.id}`}
+                          style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', borderRadius: 9, border: '1px solid var(--gray-200)', color: 'var(--text-2)', textDecoration: 'none', fontSize: 12, fontWeight: 600 }}>
+                          <Pencil size={13}/> تعديل
                         </Link>
                         <button onClick={() => deleteListing(listing.id)}
                           style={{ display: 'flex', alignItems: 'center', padding: '7px 10px', borderRadius: 9, background: 'none', border: '1px solid #FCA5A5', cursor: 'pointer', color: '#DC2626' }}>
