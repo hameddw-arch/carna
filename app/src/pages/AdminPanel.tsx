@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react'
-import { Check, X, Eye, Users, Clock, RefreshCw } from 'lucide-react'
+import { Check, X, Eye, Users, Clock, RefreshCw, Wrench } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Link } from 'react-router-dom'
 import { emailSellerListingApproved, emailSellerListingRejected } from '../lib/emails'
 
-const TABS = ['الإعلانات المعلقة', 'نشطة', 'مرفوضة', 'المستخدمون', 'الإحصاءات']
-
+const TABS = ['الإعلانات المعلقة', 'نشطة', 'مرفوضة', 'الورشات', 'المستخدمون', 'الإحصاءات']
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('الإعلانات المعلقة')
   const [listings,  setListings]  = useState<any[]>([])
+  const [workshops, setWorkshops] = useState<any[]>([])
   const [users,     setUsers]     = useState<any[]>([])
-  const [stats,     setStats]     = useState({ pending: 0, active: 0, rejected: 0, total_users: 0 })
+  const [stats,     setStats]     = useState({ pending: 0, active: 0, rejected: 0, total_users: 0, pending_workshops: 0 })
   const [loading,   setLoading]   = useState(true)
   const [rejectId,  setRejectId]  = useState<string | null>(null)
   const [rejectReason, setRejectReason] = useState('')
@@ -21,53 +21,53 @@ export default function AdminPanel() {
   async function loadData() {
     setLoading(true)
     try {
-      if (activeTab === 'الإحصاءات') {
-        await loadStats()
-      } else if (activeTab === 'المستخدمون') {
-        await loadUsers()
-      } else {
+      if      (activeTab === 'الإحصاءات')       await loadStats()
+      else if (activeTab === 'المستخدمون')      await loadUsers()
+      else if (activeTab === 'الورشات')         await loadWorkshops()
+      else {
         const statusMap: Record<string, string> = {
           'الإعلانات المعلقة': 'pending',
-          'نشطة': 'active',
-          'مرفوضة': 'rejected',
+          'نشطة':              'active',
+          'مرفوضة':            'rejected',
         }
         await loadListings(statusMap[activeTab])
       }
-    } finally {
-      setLoading(false)
-    }
+    } finally { setLoading(false) }
   }
 
   async function loadListings(status: string) {
     const { data } = await supabase
-      .from('listings')
-      .select('*, listing_images(url), users(phone, name)')
-      .eq('status', status)
-      .order('created_at', { ascending: false })
+      .from('listings').select('*, listing_images(url), users(phone, name)')
+      .eq('status', status).order('created_at', { ascending: false })
     setListings(data ?? [])
   }
 
-  async function loadUsers() {
+  async function loadWorkshops() {
     const { data } = await supabase
-      .from('users')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(100)
+      .from('services').select('*')
+      .eq('status', 'pending').order('created_at', { ascending: false })
+    setWorkshops(data ?? [])
+  }
+
+  async function loadUsers() {
+    const { data } = await supabase.from('users').select('*').order('created_at', { ascending: false }).limit(100)
     setUsers(data ?? [])
   }
 
   async function loadStats() {
-    const [pending, active, rejected, usersCount] = await Promise.all([
+    const [pending, active, rejected, usersCount, pendingWS] = await Promise.all([
       supabase.from('listings').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       supabase.from('listings').select('id', { count: 'exact', head: true }).eq('status', 'active'),
       supabase.from('listings').select('id', { count: 'exact', head: true }).eq('status', 'rejected'),
       supabase.from('users').select('id', { count: 'exact', head: true }),
+      supabase.from('services').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
     ])
     setStats({
-      pending:     pending.count  ?? 0,
-      active:      active.count   ?? 0,
-      rejected:    rejected.count ?? 0,
-      total_users: usersCount.count ?? 0,
+      pending:           pending.count     ?? 0,
+      active:            active.count      ?? 0,
+      rejected:          rejected.count    ?? 0,
+      total_users:       usersCount.count  ?? 0,
+      pending_workshops: pendingWS.count   ?? 0,
     })
   }
 
@@ -75,12 +75,7 @@ export default function AdminPanel() {
     await supabase.from('listings').update({ status: 'active' }).eq('id', id)
     const listing = listings.find(l => l.id === id)
     if (listing?.users?.name || listing?.users?.phone) {
-      // notify seller by email if they have one stored
-      emailSellerListingApproved(
-        listing.users.name ?? listing.users.phone,
-        listing.title,
-        id
-      ).catch(() => {})
+      emailSellerListingApproved(listing.users.name ?? listing.users.phone, listing.title, id).catch(() => {})
     }
     setListings(l => l.filter(x => x.id !== id))
   }
@@ -90,15 +85,20 @@ export default function AdminPanel() {
     await supabase.from('listings').update({ status: 'rejected', reject_reason: reason }).eq('id', id)
     const listing = listings.find(l => l.id === id)
     if (listing?.users?.name || listing?.users?.phone) {
-      emailSellerListingRejected(
-        listing.users.name ?? listing.users.phone,
-        listing.title,
-        reason
-      ).catch(() => {})
+      emailSellerListingRejected(listing.users.name ?? listing.users.phone, listing.title, reason).catch(() => {})
     }
     setListings(l => l.filter(x => x.id !== id))
-    setRejectId(null)
-    setRejectReason('')
+    setRejectId(null); setRejectReason('')
+  }
+
+  async function approveWorkshop(id: string) {
+    await supabase.from('services').update({ status: 'active', verified: true }).eq('id', id)
+    setWorkshops(w => w.filter(x => x.id !== id))
+  }
+
+  async function rejectWorkshop(id: string) {
+    await supabase.from('services').update({ status: 'rejected' }).eq('id', id)
+    setWorkshops(w => w.filter(x => x.id !== id))
   }
 
   async function banUser(id: string) {
@@ -107,6 +107,8 @@ export default function AdminPanel() {
     setUsers(u => u.map(x => x.id === id ? { ...x, verified: false } : x))
   }
 
+  const pendingCount = stats.pending + stats.pending_workshops
+
   return (
     <main style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 20px 60px' }}>
 
@@ -114,128 +116,152 @@ export default function AdminPanel() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800 }}>لوحة الإدارة</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 2 }}>CARNA Admin Panel</p>
+          <p style={{ color: 'var(--text-3)', fontSize: 13, marginTop: 2 }}>CARNA Admin Panel</p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <button onClick={loadData} className="btn-ghost" style={{ fontSize: 13 }}>
-            <RefreshCw size={14} /> تحديث
+          <button onClick={loadData} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--gray-100)', border: '1px solid var(--gray-200)', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontSize: 13, fontFamily: 'var(--font)' }}>
+            <RefreshCw size={14}/> تحديث
           </button>
-          {stats.pending > 0 && (
+          {pendingCount > 0 && (
             <span style={{ background: '#DC2626', color: '#fff', fontSize: 12, fontWeight: 700, borderRadius: 9999, padding: '3px 10px' }}>
-              {stats.pending} معلق
+              {pendingCount} معلق
             </span>
           )}
         </div>
       </div>
 
-      {/* Quick stats bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 28 }}>
-        <MiniStat label="معلقة"      value={stats.pending}     color="#D97706" icon={<Clock size={16}/>} />
-        <MiniStat label="نشطة"       value={stats.active}      color="#16A34A" icon={<Check size={16}/>} />
-        <MiniStat label="مرفوضة"     value={stats.rejected}    color="#DC2626" icon={<X size={16}/>} />
-        <MiniStat label="مستخدمون"   value={stats.total_users} color="#0053FA" icon={<Users size={16}/>} />
+      {/* Stats bar */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 28 }}>
+        <MiniStat label="إعلانات معلقة"  value={stats.pending}           color="#D97706" icon={<Clock size={16}/>}/>
+        <MiniStat label="نشطة"           value={stats.active}            color="#16A34A" icon={<Check size={16}/>}/>
+        <MiniStat label="مرفوضة"         value={stats.rejected}          color="#DC2626" icon={<X size={16}/>}/>
+        <MiniStat label="ورشات معلقة"    value={stats.pending_workshops} color="#7C3AED" icon={<Wrench size={16}/>}/>
+        <MiniStat label="مستخدمون"       value={stats.total_users}       color="#0053FA" icon={<Users size={16}/>}/>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, borderBottom: '2px solid var(--border-light)', marginBottom: 24 }}>
+      <div style={{ display: 'flex', gap: 4, borderBottom: '2px solid var(--gray-200)', marginBottom: 24, overflowX: 'auto' }}>
         {TABS.map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)} style={{
             padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer',
             fontWeight: activeTab === tab ? 700 : 400,
-            color: activeTab === tab ? 'var(--text-primary)' : 'var(--text-muted)',
-            borderBottom: `2px solid ${activeTab === tab ? 'var(--color-yellow)' : 'transparent'}`,
-            marginBottom: -2, fontSize: 14, fontFamily: 'inherit',
-            whiteSpace: 'nowrap',
+            color: activeTab === tab ? 'var(--text)' : 'var(--text-3)',
+            borderBottom: `2px solid ${activeTab === tab ? 'var(--yellow)' : 'transparent'}`,
+            marginBottom: -2, fontSize: 14, fontFamily: 'inherit', whiteSpace: 'nowrap',
           }}>{tab}</button>
         ))}
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>جارٍ التحميل...</div>
+        <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-3)' }}>جارٍ التحميل...</div>
       ) : (
-
         <>
-          {/* Listings tabs */}
-          {(activeTab === 'الإعلانات المعلقة' || activeTab === 'نشطة' || activeTab === 'مرفوضة') && (
+          {/* Listings */}
+          {['الإعلانات المعلقة','نشطة','مرفوضة'].includes(activeTab) && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {listings.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-muted)' }}>لا يوجد إعلانات</div>
+                <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-3)' }}>لا يوجد إعلانات</div>
               ) : listings.map(listing => (
-                <div key={listing.id} className="card" style={{ display: 'flex', gap: 16, padding: 16, alignItems: 'flex-start' }}>
-
-                  {/* Thumbnail */}
-                  <img
-                    src={listing.listing_images?.[0]?.url ?? 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=120&h=80&fit=crop'}
-                    alt=""
-                    style={{ width: 110, height: 74, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}
-                  />
-
-                  {/* Info */}
+                <div key={listing.id} style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--gray-200)', display: 'flex', gap: 16, padding: 16, alignItems: 'flex-start' }}>
+                  <img src={listing.listing_images?.[0]?.url ?? 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=120&h=80&fit=crop'}
+                    alt="" style={{ width: 110, height: 74, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}/>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{listing.title}</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                    <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 6 }}>
                       {listing.price?.toLocaleString()} ل.س · {listing.city} · {listing.km?.toLocaleString()} كم
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                      البائع: <strong>{listing.users?.name ?? listing.users?.phone ?? '—'}</strong>
-                      <span style={{ margin: '0 8px' }}>·</span>
-                      {new Date(listing.created_at).toLocaleDateString('ar-SY')}
+                    <div style={{ fontSize: 12, color: 'var(--text-4)' }}>
+                      {listing.users?.name ?? listing.users?.phone ?? '—'} · {new Date(listing.created_at).toLocaleDateString('ar-SY')}
                     </div>
-                    {listing.reject_reason && (
-                      <div style={{ fontSize: 12, color: '#DC2626', marginTop: 4 }}>سبب الرفض: {listing.reject_reason}</div>
-                    )}
+                    {listing.reject_reason && <div style={{ fontSize: 12, color: '#DC2626', marginTop: 4 }}>سبب الرفض: {listing.reject_reason}</div>}
                   </div>
-
-                  {/* Actions */}
-                  <div style={{ display: 'flex', gap: 8, flexShrink: 0, alignItems: 'center' }}>
-                    <Link to={`/listing/${listing.id}`} target="_blank" className="btn-ghost" style={{ padding: '8px 12px', fontSize: 13 }}>
-                      <Eye size={14} />
+                  <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                    <Link to={`/listing/${listing.id}`} target="_blank"
+                      style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', borderRadius: 8, border: '1px solid var(--gray-200)', color: 'var(--text-3)', textDecoration: 'none' }}>
+                      <Eye size={14}/>
                     </Link>
-                    {activeTab === 'الإعلانات المعلقة' && (
-                      <>
-                        <button onClick={() => approveListing(listing.id)}
-                          style={{ background: '#dcfce7', border: '1.5px solid #86efac', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', color: '#16A34A', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <Check size={14} /> قبول
-                        </button>
-                        <button onClick={() => setRejectId(listing.id)}
-                          style={{ background: '#fee2e2', border: '1.5px solid #fca5a5', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', color: '#DC2626', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <X size={14} /> رفض
-                        </button>
-                      </>
-                    )}
-                    {activeTab === 'نشطة' && (
-                      <button onClick={() => setRejectId(listing.id)}
-                        style={{ background: '#fee2e2', border: '1.5px solid #fca5a5', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', color: '#DC2626', fontWeight: 700, fontSize: 13 }}>
-                        إلغاء
+                    {activeTab === 'الإعلانات المعلقة' && <>
+                      <button onClick={() => approveListing(listing.id)}
+                        style={{ background: '#dcfce7', border: '1.5px solid #86efac', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', color: '#16A34A', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <Check size={14}/> قبول
                       </button>
-                    )}
+                      <button onClick={() => setRejectId(listing.id)}
+                        style={{ background: '#fee2e2', border: '1.5px solid #fca5a5', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', color: '#DC2626', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <X size={14}/> رفض
+                      </button>
+                    </>}
                   </div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Users tab */}
+          {/* Workshops */}
+          {activeTab === 'الورشات' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {workshops.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-3)' }}>لا يوجد طلبات ورشات معلقة</div>
+              ) : workshops.map(ws => (
+                <div key={ws.id} style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--gray-200)', padding: '18px 20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                        <div style={{ fontWeight: 800, fontSize: 16 }}>{ws.name}</div>
+                        <span style={{ fontSize: 11, fontWeight: 700, background: '#EDE9FE', color: '#7C3AED', padding: '2px 10px', borderRadius: 9999 }}>{ws.subscription_tier}</span>
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, fontSize: 13, color: 'var(--text-3)', marginBottom: 8 }}>
+                        <span>📍 {ws.city}</span>
+                        <span>📞 {ws.phone}</span>
+                        {ws.whatsapp && <span>💬 {ws.whatsapp}</span>}
+                        {ws.inspection && <span style={{ color: '#3B82F6', fontWeight: 600 }}>🔍 يقدم فحص</span>}
+                      </div>
+                      {ws.service_types?.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                          {ws.service_types.map((s: string) => (
+                            <span key={s} style={{ fontSize: 11, background: 'var(--gray-100)', color: 'var(--text-2)', padding: '3px 10px', borderRadius: 9999 }}>{s}</span>
+                          ))}
+                        </div>
+                      )}
+                      {ws.description && <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 8, lineHeight: 1.6 }}>{ws.description}</p>}
+                      <div style={{ fontSize: 11, color: 'var(--text-4)', marginTop: 8 }}>
+                        {new Date(ws.created_at).toLocaleDateString('ar-SY')}
+                        {ws.address && ` · ${ws.address}`}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                      <button onClick={() => approveWorkshop(ws.id)}
+                        style={{ background: '#dcfce7', border: '1.5px solid #86efac', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', color: '#16A34A', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <Check size={14}/> قبول
+                      </button>
+                      <button onClick={() => rejectWorkshop(ws.id)}
+                        style={{ background: '#fee2e2', border: '1.5px solid #fca5a5', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', color: '#DC2626', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <X size={14}/> رفض
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Users */}
           {activeTab === 'المستخدمون' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {users.map(u => (
-                <div key={u.id} className="card" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
-                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: u.is_admin ? '#1a1a1a' : 'var(--color-yellow)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 15, flexShrink: 0 }}>
+                <div key={u.id} style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--gray-200)', display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
+                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: u.is_admin ? '#1a1a1a' : 'var(--yellow)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 15, flexShrink: 0, color: u.is_admin ? '#fff' : '#000' }}>
                     {(u.name ?? u.phone ?? '?')[0]}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600, fontSize: 14 }}>{u.name ?? '—'}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)', direction: 'ltr', textAlign: 'right' }}>{u.phone}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-3)', direction: 'ltr', textAlign: 'right' }}>{u.phone}</div>
                   </div>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    {u.is_admin && (
-                      <span style={{ fontSize: 11, fontWeight: 700, background: '#1a1a1a', color: '#fff', padding: '3px 10px', borderRadius: 9999 }}>Admin</span>
-                    )}
+                    {u.is_admin && <span style={{ fontSize: 11, fontWeight: 700, background: '#1a1a1a', color: '#fff', padding: '3px 10px', borderRadius: 9999 }}>Admin</span>}
                     {u.verified
                       ? <span style={{ fontSize: 12, color: '#16A34A', fontWeight: 600 }}>● نشط</span>
-                      : <span style={{ fontSize: 12, color: '#DC2626', fontWeight: 600 }}>● محظور</span>
-                    }
-                    <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(u.created_at).toLocaleDateString('ar-SY')}</span>
+                      : <span style={{ fontSize: 12, color: '#DC2626', fontWeight: 600 }}>● محظور</span>}
+                    <span style={{ fontSize: 12, color: 'var(--text-4)' }}>{new Date(u.created_at).toLocaleDateString('ar-SY')}</span>
                     {!u.is_admin && u.verified && (
                       <button onClick={() => banUser(u.id)}
                         style={{ background: 'none', border: '1.5px solid #fca5a5', borderRadius: 8, padding: '5px 10px', cursor: 'pointer', color: '#DC2626', fontSize: 12 }}>
@@ -248,13 +274,14 @@ export default function AdminPanel() {
             </div>
           )}
 
-          {/* Stats tab */}
+          {/* Stats */}
           {activeTab === 'الإحصاءات' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
-              <StatCard icon={<Clock size={24}/>}    label="إعلانات معلقة بانتظار المراجعة" value={stats.pending}     color="#D97706" />
-              <StatCard icon={<Check size={24}/>}    label="إعلانات نشطة على الموقع"        value={stats.active}      color="#16A34A" />
-              <StatCard icon={<X size={24}/>}        label="إعلانات مرفوضة"                 value={stats.rejected}    color="#DC2626" />
-              <StatCard icon={<Users size={24}/>}    label="إجمالي المستخدمين المسجلين"     value={stats.total_users} color="#0053FA" />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20 }}>
+              <StatCard icon={<Clock size={24}/>}   label="إعلانات معلقة"      value={stats.pending}           color="#D97706"/>
+              <StatCard icon={<Check size={24}/>}   label="إعلانات نشطة"       value={stats.active}            color="#16A34A"/>
+              <StatCard icon={<X size={24}/>}       label="إعلانات مرفوضة"     value={stats.rejected}          color="#DC2626"/>
+              <StatCard icon={<Wrench size={24}/>}  label="ورشات معلقة"        value={stats.pending_workshops} color="#7C3AED"/>
+              <StatCard icon={<Users size={24}/>}   label="إجمالي المستخدمين"  value={stats.total_users}       color="#0053FA"/>
             </div>
           )}
         </>
@@ -265,38 +292,32 @@ export default function AdminPanel() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: 20 }}>
           <div style={{ background: '#fff', borderRadius: 16, padding: 28, width: '100%', maxWidth: 400 }}>
             <h3 style={{ fontWeight: 800, fontSize: 17, marginBottom: 16 }}>سبب الرفض</h3>
-            <textarea
-              className="input"
-              rows={3}
-              placeholder="اكتب السبب للبائع (اختياري)"
-              value={rejectReason}
-              onChange={e => setRejectReason(e.target.value)}
-              style={{ resize: 'none', marginBottom: 16 }}
-            />
+            <textarea className="input" rows={3} placeholder="اكتب السبب للبائع (اختياري)" value={rejectReason}
+              onChange={e => setRejectReason(e.target.value)} style={{ resize: 'none', marginBottom: 16 }}/>
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => rejectListing(rejectId)}
                 style={{ flex: 1, background: '#DC2626', color: '#fff', border: 'none', borderRadius: 10, padding: '12px', fontWeight: 700, cursor: 'pointer', fontSize: 14 }}>
                 تأكيد الرفض
               </button>
-              <button onClick={() => { setRejectId(null); setRejectReason('') }} className="btn-ghost" style={{ flex: 1 }}>
+              <button onClick={() => { setRejectId(null); setRejectReason('') }}
+                style={{ flex: 1, background: 'var(--gray-100)', border: '1px solid var(--gray-200)', borderRadius: 10, padding: '12px', fontWeight: 700, cursor: 'pointer', fontSize: 14, fontFamily: 'var(--font)' }}>
                 إلغاء
               </button>
             </div>
           </div>
         </div>
       )}
-
     </main>
   )
 }
 
 function MiniStat({ label, value, color, icon }: { label: string; value: number; color: string; icon: React.ReactNode }) {
   return (
-    <div className="card" style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-      <div style={{ color, opacity: 0.9 }}>{icon}</div>
+    <div style={{ background: '#fff', border: '1px solid var(--gray-200)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ color }}>{icon}</div>
       <div>
-        <div style={{ fontSize: 22, fontWeight: 800, color }}>{value}</div>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{label}</div>
+        <div style={{ fontSize: 20, fontWeight: 800, color }}>{value}</div>
+        <div style={{ fontSize: 11, color: 'var(--text-4)' }}>{label}</div>
       </div>
     </div>
   )
@@ -304,11 +325,11 @@ function MiniStat({ label, value, color, icon }: { label: string; value: number;
 
 function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: number; color: string }) {
   return (
-    <div className="card" style={{ padding: '24px 28px', display: 'flex', gap: 18, alignItems: 'center' }}>
+    <div style={{ background: '#fff', border: '1px solid var(--gray-200)', borderRadius: 16, padding: '24px 28px', display: 'flex', gap: 18, alignItems: 'center' }}>
       <div style={{ color, background: color + '15', borderRadius: 12, padding: 14 }}>{icon}</div>
       <div>
         <div style={{ fontSize: 32, fontWeight: 800 }}>{value}</div>
-        <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>{label}</div>
+        <div style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>{label}</div>
       </div>
     </div>
   )
