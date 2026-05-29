@@ -106,6 +106,12 @@ export default function AdminPanel() {
     if (listing?.users?.name || listing?.users?.phone) {
       emailSellerListingApproved(listing.users.name ?? listing.users.phone, listing.title, id).catch(() => {})
     }
+    if (listing?.user_id) {
+      supabase.from('notifications').insert({
+        user_id: listing.user_id, type: 'listing_approved',
+        payload: { text: `تم قبول إعلانك: ${listing.title}`, listingId: id },
+      }).then(() => {})
+    }
     setListings(l => l.filter(x => x.id !== id))
   }
 
@@ -115,6 +121,12 @@ export default function AdminPanel() {
     const listing = listings.find(l => l.id === id)
     if (listing?.users?.name || listing?.users?.phone) {
       emailSellerListingRejected(listing.users.name ?? listing.users.phone, listing.title, reason).catch(() => {})
+    }
+    if (listing?.user_id) {
+      supabase.from('notifications').insert({
+        user_id: listing.user_id, type: 'listing_rejected',
+        payload: { text: `تم رفض إعلانك: ${listing.title} — ${reason}` },
+      }).then(() => {})
     }
     setListings(l => l.filter(x => x.id !== id))
     setRejectId(null); setRejectReason('')

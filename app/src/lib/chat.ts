@@ -98,6 +98,12 @@ export async function sendMessage(listingId: string, senderId: string, receiverI
     receiver_id: receiverId,
     body:        text,
   })
+  // إشعار للمستقبِل — مفتاح المحادثة من منظوره (otherId = المرسِل)
+  await supabase.from('notifications').insert({
+    user_id: receiverId,
+    type:    'message',
+    payload: { text: `رسالة جديدة: ${text.slice(0, 40)}`, threadKey: threadKey(listingId, senderId) },
+  })
 }
 
 // اشتراك Realtime — أي رسالة جديدة موجّهة للمستخدم

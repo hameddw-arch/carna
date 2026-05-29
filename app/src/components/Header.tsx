@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Search, Menu, X, Plus, LogOut, User } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import NotificationBell from './NotificationBell'
 
 export default function Header() {
   const { user, logout } = useAuth()
@@ -57,6 +58,7 @@ export default function Header() {
               <Link to="/post" className="btn btn-yellow" style={{ fontSize: 13, padding: '9px 16px', gap: 6 }}>
                 <Plus size={15}/> إعلان
               </Link>
+              <NotificationBell />
               <div style={{ position: 'relative' }}>
                 <button onClick={() => setUserMenuOpen(!userMenuOpen)} style={{
                   background: 'var(--yellow)', border: 'none', borderRadius: '50%',
