@@ -10,28 +10,33 @@ export async function fetchListings(filters?: {
   priceFrom?: number
   priceTo?: number
   tag?: string
+  sellerType?: 'individual' | 'dealer'
 }) {
   let query = supabase
     .from('listings')
-    .select(`*, listing_images(url, "order"), listing_tags(tag)`)
+    .select(`*, listing_images(url, "order"), listing_tags(tag), users(name, phone, rating, rating_count)`)
     .eq('status', 'active')
     .order('created_at', { ascending: false })
 
-  if (filters?.city)      query = query.eq('city', filters.city)
-  if (filters?.make)      query = query.eq('make', filters.make)
-  if (filters?.yearFrom)  query = query.gte('year', filters.yearFrom)
-  if (filters?.yearTo)    query = query.lte('year', filters.yearTo)
-  if (filters?.priceFrom) query = query.gte('price', filters.priceFrom)
-  if (filters?.priceTo)   query = query.lte('price', filters.priceTo)
+  if (filters?.city)       query = query.eq('city', filters.city)
+  if (filters?.make)       query = query.eq('make', filters.make)
+  if (filters?.yearFrom)   query = query.gte('year', filters.yearFrom)
+  if (filters?.yearTo)     query = query.lte('year', filters.yearTo)
+  if (filters?.priceFrom)  query = query.gte('price', filters.priceFrom)
+  if (filters?.priceTo)    query = query.lte('price', filters.priceTo)
+  if (filters?.sellerType) query = query.eq('seller_type', filters.sellerType)
 
   const { data, error } = await query
   if (error) throw error
 
   return (data ?? []).map(l => ({
     ...l,
-    image: l.listing_images?.[0]?.url ?? PLACEHOLDER,
-    tags: l.listing_tags?.map((t: { tag: string }) => t.tag) ?? [],
-    hours: Math.floor((Date.now() - new Date(l.created_at).getTime()) / 3600000),
+    image:      l.listing_images?.[0]?.url ?? PLACEHOLDER,
+    imageCount: l.listing_images?.length ?? 0,
+    tags:       l.listing_tags?.map((t: { tag: string }) => t.tag) ?? [],
+    hours:      Math.floor((Date.now() - new Date(l.created_at).getTime()) / 3600000),
+    sellerRating:      l.users?.rating ?? null,
+    sellerRatingCount: l.users?.rating_count ?? 0,
   }))
 }
 

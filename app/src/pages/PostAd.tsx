@@ -23,7 +23,7 @@ export default function PostAd() {
   const { user }   = useAuth()
   const navigate   = useNavigate()
   const [step, setStep] = useState(0)
-  const [form, setForm] = useState({ make: '', model: '', year: '', city: '', price: '', km: '', fuel: 'بنزين', transmission: 'أوتوماتيك', color: '', description: '' })
+  const [form, setForm] = useState({ make: '', model: '', year: '', city: '', price: '', km: '', fuel: 'بنزين', transmission: 'أوتوماتيك', color: '', description: '', seller_type: 'individual' })
   const [images,   setImages]   = useState<string[]>([])
   const [agreed,   setAgreed]   = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -52,6 +52,7 @@ export default function PostAd() {
           fuel: form.fuel,
           transmission: form.transmission,
           color: form.color,
+          seller_type: form.seller_type,
           status: 'pending',
         })
         .select()
@@ -126,6 +127,30 @@ export default function PostAd() {
       {/* Step 0 */}
       {step === 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* نوع البائع */}
+          <Field label="أنت *">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              {[
+                { value: 'individual', label: '👤 صاحب السيارة', sub: 'بيع مباشر من المالك' },
+                { value: 'dealer',     label: '🏪 وكيل / معرض',  sub: 'معرض سيارات أو وكيل' },
+              ].map(opt => (
+                <button key={opt.value} type="button"
+                  onClick={() => set('seller_type', opt.value)}
+                  style={{
+                    padding: '14px 12px', borderRadius: 12, cursor: 'pointer',
+                    fontFamily: 'var(--font)', textAlign: 'center', transition: 'all 150ms ease',
+                    border: `2px solid ${form.seller_type === opt.value ? 'var(--yellow)' : 'var(--gray-200)'}`,
+                    background: form.seller_type === opt.value ? 'var(--yellow-light)' : 'var(--white)',
+                    boxShadow: form.seller_type === opt.value ? '0 0 0 3px var(--yellow-glow)' : 'none',
+                  }}>
+                  <div style={{ fontSize: 16, marginBottom: 4 }}>{opt.label}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-3)' }}>{opt.sub}</div>
+                </button>
+              ))}
+            </div>
+          </Field>
+
           <Field label="الماركة *">
             <select className="input" value={form.make} onChange={e => set('make', e.target.value)}>
               <option value="">اختر الماركة</option>
@@ -157,7 +182,7 @@ export default function PostAd() {
         <div>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 16 }}>
             حط صور واضحة — بتساعد على البيع أكتر
-            <span style={{ color: 'var(--text-muted)', marginRight: 6 }}>(حتى 10 صور)</span>
+            <span style={{ color: 'var(--text-muted)', marginRight: 6 }}>(حتى 8 صور)</span>
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
             {images.map((img, i) => (
@@ -168,7 +193,7 @@ export default function PostAd() {
                 </button>
               </div>
             ))}
-            {images.length < 10 && (
+            {images.length < 8 && (
               <label style={{ aspectRatio: '4/3', border: '2px dashed var(--border-base)', borderRadius: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer', background: 'var(--bg-subtle)' }}>
                 <Upload size={20} style={{ color: 'var(--text-muted)' }} />
                 <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>إضافة صورة</span>
@@ -177,7 +202,7 @@ export default function PostAd() {
                     const files = Array.from(e.target.files || [])
                     files.forEach(f => {
                       const r = new FileReader()
-                      r.onload = ev => setImages(imgs => [...imgs, ev.target?.result as string].slice(0, 10))
+                      r.onload = ev => setImages(imgs => [...imgs, ev.target?.result as string].slice(0, 8))
                       r.readAsDataURL(f)
                     })
                   }}

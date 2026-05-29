@@ -54,7 +54,7 @@ export default function Home() {
   const [featured,   setFeatured]   = useState<any[]>([])
   const [brands,     setBrands]     = useState(BRAND_DATA)
   const [loading,    setLoading]    = useState(true)
-  const [filters,    setFilters]    = useState({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '' })
+  const [filters,    setFilters]    = useState({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '', sellerType: '' })
 
   useEffect(() => {
     load()
@@ -77,12 +77,13 @@ export default function Home() {
 
   function apply() {
     load({
-      city:      filters.city      || undefined,
-      make:      filters.make      || undefined,
-      yearFrom:  filters.yearFrom  ? Number(filters.yearFrom)  : undefined,
-      yearTo:    filters.yearTo    ? Number(filters.yearTo)    : undefined,
-      priceFrom: filters.priceFrom ? Number(filters.priceFrom) : undefined,
-      priceTo:   filters.priceTo   ? Number(filters.priceTo)   : undefined,
+      city:       filters.city       || undefined,
+      make:       filters.make       || undefined,
+      yearFrom:   filters.yearFrom   ? Number(filters.yearFrom)  : undefined,
+      yearTo:     filters.yearTo     ? Number(filters.yearTo)    : undefined,
+      priceFrom:  filters.priceFrom  ? Number(filters.priceFrom) : undefined,
+      priceTo:    filters.priceTo    ? Number(filters.priceTo)   : undefined,
+      sellerType: (filters.sellerType as 'individual' | 'dealer') || undefined,
     })
   }
 
@@ -327,7 +328,7 @@ export default function Home() {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }}>
                   <span style={{ fontWeight: 800, fontSize: 16 }}>الفلاتر</span>
-                  <button onClick={() => { setFilters({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '' }); load() }}
+                  <button onClick={() => { setFilters({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '', sellerType: '' }); load() }}
                     style={{ color: 'var(--blue)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: 'var(--font)' }}>
                     مسح الكل
                   </button>
@@ -359,17 +360,41 @@ export default function Home() {
 
             {/* Listings */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }}>
-                <div>
-                  <div className="section-eyebrow">أحدث الإعلانات</div>
-                  <h2 className="section-title" style={{ marginBottom: 0 }}>
-                    {listings.length > 0 ? `${listings.length} إعلان` : 'الإعلانات'}
-                  </h2>
+              <div style={{ marginBottom: 22 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <div>
+                    <div className="section-eyebrow">أحدث الإعلانات</div>
+                    <h2 className="section-title" style={{ marginBottom: 0 }}>
+                      {listings.length > 0 ? `${listings.length} إعلان` : 'الإعلانات'}
+                    </h2>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    {['دمشق','حلب','اللاذقية'].map(city => (
+                      <button key={city} className="tag" onClick={() => { f('city', city); load({ city }) }} style={{ fontSize: 12 }}>
+                        {city}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  {['دمشق','حلب','اللاذقية'].map(city => (
-                    <button key={city} className="tag" onClick={() => { f('city', city); load({ city }) }} style={{ fontSize: 12 }}>
-                      {city}
+
+                {/* Seller type toggle */}
+                <div style={{ display: 'flex', gap: 8, background: 'var(--gray-100)', borderRadius: 12, padding: 4, width: 'fit-content' }}>
+                  {[
+                    { val: '',           label: 'الكل' },
+                    { val: 'individual', label: '👤 من صاحبها' },
+                    { val: 'dealer',     label: '🏪 من وكيل' },
+                  ].map(opt => (
+                    <button key={opt.val}
+                      onClick={() => { f('sellerType', opt.val); load({ sellerType: (opt.val as 'individual' | 'dealer') || undefined, city: filters.city || undefined, make: filters.make || undefined }) }}
+                      style={{
+                        padding: '7px 16px', borderRadius: 9, border: 'none',
+                        cursor: 'pointer', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 600,
+                        transition: 'all 150ms ease',
+                        background: filters.sellerType === opt.val ? '#fff' : 'transparent',
+                        color: filters.sellerType === opt.val ? 'var(--text)' : 'var(--text-3)',
+                        boxShadow: filters.sellerType === opt.val ? 'var(--shadow-sm)' : 'none',
+                      }}>
+                      {opt.label}
                     </button>
                   ))}
                 </div>
@@ -383,7 +408,7 @@ export default function Home() {
                 <div style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--text-4)' }}>
                   <div style={{ fontSize: 52, marginBottom: 14 }}>🔍</div>
                   <p style={{ fontSize: 16, marginBottom: 20 }}>ما لقينا شي — جرب بحثاً ثاني</p>
-                  <button className="btn btn-yellow" onClick={() => { setFilters({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '' }); load() }}>
+                  <button className="btn btn-yellow" onClick={() => { setFilters({ city: '', make: '', yearFrom: '', yearTo: '', priceFrom: '', priceTo: '', sellerType: '' }); load() }}>
                     عرض كل الإعلانات
                   </button>
                 </div>

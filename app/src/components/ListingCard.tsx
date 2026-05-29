@@ -12,10 +12,14 @@ interface Listing {
   year: number
   image: string
   images?: string[]
+  imageCount?: number
   hours: number
   seller?: string
   featured?: boolean
   make?: string
+  seller_type?: 'individual' | 'dealer'
+  sellerRating?: number | null
+  sellerRatingCount?: number
 }
 
 export default function ListingCard({ listing }: { listing: Listing }) {
@@ -55,16 +59,37 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             {price}
             <span style={{ fontSize: 10, fontWeight: 600, marginRight: 3 }}>ل.س</span>
           </div>
-          {listing.featured && (
+          {/* Seller type badge — top left */}
+          <div style={{ position: 'absolute', top: 10, left: 10, display: 'flex', flexDirection: 'column', gap: 5 }}>
+            {listing.featured && (
+              <div style={{
+                background: 'var(--dark)', color: 'var(--yellow)',
+                padding: '4px 9px', borderRadius: 6,
+                fontSize: 11, fontWeight: 700,
+              }}>⭐ مميز</div>
+            )}
+            {listing.seller_type === 'dealer' && (
+              <div style={{
+                background: '#0053FA', color: '#fff',
+                padding: '3px 8px', borderRadius: 6,
+                fontSize: 11, fontWeight: 700,
+              }}>🏪 وكيل</div>
+            )}
+          </div>
+
+          {/* Photo count — bottom left */}
+          {(listing.imageCount ?? 0) > 0 && (
             <div style={{
-              position: 'absolute', top: 10, left: 10,
-              background: 'var(--dark)', color: 'var(--yellow)',
-              padding: '4px 9px', borderRadius: 6,
-              fontSize: 11, fontWeight: 700,
+              position: 'absolute', bottom: 10, right: 10,
+              background: 'rgba(0,0,0,.55)', color: '#fff',
+              padding: '3px 8px', borderRadius: 6,
+              fontSize: 11, fontWeight: 600,
+              backdropFilter: 'blur(4px)',
             }}>
-              ⭐ مميز
+              📷 {listing.imageCount}
             </div>
           )}
+
           <button
             onClick={e => { e.preventDefault(); setSaved(s => !s) }}
             style={{
@@ -99,16 +124,38 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--text-4)' }}>
               <Clock size={11}/> {timeLabel}
             </div>
-            <div style={{
-              fontSize: 12, fontWeight: 600, color: 'var(--text-3)',
-              background: 'var(--gray-100)', padding: '2px 8px', borderRadius: 6,
-            }}>
-              {listing.year}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {listing.sellerRating != null && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Stars rating={listing.sellerRating}/>
+                  {(listing.sellerRatingCount ?? 0) > 0 && (
+                    <span style={{ fontSize: 11, color: 'var(--text-4)' }}>({listing.sellerRatingCount})</span>
+                  )}
+                </div>
+              )}
+              <div style={{
+                fontSize: 12, fontWeight: 600, color: 'var(--text-3)',
+                background: 'var(--gray-100)', padding: '2px 8px', borderRadius: 6,
+              }}>
+                {listing.year}
+              </div>
             </div>
           </div>
         </div>
       </article>
     </Link>
+  )
+}
+
+function Stars({ rating }: { rating: number }) {
+  return (
+    <div style={{ display: 'flex', gap: 1 }}>
+      {[1,2,3,4,5].map(i => (
+        <svg key={i} width="11" height="11" viewBox="0 0 24 24" fill={i <= Math.round(rating) ? '#FDB700' : '#E5E6EA'}>
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      ))}
+    </div>
   )
 }
 
