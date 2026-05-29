@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { MapPin, Calendar, Gauge, Fuel, Settings, Palette, User, ChevronRight, ChevronLeft, Share2, Star, Shield, Phone, MessageCircle, Loader2 } from 'lucide-react'
 import { fetchListing, fetchListings } from '../lib/queries'
+import SEO from '../components/SEO'
 
 export default function ListingPage() {
   const { id } = useParams()
@@ -35,6 +36,13 @@ export default function ListingPage() {
 
   return (
     <div style={{ background: 'var(--color-yellow)', minHeight: 'calc(100vh - 68px)' }}>
+      <SEO
+        title={listing.title}
+        description={`${listing.make} ${listing.model} ${listing.year} — ${listing.city} — ${Number(listing.price).toLocaleString()} ل.س`}
+        image={listing.images?.[0]}
+        url={`/listing/${listing.id}`}
+        type="article"
+      />
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 20px 60px' }}>
 
         {/* Breadcrumb */}

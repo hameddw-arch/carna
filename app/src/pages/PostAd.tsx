@@ -3,6 +3,7 @@ import { Upload, X, ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-rea
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { emailAdminNewListing } from '../lib/emails'
 
 function dataURLtoBlob(url: string): Blob {
   const arr = url.split(',')
@@ -59,6 +60,9 @@ export default function PostAd() {
         .single()
 
       if (listErr || !listing) throw new Error('صار في مشكلة')
+
+      // Notify admin
+      emailAdminNewListing({ id: listing.id, title: listing.title, city: listing.city, price: listing.price }).catch(() => {})
 
       // Upload images
       for (let i = 0; i < images.length; i++) {

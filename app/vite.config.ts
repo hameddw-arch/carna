@@ -24,11 +24,18 @@ export default defineConfig({
         ],
       },
       workbox: {
+        navigateFallback: '/offline.html',
+        navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
             handler: 'NetworkFirst',
-            options: { cacheName: 'supabase-cache' },
+            options: { cacheName: 'supabase-cache', networkTimeoutSeconds: 5 },
+          },
+          {
+            urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: { cacheName: 'images-cache', expiration: { maxEntries: 60, maxAgeSeconds: 86400 } },
           },
         ],
       },

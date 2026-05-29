@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>كارنا — غير متصل</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    body {
+      font-family: 'Cairo', system-ui, sans-serif;
+      background: #0D0D0D; color: #fff;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 24px;
+    }
+    .icon  { font-size: 64px; margin-bottom: 24px }
+    h1     { font-size: 24px; font-weight: 800; margin-bottom: 10px }
+    p      { color: rgba(255,255,255,.55); font-size: 15px; line-height: 1.7; margin-bottom: 28px }
+    button {
+      background: #FDB700; color: #0D0D0D;
+      border: none; border-radius: 12px;
+      padding: 13px 32px; font-size: 15px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+    }
+    button:hover { background: #E5A600 }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="icon">📡</div>
+    <h1>ما في اتصال بالإنترنت</h1>
+    <p>تأكد من اتصالك بالشبكة ثم حاول مرة ثانية</p>
+    <button onclick="location.reload()">حاول مرة ثانية</button>
+  </div>
+</body>
+</html>

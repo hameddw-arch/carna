@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Check, X, Eye, Users, Clock, RefreshCw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Link } from 'react-router-dom'
+import { emailSellerListingApproved, emailSellerListingRejected } from '../lib/emails'
 
 const TABS = ['الإعلانات المعلقة', 'نشطة', 'مرفوضة', 'المستخدمون', 'الإحصاءات']
 
@@ -72,11 +73,29 @@ export default function AdminPanel() {
 
   async function approveListing(id: string) {
     await supabase.from('listings').update({ status: 'active' }).eq('id', id)
+    const listing = listings.find(l => l.id === id)
+    if (listing?.users?.name || listing?.users?.phone) {
+      // notify seller by email if they have one stored
+      emailSellerListingApproved(
+        listing.users.name ?? listing.users.phone,
+        listing.title,
+        id
+      ).catch(() => {})
+    }
     setListings(l => l.filter(x => x.id !== id))
   }
 
   async function rejectListing(id: string) {
-    await supabase.from('listings').update({ status: 'rejected', reject_reason: rejectReason || 'مخالف للشروط' }).eq('id', id)
+    const reason = rejectReason || 'مخالف للشروط'
+    await supabase.from('listings').update({ status: 'rejected', reject_reason: reason }).eq('id', id)
+    const listing = listings.find(l => l.id === id)
+    if (listing?.users?.name || listing?.users?.phone) {
+      emailSellerListingRejected(
+        listing.users.name ?? listing.users.phone,
+        listing.title,
+        reason
+      ).catch(() => {})
+    }
     setListings(l => l.filter(x => x.id !== id))
     setRejectId(null)
     setRejectReason('')

@@ -49,9 +49,19 @@ export async function requestOTP(phone: string): Promise<string> {
 
   if (error) throw error
 
-  // TODO: send via SMS (MTN/Syriatel) when gateway is ready
-  // For now: return code to display in dev mode
-  return code
+  // Send SMS — falls back to dev mode if env vars not set
+  try {
+    await supabase.functions.invoke('send-sms', {
+      body: {
+        phone,
+        message: `كارنا: رمز التحقق الخاص بك هو ${code} — صالح لمدة 10 دقائق`,
+      },
+    })
+    return '' // SMS sent — no need to expose code
+  } catch {
+    // dev fallback: return code to display on screen
+    return code
+  }
 }
 
 // Verify OTP and login/register user
