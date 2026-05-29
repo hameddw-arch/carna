@@ -20,6 +20,8 @@ import Dashboard from './pages/Dashboard'
 import AdminPanel from './pages/AdminPanel'
 import NotFound from './pages/NotFound'
 import InstallPrompt from './components/InstallPrompt'
+import CompareBar from './components/CompareBar'
+import Compare from './pages/Compare'
 import './index.css'
 
 export default function App() {
@@ -41,10 +43,12 @@ export default function App() {
           <Route path="/login"               element={<Login />} />
           <Route path="/dashboard"           element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/post"                element={<ProtectedRoute><PostAd /></ProtectedRoute>} />
+          <Route path="/compare"             element={<Compare />} />
           <Route path="/admin"               element={<AdminRoute><AdminPanel /></AdminRoute>} />
           <Route path="*"                    element={<NotFound />} />
         </Routes>
         <Footer />
+        <CompareBar />
         <InstallPrompt />
       </div>
     </AuthProvider>

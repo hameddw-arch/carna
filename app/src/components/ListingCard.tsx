@@ -1,6 +1,7 @@
-import { MapPin, Gauge, Fuel, Heart, Clock } from 'lucide-react'
+import { MapPin, Gauge, Fuel, Heart, Clock, GitCompare } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { addToCompare, removeFromCompare, isInCompare } from '../lib/compare'
 
 interface Listing {
   id: string
@@ -23,7 +24,24 @@ interface Listing {
 }
 
 export default function ListingCard({ listing }: { listing: Listing }) {
-  const [saved, setSaved] = useState(false)
+  const [saved,      setSaved]      = useState(false)
+  const [comparing,  setComparing]  = useState(() => isInCompare(listing.id))
+
+  useEffect(() => {
+    const update = () => setComparing(isInCompare(listing.id))
+    window.addEventListener('compare-change', update)
+    return () => window.removeEventListener('compare-change', update)
+  }, [listing.id])
+
+  function toggleCompare(e: React.MouseEvent) {
+    e.preventDefault()
+    if (comparing) { removeFromCompare(listing.id); setComparing(false) }
+    else {
+      const ok = addToCompare(listing.id)
+      if (ok) setComparing(true)
+      else alert('يمكنك مقارنة 3 سيارات كحد أقصى')
+    }
+  }
 
   const timeLabel = listing.hours < 1
     ? 'الآن'
@@ -90,17 +108,33 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             </div>
           )}
 
+          {/* Save */}
           <button
             onClick={e => { e.preventDefault(); setSaved(s => !s) }}
             style={{
-              position: 'absolute', bottom: 10, left: 10,
+              position: 'absolute', bottom: 10, left: 46,
               background: 'rgba(255,255,255,.92)', border: 'none',
               borderRadius: '50%', width: 32, height: 32,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,.12)',
             }}
           >
-            <Heart size={14} fill={saved ? 'var(--yellow)' : 'none'} color={saved ? 'var(--yellow-dark)' : '#666'} strokeWidth={2} />
+            <Heart size={14} fill={saved ? 'var(--yellow)' : 'none'} color={saved ? 'var(--yellow-dark)' : '#666'} strokeWidth={2}/>
+          </button>
+          {/* Compare */}
+          <button
+            onClick={toggleCompare}
+            title={comparing ? 'إزالة من المقارنة' : 'أضف للمقارنة'}
+            style={{
+              position: 'absolute', bottom: 10, left: 10,
+              background: comparing ? 'var(--yellow)' : 'rgba(255,255,255,.92)',
+              border: 'none', borderRadius: '50%', width: 32, height: 32,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,.12)',
+              transition: 'all 150ms ease',
+            }}
+          >
+            <GitCompare size={14} color={comparing ? 'var(--dark)' : '#666'}/>
           </button>
         </div>
 
