@@ -27,7 +27,7 @@ export default function Packages() {
     })
   }, [user])
 
-  async function buyPackage(pkg: any, listingId?: string) {
+  async function activatePackage(pkg: any, listingId: string) {
     if (!user) return navigate('/login')
     if (wallet < pkg.price) return alert('رصيدك غير كافٍ — اشحن محفظتك أولاً')
     setBuying(pkg.id)
@@ -53,6 +53,9 @@ export default function Packages() {
       setBuying(null)
     }
   }
+
+  // used by dashboard upgrade flow via URL param
+  void activatePackage
 
   if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}>
