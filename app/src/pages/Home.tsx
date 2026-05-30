@@ -195,7 +195,7 @@ export default function Home() {
           }}>
             {TABS.map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                padding: '7px 20px', borderRadius: 9, border: 'none',
+                padding: '7px 20px', borderRadius: 10, border: 'none',
                 cursor: 'pointer', fontWeight: 700, fontSize: 14,
                 fontFamily: 'var(--font)', transition: 'all 150ms ease',
                 background: activeTab === tab ? '#fff' : 'transparent',
@@ -278,7 +278,7 @@ export default function Home() {
                   style={{
                     background: active ? brand.color : 'var(--white)',
                     border: `1.5px solid ${active ? brand.color : 'var(--gray-200)'}`,
-                    borderRadius: 14, padding: '14px 8px 12px',
+                    borderRadius: 16, padding: '14px 8px 12px',
                     cursor: 'pointer', textAlign: 'center',
                     fontFamily: 'var(--font)', fontWeight: 700, fontSize: 12,
                     color: active ? '#fff' : 'var(--text)',
@@ -319,7 +319,7 @@ export default function Home() {
                 onClick={() => load({})}
                 style={{
                   background: 'var(--white)', border: '1.5px solid var(--gray-200)',
-                  borderRadius: 14, padding: '20px 8px 14px',
+                  borderRadius: 16, padding: '20px 8px 14px',
                   cursor: 'pointer', textAlign: 'center', fontFamily: 'var(--font)',
                   color: 'var(--text)', transition: 'all 200ms ease',
                   boxShadow: 'var(--shadow-sm)',
@@ -344,7 +344,7 @@ export default function Home() {
               <div>
                 <div className="section-eyebrow">مميزة</div>
                 <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ background: 'var(--yellow)', borderRadius: 8, padding: '5px', display: 'inline-flex', color: 'var(--dark)' }}><Star size={15} fill="currentColor"/></span>
+                  <span style={{ background: 'var(--yellow)', borderRadius: 10, padding: '5px', display: 'inline-flex', color: 'var(--dark)' }}><Star size={15} fill="currentColor"/></span>
                   إعلانات مميزة
                 </h2>
               </div>
@@ -385,7 +385,7 @@ export default function Home() {
                     display: 'flex', flexDirection: 'column',
                     background: '#fff',
                     border: `2px solid ${isPremium ? 'var(--yellow)' : 'var(--gray-200)'}`,
-                    borderRadius: 18, overflow: 'hidden',
+                    borderRadius: 20, overflow: 'hidden',
                     transition: 'transform 150ms ease, box-shadow 150ms ease',
                     cursor: 'pointer',
                   }}
@@ -596,7 +596,7 @@ export default function Home() {
                     <button key={opt.val}
                       onClick={() => { f('sellerType', opt.val); load({ sellerType: (opt.val as 'individual' | 'dealer') || undefined, city: filters.city || undefined, make: filters.make || undefined }) }}
                       style={{
-                        padding: '7px 16px', borderRadius: 9, border: 'none',
+                        padding: '7px 16px', borderRadius: 10, border: 'none',
                         cursor: 'pointer', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 600,
                         transition: 'all 150ms ease',
                         display: 'flex', alignItems: 'center', gap: 5,
@@ -670,7 +670,7 @@ export default function Home() {
               <div key={i} style={{
                 background: 'var(--dark-3)',
                 border: '1px solid rgba(255,255,255,.07)',
-                borderRadius: 18, padding: '28px 24px',
+                borderRadius: 20, padding: '28px 24px',
                 transition: 'all 250ms ease',
               }}>
                 <div style={{

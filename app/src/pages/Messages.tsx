@@ -208,7 +208,7 @@ function Thread({ threadK, userId, onBack }: { threadK: string; userId: string; 
           return (
             <div key={m.id} style={{ display: 'flex', justifyContent: mine ? 'flex-start' : 'flex-end' }}>
               <div style={{
-                maxWidth: '70%', padding: '9px 14px', borderRadius: 14,
+                maxWidth: '70%', padding: '9px 14px', borderRadius: 16,
                 background: mine ? 'var(--yellow)' : '#fff',
                 color: mine ? 'var(--dark)' : 'var(--text)',
                 border: mine ? 'none' : '1px solid var(--gray-200)',

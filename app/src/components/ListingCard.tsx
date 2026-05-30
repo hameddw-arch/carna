@@ -69,7 +69,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <div style={{
             position: 'absolute', top: 10, right: 10,
             background: 'var(--yellow)', color: 'var(--dark)',
-            padding: '5px 11px', borderRadius: 8,
+            padding: '5px 11px', borderRadius: 10,
             fontSize: 14, fontWeight: 800,
             boxShadow: '0 2px 10px rgba(0,0,0,.2)',
             lineHeight: 1.3,

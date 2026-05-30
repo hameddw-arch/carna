@@ -122,7 +122,7 @@ export default function Dashboard() {
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               display: 'flex', alignItems: 'center', gap: 7,
-              padding: '8px 18px', borderRadius: 9, border: 'none',
+              padding: '8px 18px', borderRadius: 10, border: 'none',
               cursor: 'pointer', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 600,
               background: tab === t.id ? '#fff' : 'transparent',
               color: tab === t.id ? 'var(--text)' : 'var(--text-3)',
@@ -184,7 +184,7 @@ export default function Dashboard() {
                           <Link to={`/packages?listing=${listing.id}`}
                             style={{
                               display: 'flex', alignItems: 'center', gap: 5,
-                              padding: '7px 12px', borderRadius: 9,
+                              padding: '7px 12px', borderRadius: 10,
                               background: 'var(--yellow-light)', border: '1px solid var(--yellow)',
                               color: 'var(--yellow-dark)', fontSize: 12, fontWeight: 700,
                               textDecoration: 'none',
@@ -193,15 +193,15 @@ export default function Dashboard() {
                           </Link>
                         )}
                         <Link to={`/listing/${listing.id}`}
-                          style={{ display: 'flex', alignItems: 'center', padding: '7px 10px', borderRadius: 9, border: '1px solid var(--gray-200)', color: 'var(--text-3)', textDecoration: 'none' }}>
+                          style={{ display: 'flex', alignItems: 'center', padding: '7px 10px', borderRadius: 10, border: '1px solid var(--gray-200)', color: 'var(--text-3)', textDecoration: 'none' }}>
                           <Eye size={14}/>
                         </Link>
                         <Link to={`/edit/${listing.id}`}
-                          style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', borderRadius: 9, border: '1px solid var(--gray-200)', color: 'var(--text-2)', textDecoration: 'none', fontSize: 12, fontWeight: 600 }}>
+                          style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', borderRadius: 10, border: '1px solid var(--gray-200)', color: 'var(--text-2)', textDecoration: 'none', fontSize: 12, fontWeight: 600 }}>
                           <Pencil size={13}/> تعديل
                         </Link>
                         <button onClick={() => deleteListing(listing.id)}
-                          style={{ display: 'flex', alignItems: 'center', padding: '7px 10px', borderRadius: 9, background: 'none', border: '1px solid #FCA5A5', cursor: 'pointer', color: '#DC2626' }}>
+                          style={{ display: 'flex', alignItems: 'center', padding: '7px 10px', borderRadius: 10, background: 'none', border: '1px solid #FCA5A5', cursor: 'pointer', color: '#DC2626' }}>
                           <Trash2 size={14}/>
                         </button>
                       </div>

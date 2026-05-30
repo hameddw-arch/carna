@@ -90,7 +90,7 @@ export default function CompareBar() {
       <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
         <button onClick={clearCompare} style={{
           background: 'none', border: '1px solid rgba(255,255,255,.15)',
-          borderRadius: 8, padding: '8px 14px', cursor: 'pointer',
+          borderRadius: 10, padding: '8px 14px', cursor: 'pointer',
           color: 'rgba(255,255,255,.5)', fontSize: 13, fontFamily: 'var(--font)',
         }}>مسح</button>
         <button onClick={() => navigate(`/compare?ids=${ids.join(',')}`)}

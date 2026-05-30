@@ -205,7 +205,7 @@ export default function ServicePage() {
                     <ExternalLink size={13}/> فتح في Google Maps
                   </a>
                 </div>
-                <div style={{ borderRadius: 14, overflow: 'hidden', height: 280 }}>
+                <div style={{ borderRadius: 16, overflow: 'hidden', height: 280 }}>
                   <iframe
                     src={toEmbedUrl(service.maps_url)}
                     width="100%" height="100%"
@@ -227,14 +227,14 @@ export default function ServicePage() {
 
               {/* Submit form */}
               {submitted || myReview ? (
-                <div style={{ background: '#DCFCE7', borderRadius: 14, padding: '14px 18px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ background: '#DCFCE7', borderRadius: 16, padding: '14px 18px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
                   <CheckCircle size={16} style={{ color: '#16A34A', flexShrink: 0 }}/>
                   <span style={{ fontSize: 14, fontWeight: 600, color: '#15803D' }}>
                     شكراً! قيّمت هذه الورشة بـ {stars || myReview?.rating} نجوم
                   </span>
                 </div>
               ) : user ? (
-                <div style={{ background: 'var(--gray-50, #F9FAFB)', borderRadius: 14, padding: '18px', marginBottom: 24, border: '1px solid var(--gray-200)' }}>
+                <div style={{ background: 'var(--gray-50, #F9FAFB)', borderRadius: 16, padding: '18px', marginBottom: 24, border: '1px solid var(--gray-200)' }}>
                   <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>قيّم هذه الورشة</div>
 
                   {/* Stars picker */}

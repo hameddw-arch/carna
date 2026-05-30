@@ -75,7 +75,7 @@ export default function NotificationBell() {
             position: 'absolute', top: -4, left: -4,
             background: 'var(--error)', color: '#fff',
             fontSize: 10, fontWeight: 800, minWidth: 18, height: 18,
-            borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '0 4px', border: '2px solid #fff',
           }}>{unread > 9 ? '9+' : unread}</span>
         )}
@@ -85,7 +85,7 @@ export default function NotificationBell() {
         <div style={{
           position: 'absolute', top: 'calc(100% + 8px)', left: 0,
           background: '#fff', border: '1px solid var(--gray-200)',
-          borderRadius: 14, width: 320, maxHeight: 420, overflowY: 'auto',
+          borderRadius: 16, width: 320, maxHeight: 420, overflowY: 'auto',
           boxShadow: 'var(--shadow-lg)', zIndex: 300,
         }}>
           <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--gray-100)', fontWeight: 800, fontSize: 14 }}>

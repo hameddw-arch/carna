@@ -71,7 +71,7 @@ export default function Header() {
                   <div style={{
                     position: 'absolute', top: 'calc(100% + 8px)', left: 0,
                     background: '#fff', border: '1px solid var(--gray-200)',
-                    borderRadius: 14, minWidth: 168, padding: 6,
+                    borderRadius: 16, minWidth: 168, padding: 6,
                     boxShadow: 'var(--shadow-lg)', zIndex: 200,
                   }}>
                     <Link to="/dashboard" onClick={() => setUserMenuOpen(false)} style={{

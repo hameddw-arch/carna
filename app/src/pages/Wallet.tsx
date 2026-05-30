@@ -93,7 +93,7 @@ export default function Wallet() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {txs.map(tx => (
                   <div key={tx.id} style={{
-                    background: '#fff', borderRadius: 14, padding: '14px 16px',
+                    background: '#fff', borderRadius: 16, padding: '14px 16px',
                     border: '1px solid var(--gray-200)',
                     display: 'flex', alignItems: 'center', gap: 14,
                   }}>

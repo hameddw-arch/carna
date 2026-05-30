@@ -160,7 +160,7 @@ export default function AdminPanel() {
           <p style={{ color: 'var(--text-3)', fontSize: 13, marginTop: 2 }}>CARNA Admin Panel</p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <button onClick={loadData} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--gray-100)', border: '1px solid var(--gray-200)', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontSize: 13, fontFamily: 'var(--font)' }}>
+          <button onClick={loadData} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--gray-100)', border: '1px solid var(--gray-200)', borderRadius: 10, padding: '8px 14px', cursor: 'pointer', fontSize: 13, fontFamily: 'var(--font)' }}>
             <RefreshCw size={14}/> تحديث
           </button>
           {pendingCount > 0 && (
@@ -203,9 +203,9 @@ export default function AdminPanel() {
               {listings.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-3)' }}>لا يوجد إعلانات</div>
               ) : listings.map(listing => (
-                <div key={listing.id} style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--gray-200)', display: 'flex', gap: 16, padding: 16, alignItems: 'flex-start' }}>
+                <div key={listing.id} style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--gray-200)', display: 'flex', gap: 16, padding: 16, alignItems: 'flex-start' }}>
                   <img src={listing.listing_images?.[0]?.url ?? 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=120&h=80&fit=crop'}
-                    alt="" style={{ width: 110, height: 74, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}/>
+                    alt="" style={{ width: 110, height: 74, objectFit: 'cover', borderRadius: 10, flexShrink: 0 }}/>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{listing.title}</div>
                     <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 6 }}>
@@ -218,16 +218,16 @@ export default function AdminPanel() {
                   </div>
                   <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                     <Link to={`/listing/${listing.id}`} target="_blank"
-                      style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', borderRadius: 8, border: '1px solid var(--gray-200)', color: 'var(--text-3)', textDecoration: 'none' }}>
+                      style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', borderRadius: 10, border: '1px solid var(--gray-200)', color: 'var(--text-3)', textDecoration: 'none' }}>
                       <Eye size={14}/>
                     </Link>
                     {activeTab === 'الإعلانات المعلقة' && <>
                       <button onClick={() => approveListing(listing.id)}
-                        style={{ background: '#dcfce7', border: '1.5px solid #86efac', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', color: '#16A34A', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        style={{ background: '#dcfce7', border: '1.5px solid #86efac', borderRadius: 10, padding: '8px 14px', cursor: 'pointer', color: '#16A34A', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
                         <Check size={14}/> قبول
                       </button>
                       <button onClick={() => setRejectId(listing.id)}
-                        style={{ background: '#fee2e2', border: '1.5px solid #fca5a5', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', color: '#DC2626', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        style={{ background: '#fee2e2', border: '1.5px solid #fca5a5', borderRadius: 10, padding: '8px 14px', cursor: 'pointer', color: '#DC2626', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
                         <X size={14}/> رفض
                       </button>
                     </>}
@@ -243,7 +243,7 @@ export default function AdminPanel() {
               {workshops.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-3)' }}>لا يوجد طلبات ورشات معلقة</div>
               ) : workshops.map(ws => (
-                <div key={ws.id} style={{ background: '#fff', borderRadius: 14, border: '1px solid var(--gray-200)', padding: '18px 20px' }}>
+                <div key={ws.id} style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--gray-200)', padding: '18px 20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
@@ -271,11 +271,11 @@ export default function AdminPanel() {
                     </div>
                     <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                       <button onClick={() => approveWorkshop(ws.id)}
-                        style={{ background: '#dcfce7', border: '1.5px solid #86efac', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', color: '#16A34A', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        style={{ background: '#dcfce7', border: '1.5px solid #86efac', borderRadius: 10, padding: '8px 16px', cursor: 'pointer', color: '#16A34A', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
                         <Check size={14}/> قبول
                       </button>
                       <button onClick={() => rejectWorkshop(ws.id)}
-                        style={{ background: '#fee2e2', border: '1.5px solid #fca5a5', borderRadius: 8, padding: '8px 16px', cursor: 'pointer', color: '#DC2626', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        style={{ background: '#fee2e2', border: '1.5px solid #fca5a5', borderRadius: 10, padding: '8px 16px', cursor: 'pointer', color: '#DC2626', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 5 }}>
                         <X size={14}/> رفض
                       </button>
                     </div>
@@ -333,12 +333,12 @@ export default function AdminPanel() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {ads.map(ad => (
                     <div key={ad.id} style={{
-                      background: '#fff', borderRadius: 14, border: `1px solid ${ad.active ? 'var(--gray-200)' : 'var(--gray-100)'}`,
+                      background: '#fff', borderRadius: 16, border: `1px solid ${ad.active ? 'var(--gray-200)' : 'var(--gray-100)'}`,
                       padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 16,
                       opacity: ad.active ? 1 : 0.5,
                     }}>
                       {ad.image_url && (
-                        <img src={ad.image_url} alt="" style={{ width: 80, height: 52, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}/>
+                        <img src={ad.image_url} alt="" style={{ width: 80, height: 52, objectFit: 'cover', borderRadius: 10, flexShrink: 0 }}/>
                       )}
                       <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 3 }}>{ad.title}</div>
@@ -350,7 +350,7 @@ export default function AdminPanel() {
                       </div>
                       <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                         <button onClick={() => toggleAd(ad.id, ad.active)} style={{
-                          padding: '7px 14px', borderRadius: 8, border: '1px solid var(--gray-200)',
+                          padding: '7px 14px', borderRadius: 10, border: '1px solid var(--gray-200)',
                           background: ad.active ? '#DCFCE7' : 'var(--gray-100)',
                           color: ad.active ? '#16A34A' : 'var(--text-4)',
                           fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'var(--font)',
@@ -358,7 +358,7 @@ export default function AdminPanel() {
                           {ad.active ? '● نشط' : '○ موقوف'}
                         </button>
                         <button onClick={() => deleteAd(ad.id)} style={{
-                          padding: '7px 10px', borderRadius: 8, background: '#FEE2E2',
+                          padding: '7px 10px', borderRadius: 10, background: '#FEE2E2',
                           border: '1px solid #FCA5A5', cursor: 'pointer', color: '#DC2626',
                         }}>
                           <X size={14}/>
@@ -391,7 +391,7 @@ export default function AdminPanel() {
                     <span style={{ fontSize: 12, color: 'var(--text-4)' }}>{new Date(u.created_at).toLocaleDateString('ar-SY')}</span>
                     {!u.is_admin && u.verified && (
                       <button onClick={() => banUser(u.id)}
-                        style={{ background: 'none', border: '1.5px solid #fca5a5', borderRadius: 8, padding: '5px 10px', cursor: 'pointer', color: '#DC2626', fontSize: 12 }}>
+                        style={{ background: 'none', border: '1.5px solid #fca5a5', borderRadius: 10, padding: '5px 10px', cursor: 'pointer', color: '#DC2626', fontSize: 12 }}>
                         حظر
                       </button>
                     )}

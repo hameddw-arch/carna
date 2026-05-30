@@ -259,7 +259,7 @@ export default function Services() {
 
         {/* ── REGISTER CTA ─────────────────────────── */}
         <div style={{
-          marginTop: 56, background: 'var(--dark)', borderRadius: 24,
+          marginTop: 56, background: 'var(--dark)', borderRadius: 20,
           padding: '40px 36px', display: 'flex', alignItems: 'center',
           justifyContent: 'space-between', flexWrap: 'wrap', gap: 24,
         }}>

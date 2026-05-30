@@ -119,7 +119,7 @@ export default function RegisterWorkshop() {
 
   if (done) return (
     <main style={{ flex: 1, background: 'var(--off-white)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <div style={{ maxWidth: 480, textAlign: 'center', background: '#fff', borderRadius: 24, padding: '48px 32px', border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-md)' }}>
+      <div style={{ maxWidth: 480, textAlign: 'center', background: '#fff', borderRadius: 20, padding: '48px 32px', border: '1px solid var(--gray-200)', boxShadow: 'var(--shadow-md)' }}>
         <div style={{ fontSize: 64, marginBottom: 20 }}>🎉</div>
         <h2 style={{ fontSize: 22, fontWeight: 900, marginBottom: 10 }}>تم إرسال طلبك!</h2>
         <p style={{ fontSize: 15, color: 'var(--text-3)', lineHeight: 1.8, marginBottom: 28 }}>
@@ -349,7 +349,7 @@ export default function RegisterWorkshop() {
                 {TIERS.map(t => (
                   <button key={t.id} onClick={() => set('tier', t.id)} style={{
                     display: 'flex', alignItems: 'center', gap: 16,
-                    padding: '16px 18px', borderRadius: 14, cursor: 'pointer', textAlign: 'right',
+                    padding: '16px 18px', borderRadius: 16, cursor: 'pointer', textAlign: 'right',
                     border: `2px solid ${form.tier === t.id ? t.color : 'var(--gray-200)'}`,
                     background: form.tier === t.id ? t.color + '10' : '#fff',
                     fontFamily: 'var(--font)', width: '100%', transition: 'all 150ms ease',

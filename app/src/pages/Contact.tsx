@@ -58,7 +58,7 @@ function ContactCard({ icon, title, value, href, color }: { icon: React.ReactNod
     <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
       style={{
         display: 'flex', alignItems: 'center', gap: 16,
-        background: '#fff', borderRadius: 14, padding: '16px 20px',
+        background: '#fff', borderRadius: 16, padding: '16px 20px',
         border: '1.5px solid var(--gray-200)', textDecoration: 'none',
         transition: 'all 200ms ease',
       }}

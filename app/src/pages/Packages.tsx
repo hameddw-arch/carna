@@ -111,7 +111,7 @@ export default function Packages() {
       <div className="container" style={{ padding: '40px 24px 64px' }}>
 
         {success && (
-          <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 14, padding: '16px 20px', marginBottom: 28, color: '#065F46', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 16, padding: '16px 20px', marginBottom: 28, color: '#065F46', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>{success}</span>
             <Link to="/dashboard" className="btn btn-yellow" style={{ fontSize: 13 }}>عرض الإعلان</Link>
           </div>
@@ -119,7 +119,7 @@ export default function Packages() {
 
         {/* No listing selected warning */}
         {!listingId && user && !success && (
-          <div style={{ background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: 14, padding: '14px 18px', marginBottom: 24, fontSize: 14, color: '#92400E' }}>
+          <div style={{ background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: 16, padding: '14px 18px', marginBottom: 24, fontSize: 14, color: '#92400E' }}>
             💡 لتفعيل باقة، اذهب لـ <Link to="/dashboard" style={{ fontWeight: 700, color: '#92400E' }}>لوحة التحكم</Link> واضغط زر <strong>"مميّز"</strong> على الإعلان الذي تريد ترقيته.
           </div>
         )}
