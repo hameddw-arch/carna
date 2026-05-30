@@ -1,7 +1,15 @@
+import SEO from '../components/SEO';
+
 export default function AboutPage() {
   return (
     <div className="bg-background text-on-surface min-h-screen flex flex-col">
-      
+      <SEO
+        title="عن كارنا - منصة السيارات والورشات في سوريا"
+        description="تعرف على كارنا - المركز العصبي لقطاع السيارات في سوريا. نربط البائع بالمشتري والمالك بورشة الصيانة عبر بيئة رقمية شفافة وموثوقة."
+        image="/carna-logo.svg"
+        url="/about"
+        type="website"
+      />
 
       <main className="py-8 flex-grow rtl">
         {/* Hero Section: Platform Vision */}

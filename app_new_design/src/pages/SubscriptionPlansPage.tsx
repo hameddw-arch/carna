@@ -1,8 +1,99 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { fetchUserService, purchaseSubscription } from '../lib/queries';
+import { supabase } from '../lib/supabase';
+import SEO from '../components/SEO';
 
 export default function SubscriptionPlansPage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [balance, setBalance] = useState(0);
+  const [service, setService] = useState<any>(null);
+  const [_loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      Promise.all([
+        supabase.from('users').select('wallet_balance').eq('id', user.id).single(),
+        fetchUserService(user.id)
+      ]).then(([balRes, servData]) => {
+        setBalance(balRes.data?.wallet_balance || 0);
+        setService(servData);
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  const handlePurchase = async (tier: string, cost: number) => {
+    if (!user) {
+      alert('الرجاء تسجيل الدخول أولاً');
+      navigate('/login');
+      return;
+    }
+    if (!service) {
+      alert('يجب عليك تسجيل ورشة أولاً للاشتراك في هذه الباقة');
+      navigate('/workshop-registration');
+      return;
+    }
+    if (balance < cost) {
+      if (window.confirm('رصيدك الحالي غير كافٍ. هل تريد الانتقال لصفحة المحفظة لشحن الرصيد؟')) {
+        navigate('/wallet');
+      }
+      return;
+    }
+    
+    if (window.confirm(`هل أنت متأكد من خصم ${cost} ل.س من محفظتك للاشتراك بباقة ${tier}؟`)) {
+      try {
+        const newBal = await purchaseSubscription(user.id, service.id, tier, cost);
+        setBalance(newBal);
+        setService({ ...service, subscription_tier: tier });
+        alert('تم الاشتراك بالباقة بنجاح!');
+      } catch (err: any) {
+        if (err.message === 'INSUFFICIENT_FUNDS') {
+          alert('الرصيد غير كافٍ للعملية.');
+        } else {
+          console.error(err);
+          alert('حدث خطأ أثناء الشراء');
+        }
+      }
+    }
+  };
+
+  const schemaData = {
+    "@context": "https://schema.org/",
+    "@type": "LocalBusiness",
+    "name": "باقات اشتراك كارنا",
+    "description": "باقات اشتراك مرنة للورشات والمعارض السوري",
+    "url": "https://carna.sy/subscription-plans",
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "الباقة الأساسية",
+        "price": "25000",
+        "priceCurrency": "SYP"
+      },
+      {
+        "@type": "Offer",
+        "name": "الباقة المميزة",
+        "price": "75000",
+        "priceCurrency": "SYP"
+      }
+    ]
+  };
+
   return (
-    <div className="bg-background text-on-surface min-h-screen flex flex-col relative overflow-x-hidden">
+    <>
+      <SEO
+        title="باقات الاشتراك"
+        description="اختر الباقة المناسبة لورشتك. باقات مرنة وأسعار منافسة للورشات والمعارض على منصة كارنا"
+        url="/subscription-plans"
+        type="website"
+        jsonLd={schemaData}
+      />
+      <div className="bg-background text-on-surface min-h-screen flex flex-col relative overflow-x-hidden">
       
       {/* Visual Background Element */}
       <div className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] z-0">
@@ -72,17 +163,20 @@ export default function SubscriptionPlansPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-xs">
-                      <h2 className="font-headline-sm text-headline-sm text-text-primary">الباقة الأساسية</h2>
+                      <h2 className="font-headline-sm text-headline-sm text-text-primary">
+                        {service ? `باقة الورشة: ${service.subscription_tier === 'premium' ? 'مميزة' : service.subscription_tier === 'حصري' ? 'حصرية' : 'أساسية'}` : 'لا توجد ورشة مسجلة'}
+                      </h2>
                       <span className="bg-verification-blue/10 text-verification-blue px-xs py-base rounded-full text-[10px] font-bold">نشطة حالياً</span>
                     </div>
-                    <p className="font-body-sm text-body-sm text-text-muted">تنتهي الصلاحية في: <span className="text-text-primary font-bold">15 حزيران 2024</span></p>
+                    {service && <p className="font-body-sm text-body-sm text-text-muted">الرصيد المتاح: <span className="text-text-primary font-bold">{balance.toLocaleString()} ل.س</span></p>}
                   </div>
                 </div>
                 <div className="flex flex-col md:items-end gap-xs">
                   <div className="w-full md:w-48 bg-surface-container h-2 rounded-full overflow-hidden">
-                    <div className="bg-accent-yellow h-full w-2/3"></div>
+                    <div className="bg-accent-yellow h-full w-full"></div>
                   </div>
-                  <p className="font-label-sm text-label-sm text-text-muted">استهلاك الإعلانات: <span className="text-text-primary font-bold">6 من أصل 10 إعلانات</span></p>
+                  <p className="font-label-sm text-label-sm text-text-muted">إعلانات الورشة <span className="text-text-primary font-bold">غير محدودة</span></p>
+
                 </div>
                 <button className="bg-primary text-on-primary font-label-lg text-label-lg px-lg py-sm rounded-lg hover:brightness-110 transition-all active:scale-95">
                   تجديد الاشتراك
@@ -150,7 +244,7 @@ export default function SubscriptionPlansPage() {
                     دعم فني خلال 24 ساعة
                   </li>
                 </ul>
-                <Link to="/workshop-registration?tier=مميز" className="block text-center w-full font-label-lg text-label-lg py-sm rounded-lg hover:brightness-95 transition-all bg-accent-yellow text-black">اشترك الآن</Link>
+                <button onClick={() => handlePurchase('premium', 25000)} className="block text-center w-full font-label-lg text-label-lg py-sm rounded-lg hover:brightness-95 transition-all bg-accent-yellow text-black">اشترك الآن</button>
               </div>
 
               {/* Premium Plan */}
@@ -180,9 +274,9 @@ export default function SubscriptionPlansPage() {
                     مدير حساب خاص (أولوية)
                   </li>
                 </ul>
-                <Link to="/workshop-registration?tier=حصري" className="block text-center w-full bg-on-background text-on-primary font-label-lg text-label-lg py-sm rounded-lg hover:bg-tertiary transition-all active:scale-95">
+                <button onClick={() => handlePurchase('حصري', 75000)} className="block text-center w-full bg-on-background text-on-primary font-label-lg text-label-lg py-sm rounded-lg hover:bg-tertiary transition-all active:scale-95">
                   انضم للمحترفين
-                </Link>
+                </button>
               </div>
             </div>
 
@@ -252,6 +346,7 @@ export default function SubscriptionPlansPage() {
       </div>
 
 
-    </div>
+      </div>
+    </>
   );
 }

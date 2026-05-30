@@ -1,27 +1,43 @@
 import SEO from '../components/SEO'
+import { Link } from 'react-router-dom';
 
 export default function Privacy() {
-  return (
-    <main style={{ flex: 1, background: 'var(--off-white)' }}>
-      <SEO title="إخلاء المسؤولية والخصوصية" url="/privacy"/>
-      <div className="container" style={{ padding: '48px 24px 80px', maxWidth: 760 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>إخلاء المسؤولية والخصوصية</h1>
-        <p style={{ color: 'var(--text-3)', fontSize: 13, marginBottom: 36 }}>آخر تحديث: {new Date().toLocaleDateString('ar-SY')}</p>
+  const privacyPoints = [
+    { title: '1. جمع البيانات', body: 'نجمع فقط البيانات الضرورية لتشغيل المنصة: (الاسم، رقم الهاتف، والبريد الإلكتروني إن وجد). رقم هاتفك يظل محمياً ولا يظهر للعموم إلا عند موافقتك الصريحة أو من خلال قنوات تواصل آمنة.' },
+    { title: '2. استخدام البيانات', body: 'تُستخدم بياناتك لتسهيل تواصلك مع المشترين/البائعين، ولتزويدك بإشعارات تخص إعلاناتك. لا نقوم ببيع بياناتك لأي طرف ثالث.' },
+    { title: '3. حماية البيانات', body: 'نستخدم بروتوكولات تشفير قياسية لحماية بيانات حسابك وعمليات محفظتك من الوصول غير المصرح به.' },
+    { title: '4. ملفات الارتباط (Cookies)', body: 'نستخدم الكوكيز فقط للحفاظ على تسجيل دخولك وتحسين تجربة التصفح وحفظ تفضيلاتك (مثل الوضع الداكن).' },
+    { title: '5. حذف الحساب', body: 'يمكنك طلب حذف حسابك وكافة بياناتك وإعلاناتك في أي وقت عبر التواصل مع الدعم الفني، وسيتم الحذف خلال 7 أيام عمل.' }
+  ];
 
-        {[
-          { title: 'إخلاء المسؤولية', body: 'كارنا منصة وسيطة للعرض فقط. لا تتحمل كارنا أي مسؤولية قانونية أو مالية عن أي صفقة تتم بين البائع والمشتري، أو عن أي خسارة ناجمة عن الاعتماد على المعلومات المنشورة في الإعلانات.' },
-          { title: 'البيانات التي نجمعها', body: 'نجمع: رقم الهاتف عند التسجيل، الإعلانات التي تنشرها، عمليات البحث وتصفح الموقع (للإحصاء). لا نجمع أي بيانات دفع مباشرة.' },
-          { title: 'استخدام البيانات', body: 'تُستخدم البيانات لتشغيل الموقع، وإرسال إشعارات تخص إعلاناتك، وتحسين تجربة الاستخدام. لا نبيع بياناتك لأي طرف ثالث.' },
-          { title: 'حماية البيانات', body: 'تُخزَّن بياناتك بأمان على خوادم Supabase (PostgreSQL) مع تشفير كامل. الاتصال محمي بـ SSL/TLS عبر Cloudflare.' },
-          { title: 'ملفات تعريف الارتباط (Cookies)', body: 'نستخدم Cookies الضرورية للجلسة فقط. لا نستخدم Cookies إعلانية أو تتبعية.' },
-          { title: 'حقوق المستخدم', body: 'يحق لك طلب حذف حسابك وجميع بياناتك في أي وقت عبر التواصل معنا على: info@carna.online' },
-        ].map(s => (
-          <div key={s.title} style={{ marginBottom: 28 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 800, marginBottom: 8 }}>{s.title}</h2>
-            <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.8 }}>{s.body}</p>
-          </div>
-        ))}
+  return (
+    <main className="bg-background text-on-surface min-h-screen rtl flex flex-col">
+      <SEO title="سياسة الخصوصية" url="/privacy"/>
+      
+      {/* Header Pattern Background */}
+      <div className="bg-surface-bright border-b border-border-light relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-verification-blue/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
+        <div className="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-16 relative z-10 text-center">
+          <h1 className="font-display-lg text-display-lg font-black text-text-primary mb-sm">سياسة الخصوصية</h1>
+          <p className="font-body-lg text-body-lg text-text-muted">نحن في كارنا نلتزم بحماية بياناتك وخصوصيتك بأعلى المعايير.</p>
+        </div>
+      </div>
+
+      <div className="flex-1 max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+        <div className="flat-card p-lg space-y-xl">
+          {privacyPoints.map((point) => (
+            <div key={point.title}>
+              <h2 className="font-headline-sm text-headline-sm font-bold text-text-primary mb-sm border-r-4 border-verification-blue pr-sm">{point.title}</h2>
+              <p className="font-body-md text-body-md text-text-muted leading-relaxed">{point.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-xl text-center pb-xl">
+          <p className="font-body-md text-body-md text-text-muted mb-md">للمزيد من المعلومات حول كيفية معالجة بياناتك</p>
+          <Link to="/contact" className="inline-block bg-surface-container-high text-on-surface px-lg py-sm rounded-lg font-label-lg transition-all hover:brightness-95 active:scale-95">الدعم الفني</Link>
+        </div>
       </div>
     </main>
-  )
+  );
 }

@@ -1,11 +1,13 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useState } from 'react';
 import logoDark from '../assets/carna logo.svg';
 
 export default function Header() {
   const { user } = useAuth();
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const isActive = (path: string) => {
     if (path === '/') {
@@ -22,8 +24,14 @@ export default function Header() {
 
   return (
     <header className="bg-surface-white border-b border-border-light sticky top-0 z-50">
-      <div className="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+      <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-16">
         <div className="flex items-center gap-md">
+          <button 
+            className="md:hidden flex items-center justify-center p-2 rounded-full hover:bg-surface-container active:scale-95"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <span className="material-symbols-outlined">{isMobileMenuOpen ? 'close' : 'menu'}</span>
+          </button>
           <Link to="/">
             <img alt="CARNA" className="h-8" src={logoDark} />
           </Link>
@@ -50,6 +58,22 @@ export default function Header() {
           )}
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-surface-white border-b border-border-light shadow-lg">
+          <nav className="flex flex-col p-md gap-4">
+            <Link onClick={() => setIsMobileMenuOpen(false)} className={linkClass('/')} to="/">السيارات</Link>
+            <Link onClick={() => setIsMobileMenuOpen(false)} className={linkClass('/workshops')} to="/workshops">الورشات</Link>
+            <Link onClick={() => setIsMobileMenuOpen(false)} className={linkClass('/about')} to="/about">حول كارنا</Link>
+            {user && (
+              <Link onClick={() => setIsMobileMenuOpen(false)} to="/post-ad" className="text-center bg-primary-container text-on-primary-container px-sm py-xs rounded-lg font-label-lg hover:bg-inverse-primary transition-all">
+                + أضف إعلانك
+              </Link>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

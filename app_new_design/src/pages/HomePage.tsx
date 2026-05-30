@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CarCard from '../components/CarCard';
 import { fetchListings } from '../lib/queries';
+import SEO from '../components/SEO';
 
 export default function HomePage() {
   const brands = [
@@ -108,6 +109,13 @@ export default function HomePage() {
 
   return (
     <>
+      <SEO
+        title="كارنا - منصة بيع وشراء السيارات والورشات في سوريا"
+        description="منصة كارنا للسيارات - ابحث عن السيارات المستعملة والجديدة من أفضل البائعين والموزعين في سوريا. اكتشف آلاف الإعلانات مع صور عالية الجودة وتفاصيل دقيقة."
+        image="/carna-logo.svg"
+        url="/"
+        type="website"
+      />
       <section 
         className="relative py-24 px-margin-mobile md:px-margin-desktop overflow-hidden bg-surface-container-low"
         style={{

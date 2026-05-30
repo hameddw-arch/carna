@@ -1,5 +1,6 @@
 
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -38,13 +39,19 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 export default function App() {
   const location = useLocation();
   const hideHeaderFooter = location.pathname.startsWith('/admin') || location.pathname.startsWith('/workshop-admin');
 
   return (
     <div dir="rtl" className="bg-surface-white font-body-md text-body-md text-on-surface">
-      
+      <ScrollToTop />
       {!hideHeaderFooter && <Header />}
       
       <main className="min-h-screen">

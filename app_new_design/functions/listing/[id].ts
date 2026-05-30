@@ -73,7 +73,7 @@ export const onRequest = async (context: { params: { id: string }; env: Env; req
     <script type="application/ld+json">${jsonLd}</script>
   `
 
-  // @ts-ignore — HTMLRewriter متاح في بيئة Cloudflare Workers
+  // @ts-expect-error — HTMLRewriter متاح في بيئة Cloudflare Workers
   return new HTMLRewriter()
     .on('title', { element(el: any) { el.setInnerContent(title) } })
     .on('head', { element(el: any) { el.append(head, { html: true }) } })

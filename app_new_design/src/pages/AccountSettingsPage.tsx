@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from '../contexts/AuthContext';
 import { updateUserProfile } from '../lib/queries';
+import { supabase } from '../lib/supabase';
 
 export default function AccountSettingsPage() {
   const { user, setUser, loading } = useAuth();
@@ -14,12 +15,22 @@ export default function AccountSettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
 
+  const [passwordData, setPasswordData] = useState({
+    new: '',
+    confirm: ''
+  });
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState('');
+
   useEffect(() => {
     if (user) {
       setFormData({
         name: user.name || '',
         phone: user.phone || '',
       });
+      // Try to load notifications if they exist on the user object, else default
+      if (user.email_notifications !== undefined) setEmailNotifications(user.email_notifications);
+      if (user.sms_notifications !== undefined) setSmsNotifications(user.sms_notifications);
     }
   }, [user]);
 
@@ -31,13 +42,45 @@ export default function AccountSettingsPage() {
       const updatedUser = await updateUserProfile(user.id, {
         name: formData.name,
         phone: formData.phone,
+        email_notifications: emailNotifications,
+        sms_notifications: smsNotifications
       });
-      setUser({ ...user, name: updatedUser.name, phone: updatedUser.phone });
+      setUser({ 
+        ...user, 
+        name: updatedUser.name, 
+        phone: updatedUser.phone, 
+        email_notifications: updatedUser.email_notifications,
+        sms_notifications: updatedUser.sms_notifications 
+      });
       setMessage('تم حفظ التغييرات بنجاح');
     } catch (err: any) {
       setMessage('حدث خطأ: ' + err.message);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    if (passwordData.new !== passwordData.confirm) {
+      setPasswordMessage('كلمات المرور غير متطابقة');
+      return;
+    }
+    if (passwordData.new.length < 6) {
+      setPasswordMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+      return;
+    }
+    
+    setIsSavingPassword(true);
+    setPasswordMessage('');
+    try {
+      const { error } = await supabase.auth.updateUser({ password: passwordData.new });
+      if (error) throw error;
+      setPasswordMessage('تم تحديث كلمة المرور بنجاح');
+      setPasswordData({ new: '', confirm: '' });
+    } catch (err: any) {
+      setPasswordMessage('حدث خطأ: ' + err.message);
+    } finally {
+      setIsSavingPassword(false);
     }
   };
 
@@ -139,6 +182,16 @@ export default function AccountSettingsPage() {
                   </div>
                 </div>
               </div>
+              <div className="mt-md flex items-center justify-between">
+                <span className={`font-label-sm ${message.includes('خطأ') ? 'text-error' : 'text-green-600'}`}>{message}</span>
+                <button 
+                  onClick={handleSave} 
+                  disabled={isSaving}
+                  className="bg-primary text-on-primary px-lg py-xs rounded-lg font-label-lg font-bold hover:brightness-110 transition-all disabled:opacity-50"
+                >
+                  {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                </button>
+              </div>
             </section>
 
             {/* 2. Security Section */}
@@ -147,22 +200,37 @@ export default function AccountSettingsPage() {
                 <span className="material-symbols-outlined text-primary text-3xl">security</span>
                 <h2 className="font-headline-sm text-headline-sm">الأمان وكلمة المرور</h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
-                <div className="flex flex-col gap-xs group">
-                  <label className="font-label-lg text-label-lg text-text-muted">كلمة المرور الحالية</label>
-                  <input className="border border-border-light rounded-lg px-sm py-xs font-body-md transition-transform duration-200 focus-within:scale-[1.01]" placeholder="••••••••" type="password" />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
                 <div className="flex flex-col gap-xs group">
                   <label className="font-label-lg text-label-lg text-text-muted">كلمة المرور الجديدة</label>
-                  <input className="border border-border-light rounded-lg px-sm py-xs font-body-md transition-transform duration-200 focus-within:scale-[1.01]" placeholder="••••••••" type="password" />
+                  <input 
+                    className="border border-border-light rounded-lg px-sm py-xs font-body-md transition-transform duration-200 focus-within:scale-[1.01]" 
+                    placeholder="••••••••" 
+                    type="password" 
+                    value={passwordData.new}
+                    onChange={e => setPasswordData({...passwordData, new: e.target.value})}
+                  />
                 </div>
                 <div className="flex flex-col gap-xs group">
                   <label className="font-label-lg text-label-lg text-text-muted">تأكيد كلمة المرور</label>
-                  <input className="border border-border-light rounded-lg px-sm py-xs font-body-md transition-transform duration-200 focus-within:scale-[1.01]" placeholder="••••••••" type="password" />
+                  <input 
+                    className="border border-border-light rounded-lg px-sm py-xs font-body-md transition-transform duration-200 focus-within:scale-[1.01]" 
+                    placeholder="••••••••" 
+                    type="password" 
+                    value={passwordData.confirm}
+                    onChange={e => setPasswordData({...passwordData, confirm: e.target.value})}
+                  />
                 </div>
               </div>
-              <div className="mt-md flex justify-end">
-                <button className="bg-accent-yellow text-on-primary-fixed px-lg py-xs rounded-lg font-label-lg font-bold hover:brightness-95 transition-all">تحديث كلمة المرور</button>
+              <div className="mt-md flex items-center justify-between">
+                <span className={`font-label-sm ${passwordMessage.includes('نجاح') ? 'text-green-600' : 'text-error'}`}>{passwordMessage}</span>
+                <button 
+                  onClick={handleUpdatePassword}
+                  disabled={isSavingPassword || !passwordData.new || !passwordData.confirm}
+                  className="bg-accent-yellow text-on-primary-fixed px-lg py-xs rounded-lg font-label-lg font-bold hover:brightness-95 transition-all disabled:opacity-50"
+                >
+                  {isSavingPassword ? 'جاري التحديث...' : 'تحديث كلمة المرور'}
+                </button>
               </div>
             </section>
 

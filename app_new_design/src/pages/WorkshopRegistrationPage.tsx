@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { insertService } from '../lib/queries';
+import SEO from '../components/SEO';
 
 export default function WorkshopRegistrationPage() {
   const navigate = useNavigate();
@@ -50,9 +51,25 @@ export default function WorkshopRegistrationPage() {
     }
   };
 
+  const schemaData = {
+    "@context": "https://schema.org/",
+    "@type": "LocalBusiness",
+    "name": "تسجيل الورشات - كارنا",
+    "description": "سجل ورشتك على منصة كارنا واستقبل عملاء جدد",
+    "url": "https://carna.sy/workshop-registration"
+  };
+
   if (showSuccess) {
     return (
-      <div className="bg-background min-h-screen">
+      <>
+        <SEO
+          title="تم تسجيل الورشة بنجاح"
+          description="تم إرسال طلب تسجيل ورشتك. سيتواصل معك فريقنا قريباً لتفعيل الحساب"
+          url="/workshop-registration"
+          type="article"
+          jsonLd={schemaData}
+        />
+        <div className="bg-background min-h-screen">
         <main className="mt-24 mb-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full flex flex-col gap-lg">
           <div className="bg-verification-blue/10 border border-verification-blue rounded-xl p-xl flex flex-col items-center justify-center text-center py-20">
             <span className="material-symbols-outlined text-[64px] text-verification-blue mb-md">check_circle</span>
@@ -61,11 +78,20 @@ export default function WorkshopRegistrationPage() {
           </div>
         </main>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="bg-background min-h-screen text-on-surface rtl">
+    <>
+      <SEO
+        title="تسجيل ورشة جديدة"
+        description="سجل ورشتك على كارنا واستقبل عملاء جدد. عملية تسجيل سهلة وسريعة للورشات والمعارض السوري"
+        url="/workshop-registration"
+        type="website"
+        jsonLd={schemaData}
+      />
+      <div className="bg-background min-h-screen text-on-surface rtl">
       <main className="py-lg px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full flex flex-col gap-lg">
         {/* Page Header */}
         <section className="flex flex-col gap-base">
@@ -227,6 +253,7 @@ export default function WorkshopRegistrationPage() {
           </div>
         </form>
       </main>
-    </div>
+      </div>
+    </>
   );
 }

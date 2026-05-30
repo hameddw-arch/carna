@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchServices } from '../lib/queries';
+import SEO from '../components/SEO';
 
 export default function WorkshopsDirectoryPage() {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -23,7 +24,14 @@ export default function WorkshopsDirectoryPage() {
 
   return (
     <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg">
-            
+      <SEO
+        title="دليل الورشات والخدمات - كارنا"
+        description="ابحث عن أفضل الورشات والخدمات للسيارات في سوريا. ميكانيكا، كهرباء، دهان، فحص فني وأكثر. شاهد التقييمات والتخصصات والعناوين والأرقام."
+        image="/carna-logo.svg"
+        url="/workshops"
+        type="website"
+      />
+
       {/* Subscription Plans Section */}
       <section className="mb-xl text-center">
         <h2 className="font-headline-lg text-headline-lg mb-md">اختر باقة التميز لورشتك</h2>
@@ -87,11 +95,19 @@ export default function WorkshopsDirectoryPage() {
           {loading ? (
             <div className="py-md text-center w-full">جاري تحميل الورشات المميزة...</div>
           ) : (
-            services.filter(s => s.subscription_tier === 'premium').map(service => (
-              <Link to={`/workshop/${service.id}`} key={service.id} className="min-w-[280px] md:min-w-[320px] bg-surface-white border border-border-light rounded-xl overflow-hidden cursor-pointer active:scale-95 transition-transform block">
+            services.filter(s => s.subscription_tier === 'premium').map(service => {
+              const isInspectionCenter = service.category?.includes('فحص') || (service.specialties && service.specialties.includes('فحص فني'));
+              return (
+              <Link to={`/workshop/${service.id}`} key={service.id} className={`min-w-[280px] md:min-w-[320px] bg-surface-white border ${isInspectionCenter ? 'border-[#2196F3] shadow-[0_0_10px_rgba(33,150,243,0.2)]' : 'border-border-light'} rounded-xl overflow-hidden cursor-pointer active:scale-95 transition-transform block`}>
                 <div className="h-40 bg-surface-container relative">
                   <img className="w-full h-full object-cover" src={service.image || '/placeholder-car.svg'} alt={service.name} />
                   <span className="absolute top-sm right-sm bg-accent-yellow text-on-primary-container px-sm py-1 rounded font-label-sm text-label-sm font-bold">مميزة</span>
+                  {isInspectionCenter && (
+                    <span className="absolute top-sm left-sm bg-[#E3F2FD] text-[#1976D2] px-2 py-1 rounded text-[10px] font-bold flex items-center gap-1 border border-[#90CAF9]">
+                      <span className="material-symbols-outlined text-[14px]">plumbing</span>
+                      فحص قبل الشراء
+                    </span>
+                  )}
                 </div>
                 <div className="p-md">
                   <h4 className="font-headline-sm text-headline-sm mb-xs">{service.name}</h4>
@@ -106,7 +122,8 @@ export default function WorkshopsDirectoryPage() {
                   </div>
                 </div>
               </Link>
-            ))
+              );
+            })
           )}
         </div>
       </section>
@@ -205,18 +222,28 @@ export default function WorkshopsDirectoryPage() {
             ) : services.length === 0 ? (
               <div className="col-span-2 text-center py-xl text-tertiary font-body-md">لم يتم العثور على ورشات.</div>
             ) : (
-              services.map(service => (
-                <Link to={`/workshop/${service.id}`} key={service.id} className="bg-surface-white border border-border-light rounded-lg flex overflow-hidden hover:border-primary transition-all group cursor-pointer h-24 block">
-                  <div className="w-24 h-full bg-surface-container-high shrink-0 float-right">
+              services.map(service => {
+                const isInspectionCenter = service.category?.includes('فحص') || (service.specialties && service.specialties.includes('فحص فني'));
+                return (
+                <Link to={`/workshop/${service.id}`} key={service.id} className={`bg-surface-white border ${isInspectionCenter ? 'border-[#2196F3] shadow-[0_0_10px_rgba(33,150,243,0.2)]' : 'border-border-light'} rounded-lg flex overflow-hidden hover:border-primary transition-all group cursor-pointer h-24 block relative`}>
+                  <div className="w-24 h-full bg-surface-container-high shrink-0 float-right relative">
                     <img className="w-full h-full object-cover" src={service.image || '/placeholder-car.svg'} alt={service.name} />
                   </div>
                   <div className="p-md flex-1">
                     <div className="flex justify-between items-start mb-base">
-                      <h5 className="font-label-lg text-label-lg font-bold group-hover:text-primary transition-colors">{service.name}</h5>
+                      <div className="flex items-center gap-xs">
+                        <h5 className="font-label-lg text-label-lg font-bold group-hover:text-primary transition-colors">{service.name}</h5>
+                        {isInspectionCenter && (
+                          <span className="bg-[#E3F2FD] text-[#1976D2] px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 border border-[#90CAF9]">
+                            <span className="material-symbols-outlined text-[12px]">plumbing</span>
+                            فحص قبل الشراء
+                          </span>
+                        )}
+                      </div>
                       {service.subscription_tier === 'premium' ? (
-                        <span className="bg-verification-blue/10 text-verification-blue px-xs py-0.5 rounded-full text-[10px] font-bold">موثوق</span>
+                        <span className="bg-verification-blue/10 text-verification-blue px-xs py-0.5 rounded-full text-[10px] font-bold shrink-0">موثوق</span>
                       ) : (
-                        <span className="bg-surface-container-highest text-tertiary px-xs py-0.5 rounded-full text-[10px] font-bold">نشط</span>
+                        <span className="bg-surface-container-highest text-tertiary px-xs py-0.5 rounded-full text-[10px] font-bold shrink-0">نشط</span>
                       )}
                     </div>
                     <div className="flex gap-md mb-xs">
@@ -229,7 +256,8 @@ export default function WorkshopsDirectoryPage() {
                     </div>
                   </div>
                 </Link>
-              ))
+                );
+              })
             )}
           </div>
           

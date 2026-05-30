@@ -1,22 +1,117 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 // Removed unused Link import
 import { useAuth } from '../contexts/AuthContext';
-import { fetchUserService } from '../lib/queries';
+import { fetchUserService, updateService, uploadServiceImage, fetchServiceReviews, replyToReview } from '../lib/queries';
 import logoDark from '../assets/carna logo.svg';
 
 export default function WorkshopDashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const [service, setService] = useState<any>(null);
-  // Removed unused loading state
+  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    city: '',
+    neighborhood: '',
+    location_url: ''
+  });
+  const [specialties, setSpecialties] = useState<string[]>([]);
+  const [newSpecialty, setNewSpecialty] = useState('');
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [replyText, setReplyText] = useState<{ [key: string]: string }>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (user) {
-      // Removed setLoading(true)
       fetchUserService(user.id)
-        .then(data => setService(data))
+        .then(data => {
+          if (data) {
+            setService(data);
+            setFormData({
+              name: data.name || '',
+              description: data.description || '',
+              city: data.city || '',
+              neighborhood: data.neighborhood || '',
+              location_url: data.location_url || ''
+            });
+            setSpecialties(data.specialties || ['ميكانيكا', 'كهرباء']);
+            fetchServiceReviews(data.id).then(setReviews).catch(console.error);
+          }
+        })
         .catch(console.error);
     }
   }, [user]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = async () => {
+    if (!service) return;
+    setIsSaving(true);
+    try {
+      const updates = {
+        name: formData.name,
+        description: formData.description,
+        city: formData.city,
+        neighborhood: formData.neighborhood,
+        location_url: formData.location_url,
+        specialties
+      };
+      const updated = await updateService(service.id, updates);
+      setService({ ...service, ...updated });
+      alert('تم حفظ البيانات بنجاح');
+    } catch (err) {
+      console.error(err);
+      alert('حدث خطأ أثناء الحفظ');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const addSpecialty = () => {
+    if (newSpecialty.trim() && !specialties.includes(newSpecialty.trim())) {
+      setSpecialties([...specialties, newSpecialty.trim()]);
+      setNewSpecialty('');
+    }
+  };
+
+  const removeSpecialty = (spec: string) => {
+    setSpecialties(specialties.filter(s => s !== spec));
+  };
+
+  const handleReplyChange = (reviewId: string, text: string) => {
+    setReplyText({ ...replyText, [reviewId]: text });
+  };
+
+  const handleSendReply = async (reviewId: string) => {
+    try {
+      await replyToReview(reviewId, replyText[reviewId]);
+      alert('تم إرسال الرد بنجاح');
+      setReviews(reviews.map(r => r.id === reviewId ? { ...r, reply: replyText[reviewId] } : r));
+    } catch (e) {
+      console.error(e);
+      alert('خطأ في إرسال الرد');
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !service) return;
+    
+    try {
+      const url = await uploadServiceImage(service.id, file);
+      if (url) {
+        // Assuming your services table has an 'image' column. If not, it can be updated in DB schema later.
+        await updateService(service.id, { image: url });
+        setService({ ...service, image: url });
+        alert('تم تحديث الصورة بنجاح');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('حدث خطأ أثناء رفع الصورة');
+    }
+  };
 
   if (authLoading) return <div className="p-xl text-center">جاري التحميل...</div>;
   if (!user) return <div className="p-xl text-center">الرجاء تسجيل الدخول</div>;
@@ -102,7 +197,7 @@ export default function WorkshopDashboardPage() {
           {/* Header Section */}
           <div className="mb-lg">
             <h1 className="font-headline-lg text-headline-lg text-on-surface mb-xs">لوحة تحكم الورشة</h1>
-            <p className="font-body-md text-body-md text-tertiary">إدارة بيانات ورشة "{service?.title || 'النجم الذهبي'}" وتحليلات الأداء</p>
+            <p className="font-body-md text-body-md text-tertiary">إدارة بيانات ورشة "{service?.name || 'النجم الذهبي'}" وتحليلات الأداء</p>
           </div>
 
           {/* Analytics Bento Grid */}
@@ -148,26 +243,34 @@ export default function WorkshopDashboardPage() {
               <section className="bg-surface-white border border-border-light p-lg rounded-xl">
                 <div className="flex justify-between items-center mb-md">
                   <h2 className="font-headline-sm text-headline-sm">بيانات الورشة</h2>
-                  <button className="text-primary font-bold font-label-lg text-label-lg hover:underline transition-all active:scale-95">حفظ التغييرات</button>
+                  <button onClick={handleSave} disabled={isSaving} className="text-primary font-bold font-label-lg text-label-lg hover:underline transition-all active:scale-95 disabled:opacity-50">
+                    {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                  </button>
                 </div>
                 <div className="space-y-md">
                   <div>
                     <label className="block font-label-lg text-label-lg mb-base">اسم الورشة</label>
-                    <input className="w-full bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none" type="text" defaultValue={service?.title || "ورشة النجم الذهبي لصيانة السيارات"} />
+                    <input name="name" value={formData.name} onChange={handleInputChange} className="w-full bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none" type="text" placeholder="مثال: ورشة النجم الذهبي لصيانة السيارات" />
                   </div>
                   <div>
                     <label className="block font-label-lg text-label-lg mb-base">الوصف</label>
-                    <textarea className="w-full bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none" rows={3} defaultValue={service?.description || "أفضل ورشة متخصصة في صيانة المحركات وناقل الحركة الأوتوماتيكي بأحدث الأجهزة الإلكترونية. ضمان على جميع قطع الغيار."}></textarea>
+                    <textarea name="description" value={formData.description} onChange={handleInputChange} className="w-full bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none" rows={3} placeholder="اكتب وصفاً جذاباً لورشتك..."></textarea>
                   </div>
                   
                   {/* Specialty Chips */}
                   <div>
                     <label className="block font-label-lg text-label-lg mb-xs">التخصصات</label>
-                    <div className="flex flex-wrap gap-xs">
-                      <span className="bg-primary-container text-on-primary-container px-sm py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1 hover:opacity-80 transition-opacity">ميكانيكا <span className="material-symbols-outlined text-[14px] cursor-pointer">close</span></span>
-                      <span className="bg-primary-container text-on-primary-container px-sm py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1 hover:opacity-80 transition-opacity">كهرباء <span className="material-symbols-outlined text-[14px] cursor-pointer">close</span></span>
-                      <span className="bg-primary-container text-on-primary-container px-sm py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1 hover:opacity-80 transition-opacity">فحص كمبيوتر <span className="material-symbols-outlined text-[14px] cursor-pointer">close</span></span>
-                      <span className="bg-surface-container text-tertiary border border-border-light px-sm py-1 rounded-full font-label-sm text-label-sm cursor-pointer hover:bg-surface-container-high active:scale-95 transition-all">+ إضافة تخصص</span>
+                    <div className="flex flex-wrap gap-xs mb-sm">
+                      {specialties.map(spec => (
+                        <span key={spec} className="bg-primary-container text-on-primary-container px-sm py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1 hover:opacity-80 transition-opacity">
+                          {spec} 
+                          <span onClick={() => removeSpecialty(spec)} className="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <input type="text" value={newSpecialty} onChange={(e) => setNewSpecialty(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addSpecialty()} placeholder="إضافة تخصص جديد..." className="bg-surface-container-low border border-border-light rounded-lg px-md py-1 font-body-sm text-body-sm focus:ring-1 focus:ring-primary outline-none" />
+                      <button onClick={addSpecialty} className="bg-surface-container text-tertiary border border-border-light px-sm py-1 rounded-full font-label-sm text-label-sm cursor-pointer hover:bg-surface-container-high active:scale-95 transition-all">إضافة</button>
                     </div>
                   </div>
 
@@ -189,9 +292,10 @@ export default function WorkshopDashboardPage() {
                           <span className="material-symbols-outlined text-white cursor-pointer hover:scale-110 transition-transform">edit</span>
                         </div>
                       </div>
-                      <div className="aspect-square border-2 border-dashed border-border-light rounded-lg flex flex-col items-center justify-center text-tertiary cursor-pointer hover:bg-surface-container-low transition-colors active:scale-95">
+                      <div onClick={() => fileInputRef.current?.click()} className="aspect-square border-2 border-dashed border-border-light rounded-lg flex flex-col items-center justify-center text-tertiary cursor-pointer hover:bg-surface-container-low transition-colors active:scale-95">
                         <span className="material-symbols-outlined text-[32px] mb-xs">add_a_photo</span>
                         <span className="font-label-sm text-label-sm">رفع صورة</span>
+                        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
                       </div>
                     </div>
                   </div>
@@ -205,49 +309,47 @@ export default function WorkshopDashboardPage() {
                   <a className="text-tertiary font-label-lg text-label-lg hover:text-primary transition-colors" href="#">مشاهدة الكل</a>
                 </div>
                 <div className="space-y-md">
-                  {/* Review Item */}
-                  <div className="border-b border-border-light pb-md">
-                    <div className="flex justify-between mb-xs">
-                      <div className="flex items-center gap-sm">
-                        <div className="w-8 h-8 bg-surface-container rounded-full flex items-center justify-center font-bold text-primary font-label-lg text-label-lg">س</div>
-                        <span className="font-label-lg text-label-lg font-bold">سامي العتيبي</span>
+                  {reviews.length === 0 ? (
+                    <p className="text-tertiary font-body-sm">لا توجد تقييمات حتى الآن.</p>
+                  ) : (
+                    reviews.map(review => (
+                      <div key={review.id} className="border-b border-border-light pb-md">
+                        <div className="flex justify-between mb-xs">
+                          <div className="flex items-center gap-sm">
+                            <div className="w-8 h-8 bg-surface-container rounded-full flex items-center justify-center font-bold text-primary font-label-lg text-label-lg">
+                              {review.users?.name?.charAt(0) || 'م'}
+                            </div>
+                            <span className="font-label-lg text-label-lg font-bold">{review.users?.name || 'مستخدم'}</span>
+                          </div>
+                          <div className="flex text-accent-yellow">
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} className={`material-symbols-outlined text-sm ${i < review.rating ? 'fill' : ''}`}>star</span>
+                            ))}
+                          </div>
+                        </div>
+                        <p className="font-body-sm text-body-sm text-on-surface mb-sm">{review.content}</p>
+                        
+                        {review.reply ? (
+                          <div className="bg-surface-container-low p-sm rounded-lg border-r-2 border-primary">
+                            <p className="font-body-sm text-body-sm font-bold text-primary mb-1">ردك:</p>
+                            <p className="font-body-sm text-body-sm text-on-surface-variant italic">"{review.reply}"</p>
+                          </div>
+                        ) : (
+                          <div className="relative">
+                            <input 
+                              value={replyText[review.id] || ''}
+                              onChange={(e) => handleReplyChange(review.id, e.target.value)}
+                              className="w-full bg-surface-container-low border border-border-light rounded-lg pr-md pl-12 py-2 font-body-sm text-body-sm outline-none focus:ring-1 focus:ring-primary" 
+                              placeholder="اكتب رداً..." 
+                              type="text" 
+                              onKeyDown={(e) => e.key === 'Enter' && handleSendReply(review.id)}
+                            />
+                            <button onClick={() => handleSendReply(review.id)} className="absolute left-2 top-1/2 -translate-y-1/2 text-primary font-bold font-label-sm text-label-sm hover:underline active:scale-95 transition-transform">إرسال</button>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex text-accent-yellow">
-                        <span className="material-symbols-outlined text-sm fill">star</span>
-                        <span className="material-symbols-outlined text-sm fill">star</span>
-                        <span className="material-symbols-outlined text-sm fill">star</span>
-                        <span className="material-symbols-outlined text-sm fill">star</span>
-                        <span className="material-symbols-outlined text-sm fill">star</span>
-                      </div>
-                    </div>
-                    <p className="font-body-sm text-body-sm text-on-surface mb-sm">الورشة ممتازة جداً والموظفين محترمين. تم إصلاح العطل في وقت قياسي وبسعر مناسب.</p>
-                    <div className="bg-surface-container-low p-sm rounded-lg border-r-2 border-primary">
-                      <p className="font-body-sm text-body-sm font-bold text-primary mb-1">ردك:</p>
-                      <p className="font-body-sm text-body-sm text-on-surface-variant italic">"شكراً جزيلاً لثقتكم بنا أستاذ سامي، نسعد دائماً بخدمتكم."</p>
-                    </div>
-                  </div>
-
-                  {/* Review Item (Needs Reply) */}
-                  <div>
-                    <div className="flex justify-between mb-xs">
-                      <div className="flex items-center gap-sm">
-                        <div className="w-8 h-8 bg-surface-container rounded-full flex items-center justify-center font-bold text-primary font-label-lg text-label-lg">م</div>
-                        <span className="font-label-lg text-label-lg font-bold">محمد الحربي</span>
-                      </div>
-                      <div className="flex text-accent-yellow">
-                        <span className="material-symbols-outlined text-sm fill">star</span>
-                        <span className="material-symbols-outlined text-sm fill">star</span>
-                        <span className="material-symbols-outlined text-sm fill">star</span>
-                        <span className="material-symbols-outlined text-sm fill">star</span>
-                        <span className="material-symbols-outlined text-sm">star</span>
-                      </div>
-                    </div>
-                    <p className="font-body-sm text-body-sm text-on-surface mb-sm">الخدمة جيدة ولكن كان هناك تأخير بسيط في تسليم السيارة. أتمنى تحسين المواعيد.</p>
-                    <div className="relative">
-                      <input className="w-full bg-surface-container-low border border-border-light rounded-lg pr-md pl-12 py-2 font-body-sm text-body-sm outline-none focus:ring-1 focus:ring-primary" placeholder="اكتب رداً..." type="text" />
-                      <button className="absolute left-2 top-1/2 -translate-y-1/2 text-primary font-bold font-label-sm text-label-sm hover:underline active:scale-95 transition-transform">إرسال</button>
-                    </div>
-                  </div>
+                    ))
+                  )}
                 </div>
               </section>
             </div>
@@ -292,32 +394,32 @@ export default function WorkshopDashboardPage() {
                 <div className="flex flex-col gap-sm">
                   <div>
                     <label className="block font-label-sm text-label-sm text-on-surface-variant mb-xs">المحافظة</label>
-                    <select className="w-full bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none">
+                    <select name="city" value={formData.city} onChange={handleInputChange} className="w-full bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none">
                       <option value="">اختر المحافظة</option>
-                      <option>دمشق</option>
-                      <option>ريف دمشق</option>
-                      <option>حلب</option>
-                      <option>حمص</option>
-                      <option>حماة</option>
-                      <option>اللاذقية</option>
-                      <option>طرطوس</option>
-                      <option>السويداء</option>
-                      <option>درعا</option>
-                      <option>القنيطرة</option>
-                      <option>دير الزور</option>
-                      <option>الحسكة</option>
-                      <option>الرقة</option>
-                      <option>إدلب</option>
+                      <option value="دمشق">دمشق</option>
+                      <option value="ريف دمشق">ريف دمشق</option>
+                      <option value="حلب">حلب</option>
+                      <option value="حمص">حمص</option>
+                      <option value="حماة">حماة</option>
+                      <option value="اللاذقية">اللاذقية</option>
+                      <option value="طرطوس">طرطوس</option>
+                      <option value="السويداء">السويداء</option>
+                      <option value="درعا">درعا</option>
+                      <option value="القنيطرة">القنيطرة</option>
+                      <option value="دير الزور">دير الزور</option>
+                      <option value="الحسكة">الحسكة</option>
+                      <option value="الرقة">الرقة</option>
+                      <option value="إدلب">إدلب</option>
                     </select>
                   </div>
                   <div>
                     <label className="block font-label-sm text-label-sm text-on-surface-variant mb-xs">المدينة / المنطقة</label>
-                    <input type="text" placeholder="مثال: جرمانا، المزة، الخ..." className="w-full bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none" />
+                    <input type="text" name="neighborhood" value={formData.neighborhood} onChange={handleInputChange} placeholder="مثال: جرمانا، المزة، الخ..." className="w-full bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none" />
                   </div>
                   <div>
                     <label className="block font-label-sm text-label-sm text-on-surface-variant mb-xs">رابط خرائط جوجل (Google Maps)</label>
                     <div className="flex gap-2">
-                      <input type="url" placeholder="https://maps.google.com/..." className="flex-grow bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none" dir="ltr" />
+                      <input type="url" name="location_url" value={formData.location_url} onChange={handleInputChange} placeholder="https://maps.google.com/..." className="flex-grow bg-surface-container-low border border-border-light rounded-lg px-md py-xs font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none" dir="ltr" />
                       <a href="https://www.google.com/maps" target="_blank" rel="noreferrer" className="flex items-center justify-center bg-surface-container border border-border-light rounded-lg px-sm hover:bg-surface-container-high transition-colors text-primary" title="افتح الخرائط لتحديد الموقع">
                         <span className="material-symbols-outlined text-[20px]">map</span>
                       </a>

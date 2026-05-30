@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchAdminStats, fetchAllListingsForAdmin, updateListingStatus, deleteListing, fetchPendingTransactions, approveTransaction } from '../lib/queries';
+import { 
+  fetchAdminStats, 
+  fetchAllListingsForAdmin, 
+  updateListingStatus, 
+  deleteListing, 
+  fetchPendingTransactions, 
+  approveTransaction,
+  fetchAllServicesForAdmin,
+  updateServiceStatus,
+  deleteService
+} from '../lib/queries';
 import logoDark from '../assets/carna logo.svg';
 
 
@@ -8,8 +18,10 @@ export default function AdminDashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<any>(null);
   const [listings, setListings] = useState<any[]>([]);
+  const [services, setServices] = useState<any[]>([]);
   const [pendingTxs, setPendingTxs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   // States for governorates and logs
   const [governorates, setGovernorates] = useState([
@@ -27,6 +39,7 @@ export default function AdminDashboardPage() {
 
   const addLog = (action: string, type: string, color: string, icon: string) => {
     const newLog = {
+      // eslint-disable-next-line react-hooks/purity
       id: Date.now(),
       action,
       user: user?.name || 'Admin',
@@ -59,6 +72,30 @@ export default function AdminDashboardPage() {
     } catch (error) {
       console.error('Error deleting listing:', error);
       alert('حدث خطأ أثناء حذف الإعلان');
+    }
+  };
+
+  const handleToggleService = async (id: string, currentStatus: string) => {
+    try {
+      const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+      await updateServiceStatus(id, newStatus);
+      setServices(prev => prev.map(s => s.id === id ? { ...s, status: newStatus } : s));
+      addLog(`تغيير حالة ورشة إلى ${newStatus === 'active' ? 'مفعلة' : 'معطلة'}`, 'edit', 'blue', 'toggle_on');
+    } catch (error) {
+      console.error('Error toggling service:', error);
+      alert('حدث خطأ أثناء تحديث حالة الورشة');
+    }
+  };
+
+  const handleDeleteService = async (id: string) => {
+    if (!window.confirm('هل أنت متأكد من حذف هذه الورشة نهائياً؟')) return;
+    try {
+      await deleteService(id);
+      setServices(prev => prev.filter(s => s.id !== id));
+      addLog('حذف ورشة', 'delete', 'red', 'delete');
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      alert('حدث خطأ أثناء حذف الورشة');
     }
   };
 
@@ -107,11 +144,13 @@ export default function AdminDashboardPage() {
     Promise.all([
       fetchAdminStats(),
       fetchAllListingsForAdmin(5),
-      fetchPendingTransactions()
-    ]).then(([s, l, txs]) => {
+      fetchPendingTransactions(),
+      fetchAllServicesForAdmin()
+    ]).then(([s, l, txs, servs]) => {
       setStats(s);
       setListings(l);
       setPendingTxs(txs);
+      setServices(servs);
     }).finally(() => setLoading(false));
   }, []);
 
@@ -161,36 +200,36 @@ export default function AdminDashboardPage() {
         {/* Sidebar Navigation */}
         <aside className="hidden md:flex flex-col p-4 gap-6 w-64 border-l border-border-light bg-inverse-surface text-white sticky top-16 h-[calc(100vh-64px)]">
           <div className="flex flex-col gap-2 flex-grow">
-            <a className="flex items-center justify-between gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95" href="#">
+            <button onClick={() => setActiveTab('dashboard')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'dashboard' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
               <div className="flex items-center gap-xs">
                 <span className="material-symbols-outlined">dashboard</span>
                 <span className="font-label-lg text-label-lg">لوحة القيادة</span>
               </div>
-            </a>
-            <a className="flex items-center justify-between gap-xs px-sm py-3 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all shadow-md active:scale-95" href="#">
+            </button>
+            <button onClick={() => setActiveTab('settings')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'settings' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
               <div className="flex items-center gap-xs">
                 <span className="material-symbols-outlined">settings</span>
                 <span className="font-label-lg text-label-lg">الإعدادات</span>
               </div>
-            </a>
-            <a className="flex items-center justify-between gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95" href="#">
+            </button>
+            <button onClick={() => setActiveTab('governorates')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'governorates' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
               <div className="flex items-center gap-xs">
                 <span className="material-symbols-outlined">map</span>
                 <span className="font-label-lg text-label-lg">إدارة المحافظات</span>
               </div>
-            </a>
-            <a className="flex items-center justify-between gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95" href="#">
+            </button>
+            <button onClick={() => setActiveTab('logs')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'logs' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
               <div className="flex items-center gap-xs">
                 <span className="material-symbols-outlined">list_alt</span>
                 <span className="font-label-lg text-label-lg">سجلات النشاط</span>
               </div>
-            </a>
-            <a className="flex items-center justify-between gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95" href="#">
+            </button>
+            <button onClick={() => setActiveTab('workshops')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'workshops' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
               <div className="flex items-center gap-xs">
                 <span className="material-symbols-outlined">handyman</span>
                 <span className="font-label-lg text-label-lg">الورشات</span>
               </div>
-            </a>
+            </button>
           </div>
           <div className="border-t border-white/10 pt-4 flex flex-col gap-1">
             <a className="flex items-center gap-xs px-sm py-3 text-error/80 hover:bg-error/10 transition-all rounded-lg active:scale-95" href="#">
@@ -207,86 +246,136 @@ export default function AdminDashboardPage() {
             <p className="text-body-md text-tertiary">لوحة تحكم الإدارة العامة للسيارات السوري</p>
           </header>
 
-          {/* KPI Cards Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-md mb-xl">
-            <div className="bg-surface-white border border-border-light p-lg rounded-xl shadow-sm relative overflow-hidden flex justify-between items-center">
-              <div>
-                <p className="text-tertiary font-label-lg text-label-lg mb-1">إجمالي الإعلانات</p>
-                <p className="font-headline-md text-headline-md text-on-surface">{stats?.listingsCount || 0}</p>
+          {activeTab === 'dashboard' && (
+            <>
+              {/* KPI Cards Section */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-md mb-xl">
+                <div className="bg-surface-white border border-border-light p-lg rounded-xl shadow-sm relative overflow-hidden flex justify-between items-center">
+                  <div>
+                    <p className="text-tertiary font-label-lg text-label-lg mb-1">إجمالي الإعلانات</p>
+                    <p className="font-headline-md text-headline-md text-on-surface">{stats?.listingsCount || 0}</p>
+                  </div>
+                  <div className="bg-green-50 p-2 rounded-lg text-green-600">
+                    <span className="material-symbols-outlined">trending_up</span>
+                  </div>
+                </div>
+                <div className="bg-surface-white border border-border-light p-lg rounded-xl shadow-sm relative overflow-hidden flex justify-between items-center">
+                  <div>
+                    <p className="text-tertiary font-label-lg text-label-lg mb-1">المستخدمون</p>
+                    <p className="font-headline-md text-headline-md text-on-surface">{stats?.usersCount || 0}</p>
+                  </div>
+                  <div className="bg-green-50 p-2 rounded-lg text-green-600">
+                    <span className="material-symbols-outlined">trending_up</span>
+                  </div>
+                </div>
+                <div className="bg-surface-white border border-border-light p-lg rounded-xl shadow-sm relative overflow-hidden flex justify-between items-center">
+                  <div>
+                    <p className="text-tertiary font-label-lg text-label-lg mb-1">الإيرادات</p>
+                    <p className="font-headline-md text-headline-md text-on-surface">{stats?.revenue?.toLocaleString() || 0} ل.س</p>
+                  </div>
+                  <div className="bg-primary-container/20 p-2 rounded-lg text-primary">
+                    <span className="material-symbols-outlined">trending_up</span>
+                  </div>
+                </div>
               </div>
-              <div className="bg-green-50 p-2 rounded-lg text-green-600">
-                <span className="material-symbols-outlined">trending_up</span>
-              </div>
-            </div>
-            <div className="bg-surface-white border border-border-light p-lg rounded-xl shadow-sm relative overflow-hidden flex justify-between items-center">
-              <div>
-                <p className="text-tertiary font-label-lg text-label-lg mb-1">المستخدمون</p>
-                <p className="font-headline-md text-headline-md text-on-surface">{stats?.usersCount || 0}</p>
-              </div>
-              <div className="bg-green-50 p-2 rounded-lg text-green-600">
-                <span className="material-symbols-outlined">trending_up</span>
-              </div>
-            </div>
-            <div className="bg-surface-white border border-border-light p-lg rounded-xl shadow-sm relative overflow-hidden flex justify-between items-center">
-              <div>
-                <p className="text-tertiary font-label-lg text-label-lg mb-1">الإيرادات</p>
-                <p className="font-headline-md text-headline-md text-on-surface">{stats?.revenue?.toLocaleString() || 0} ل.س</p>
-              </div>
-              <div className="bg-primary-container/20 p-2 rounded-lg text-primary">
-                <span className="material-symbols-outlined">trending_up</span>
-              </div>
-            </div>
-          </div>
 
-          {/* Grid for Main Tables */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg mb-lg">
-            {/* Recent Ads Table */}
-            <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm">
-              <div className="p-md flex justify-between items-center border-b border-border-light">
-                <h2 className="font-headline-sm text-headline-sm">أحدث الإعلانات</h2>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-right">
-                  <thead className="bg-surface-container-low text-tertiary text-label-sm border-b border-border-light">
-                    <tr>
-                      <th className="p-md font-medium">اسم الإعلان</th>
-                      <th className="p-md font-medium">الفئة</th>
-                      <th className="p-md font-medium text-center">الحالة</th>
-                      <th className="p-md font-medium text-center">إجراءات</th>
-                      <th className="p-md font-medium">تاريخ النشر</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border-light text-body-sm">
-                    {listings.map(l => (
-                      <tr key={l.id} className="hover:bg-surface-container-lowest transition-colors">
-                        <td className="p-md font-bold">{l.title || `${l.make} ${l.model}`}</td>
-                        <td className="p-md">{l.body_type || 'سيدان'}</td>
-                        <td className="p-md text-center">
-                          {l.status === 'active' ? (
-                            <span className="bg-green-500 text-white px-3 py-0.5 rounded text-[11px] font-bold">فعال</span>
-                          ) : (
-                            <span className="bg-gray-400 text-white px-3 py-0.5 rounded text-[11px] font-bold">غير فعال</span>
-                          )}
-                        </td>
-                        <td className="p-md text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <button onClick={() => handleToggleListing(l.id, l.status)} className="p-1 text-tertiary hover:text-primary transition-colors" title="تغيير الحالة">
-                              <span className="material-symbols-outlined text-sm">{l.status === 'active' ? 'block' : 'check_circle'}</span>
-                            </button>
-                            <button onClick={() => handleDeleteListing(l.id)} className="p-1 text-tertiary hover:text-error transition-colors" title="حذف">
-                              <span className="material-symbols-outlined text-sm">delete</span>
-                            </button>
-                          </div>
-                        </td>
-                        <td className="p-md text-tertiary">{new Date(l.created_at).toLocaleDateString('ar-EG')}</td>
+              {/* Recent Ads Table */}
+              <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm mb-lg">
+                <div className="p-md flex justify-between items-center border-b border-border-light">
+                  <h2 className="font-headline-sm text-headline-sm">أحدث الإعلانات</h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-right">
+                    <thead className="bg-surface-container-low text-tertiary text-label-sm border-b border-border-light">
+                      <tr>
+                        <th className="p-md font-medium">اسم الإعلان</th>
+                        <th className="p-md font-medium">الفئة</th>
+                        <th className="p-md font-medium text-center">الحالة</th>
+                        <th className="p-md font-medium text-center">إجراءات</th>
+                        <th className="p-md font-medium">تاريخ النشر</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-border-light text-body-sm">
+                      {listings.map(l => (
+                        <tr key={l.id} className="hover:bg-surface-container-lowest transition-colors">
+                          <td className="p-md font-bold">{l.title || `${l.make} ${l.model}`}</td>
+                          <td className="p-md">{l.body_type || 'سيدان'}</td>
+                          <td className="p-md text-center">
+                            {l.status === 'active' ? (
+                              <span className="bg-green-500 text-white px-3 py-0.5 rounded text-[11px] font-bold">فعال</span>
+                            ) : (
+                              <span className="bg-gray-400 text-white px-3 py-0.5 rounded text-[11px] font-bold">غير فعال</span>
+                            )}
+                          </td>
+                          <td className="p-md text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <button onClick={() => handleToggleListing(l.id, l.status)} className="p-1 text-tertiary hover:text-primary transition-colors" title="تغيير الحالة">
+                                <span className="material-symbols-outlined text-sm">{l.status === 'active' ? 'block' : 'check_circle'}</span>
+                              </button>
+                              <button onClick={() => handleDeleteListing(l.id)} className="p-1 text-tertiary hover:text-error transition-colors" title="حذف">
+                                <span className="material-symbols-outlined text-sm">delete</span>
+                              </button>
+                            </div>
+                          </td>
+                          <td className="p-md text-tertiary">{new Date(l.created_at).toLocaleDateString('ar-EG')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
 
-            {/* Governorate Management Table */}
+              {/* Pending Wallet Topups */}
+              <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm">
+                <div className="p-md flex justify-between items-center border-b border-border-light">
+                  <h2 className="font-headline-sm text-headline-sm">طلبات شحن المحفظة المعلقة</h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-right">
+                    <thead className="bg-surface-container-low text-tertiary text-label-sm border-b border-border-light">
+                      <tr>
+                        <th className="p-md font-medium">المستخدم</th>
+                        <th className="p-md font-medium">المبلغ</th>
+                        <th className="p-md font-medium">طريقة الدفع</th>
+                        <th className="p-md font-medium">تاريخ الطلب</th>
+                        <th className="p-md font-medium text-center">إجراءات</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border-light text-body-sm">
+                      {pendingTxs.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="p-md text-center text-tertiary">لا توجد طلبات معلقة</td>
+                        </tr>
+                      ) : (
+                        pendingTxs.map(tx => (
+                          <tr key={tx.id} className="hover:bg-surface-container-lowest transition-colors">
+                            <td className="p-md font-bold">{tx.users?.name || 'مستخدم غير معروف'} <br/><span className="text-[11px] text-tertiary">{tx.users?.phone}</span></td>
+                            <td className="p-md text-orange-500 font-bold">{tx.amount.toLocaleString()} ل.س</td>
+                            <td className="p-md">{tx.method}</td>
+                            <td className="p-md text-tertiary">{new Date(tx.created_at).toLocaleDateString('ar-EG')}</td>
+                            <td className="p-md text-center">
+                              <button onClick={() => handleApproveTransaction(tx.id, tx.user_id, tx.amount)} className="bg-green-500 text-white px-md py-xs rounded hover:bg-green-600 transition-colors font-bold text-xs shadow-sm">
+                                تأكيد الشحن
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeTab === 'settings' && (
+            <div className="bg-surface-white border border-border-light rounded-xl p-lg shadow-sm">
+              <h2 className="font-headline-sm text-headline-sm mb-md">إعدادات المنصة</h2>
+              <p className="text-tertiary">الإعدادات العامة للوحة التحكم ستضاف هنا قريبًا.</p>
+            </div>
+          )}
+
+          {activeTab === 'governorates' && (
             <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm">
               <div className="p-md flex justify-between items-center border-b border-border-light">
                 <h2 className="font-headline-sm text-headline-sm">إدارة المحافظات</h2>
@@ -324,40 +413,98 @@ export default function AdminDashboardPage() {
                 </table>
               </div>
             </div>
+          )}
 
-            {/* Pending Wallet Topups */}
-            <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm lg:col-span-2">
+          {activeTab === 'logs' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+              <div className="bg-surface-white border border-border-light rounded-xl p-md shadow-sm">
+                <h2 className="font-headline-sm text-headline-sm mb-md text-center">تاريخ النشاط</h2>
+                <div className="space-y-4">
+                  {activityLogs.map((log) => (
+                    <div key={log.id} className="flex items-center justify-between pb-3 border-b border-border-light last:border-0">
+                      <div className={`p-2 rounded-lg ${getColorClasses(log.color, 'icon')}`}>
+                        <span className="material-symbols-outlined">{log.icon}</span>
+                      </div>
+                      <div className="flex-grow text-center">
+                        <p className="text-body-sm font-bold">{log.action} - {log.user}</p>
+                      </div>
+                      <div className="text-tertiary text-xs">{log.time}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-surface-white border border-border-light rounded-xl p-md shadow-sm">
+                <h2 className="font-headline-sm text-headline-sm mb-md text-center">سجلات النشاط التفصيلية</h2>
+                <div className="space-y-4">
+                  {activityLogs.map((log) => (
+                    <div key={`log-${log.id}`} className="flex items-center justify-between pb-3 border-b border-border-light last:border-0">
+                      <div className="flex-grow">
+                        <p className="text-body-sm text-on-surface">{log.action} - {log.user}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-tertiary text-xs">{log.time}</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${getColorClasses(log.color, 'badge')}`}>
+                          {log.type === 'edit' ? 'تعديل' : log.type === 'add' ? 'إضافة' : 'حذف/تعطيل'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'workshops' && (
+            <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm">
               <div className="p-md flex justify-between items-center border-b border-border-light">
-                <h2 className="font-headline-sm text-headline-sm">طلبات شحن المحفظة المعلقة</h2>
+                <h2 className="font-headline-sm text-headline-sm">إدارة الورشات</h2>
+                <p className="text-body-sm text-tertiary font-bold">إجمالي الورشات: <span className="text-primary">{services.length}</span></p>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-right">
                   <thead className="bg-surface-container-low text-tertiary text-label-sm border-b border-border-light">
                     <tr>
-                      <th className="p-md font-medium">المستخدم</th>
-                      <th className="p-md font-medium">المبلغ</th>
-                      <th className="p-md font-medium">طريقة الدفع</th>
-                      <th className="p-md font-medium">تاريخ الطلب</th>
+                      <th className="p-md font-medium">اسم الورشة</th>
+                      <th className="p-md font-medium">المدينة</th>
+                      <th className="p-md font-medium">المالك</th>
+                      <th className="p-md font-medium text-center">الحالة</th>
                       <th className="p-md font-medium text-center">إجراءات</th>
+                      <th className="p-md font-medium">تاريخ الإضافة</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-light text-body-sm">
-                    {pendingTxs.length === 0 ? (
+                    {services.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="p-md text-center text-tertiary">لا توجد طلبات معلقة</td>
+                        <td colSpan={6} className="p-md text-center text-tertiary font-bold">لا توجد ورشات مضافة حالياً</td>
                       </tr>
                     ) : (
-                      pendingTxs.map(tx => (
-                        <tr key={tx.id} className="hover:bg-surface-container-lowest transition-colors">
-                          <td className="p-md font-bold">{tx.users?.name || 'مستخدم غير معروف'} <br/><span className="text-[11px] text-tertiary">{tx.users?.phone}</span></td>
-                          <td className="p-md text-orange-500 font-bold">{tx.amount.toLocaleString()} ل.س</td>
-                          <td className="p-md">{tx.method}</td>
-                          <td className="p-md text-tertiary">{new Date(tx.created_at).toLocaleDateString('ar-EG')}</td>
-                          <td className="p-md text-center">
-                            <button onClick={() => handleApproveTransaction(tx.id, tx.user_id, tx.amount)} className="bg-green-500 text-white px-md py-xs rounded hover:bg-green-600 transition-colors font-bold text-xs shadow-sm">
-                              تأكيد الشحن
-                            </button>
+                      services.map(s => (
+                        <tr key={s.id} className="hover:bg-surface-container-lowest transition-colors">
+                          <td className="p-md font-bold">{s.name}</td>
+                          <td className="p-md">{s.city}</td>
+                          <td className="p-md">
+                            {s.users?.name || 'مستخدم غير معروف'}
+                            <br/>
+                            <span className="text-[11px] text-tertiary">{s.users?.phone}</span>
                           </td>
+                          <td className="p-md text-center">
+                            {s.status === 'active' ? (
+                              <span className="bg-green-500 text-white px-3 py-0.5 rounded text-[11px] font-bold">فعال</span>
+                            ) : (
+                              <span className="bg-gray-400 text-white px-3 py-0.5 rounded text-[11px] font-bold">غير فعال</span>
+                            )}
+                          </td>
+                          <td className="p-md text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <button onClick={() => handleToggleService(s.id, s.status)} className="p-1 text-tertiary hover:text-primary transition-colors" title="تغيير الحالة">
+                                <span className="material-symbols-outlined text-sm">{s.status === 'active' ? 'block' : 'check_circle'}</span>
+                              </button>
+                              <button onClick={() => handleDeleteService(s.id)} className="p-1 text-tertiary hover:text-error transition-colors" title="حذف">
+                                <span className="material-symbols-outlined text-sm">delete</span>
+                              </button>
+                            </div>
+                          </td>
+                          <td className="p-md text-tertiary">{new Date(s.created_at).toLocaleDateString('ar-EG')}</td>
                         </tr>
                       ))
                     )}
@@ -365,56 +512,8 @@ export default function AdminDashboardPage() {
                 </table>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Activity Sections Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg mb-lg">
-            {/* Activity History (تاريخ النشاط) */}
-            <div className="bg-surface-white border border-border-light rounded-xl p-md shadow-sm">
-              <h2 className="font-headline-sm text-headline-sm mb-md text-center">تاريخ النشاط</h2>
-              <div className="space-y-4">
-                {activityLogs.slice(0, 5).map((log) => (
-                  <div key={log.id} className="flex items-center justify-between pb-3 border-b border-border-light last:border-0">
-                    <div className={`p-2 rounded-lg ${getColorClasses(log.color, 'icon')}`}>
-                      <span className="material-symbols-outlined">{log.icon}</span>
-                    </div>
-                    <div className="flex-grow text-center">
-                      <p className="text-body-sm font-bold">{log.action} - {log.user}</p>
-                    </div>
-                    <div className="text-tertiary text-xs">{log.time}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Activity Logs (سجلات النشاط) */}
-            <div className="bg-surface-white border border-border-light rounded-xl p-md shadow-sm">
-              <h2 className="font-headline-sm text-headline-sm mb-md text-center">سجلات النشاط</h2>
-              <div className="space-y-4">
-                {activityLogs.slice(0, 5).map((log) => (
-                  <div key={`log-${log.id}`} className="flex items-center justify-between pb-3 border-b border-border-light last:border-0">
-                    <div className="flex-grow">
-                      <p className="text-body-sm text-on-surface">{log.action} - {log.user}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-tertiary text-xs">{log.time}</span>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${getColorClasses(log.color, 'badge')}`}>
-                        {log.type === 'edit' ? 'تعديل' : log.type === 'add' ? 'إضافة' : 'حذف/تعطيل'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Workshops Overview Section */}
-          <div className="flex justify-end">
-            <div className="bg-surface-white border border-border-light rounded-xl p-md shadow-sm min-w-[300px]">
-              <h2 className="font-headline-sm text-headline-sm mb-2 text-center">نظرة عامة على الورشات</h2>
-              <p className="text-body-md text-center">عدد الورشات النشطة: <span className="font-bold text-primary">{stats?.servicesCount || 0}</span></p>
-            </div>
-          </div>
         </main>
       </div>
 

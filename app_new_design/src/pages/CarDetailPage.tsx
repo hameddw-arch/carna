@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { fetchListing } from '../lib/queries';
+import { fetchListing, incrementListingViews } from '../lib/queries';
+import SEO from '../components/SEO';
 
 export default function CarDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -14,7 +15,10 @@ export default function CarDetailPage() {
     if (!id) return;
     setLoading(true);
     fetchListing(id)
-      .then(data => setListing(data))
+      .then(data => {
+        setListing(data);
+        incrementListingViews(id).catch(err => console.warn('View count update failed:', err));
+      })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, [id]);
@@ -40,10 +44,59 @@ export default function CarDetailPage() {
 
   const title = listing.title || `${listing.make} ${listing.model} ${listing.year}`;
   const images = listing.images || [];
+  const description = `${listing.make} ${listing.model} سنة ${listing.year} - ${listing.price?.toLocaleString()} ل.س - ${listing.city}. ${listing.mileage} كم، ${listing.condition || 'مستعمل'}. شاهد صور وتفاصيل السيارة على كارنا.`;
+  const imageUrl = images[0] || '/placeholder-car.svg';
+
+  const vehicleSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Vehicle",
+    "name": title,
+    "description": listing.description || description,
+    "image": images,
+    "brand": {
+      "@type": "Brand",
+      "name": listing.make
+    },
+    "model": listing.model,
+    "productionDate": `${listing.year}`,
+    "mileageFromOdometer": {
+      "@type": "QuantitativeValue",
+      "value": listing.mileage || 0,
+      "unitCode": "KMT"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": listing.price,
+      "priceCurrency": "SYP",
+      "availability": "https://schema.org/InStock"
+    },
+    "vehicleCondition": listing.condition === 'جديدة' ? "New" : "Used",
+    "bodyType": listing.body_type,
+    "fuelType": listing.fuel_type || listing.fuel,
+    "transmission": listing.transmission,
+    "seller": {
+      "@type": "Person",
+      "name": listing.users?.name || "بائع",
+      "aggregateRating": listing.users?.rating ? {
+        "@type": "AggregateRating",
+        "ratingValue": listing.users.rating,
+        "reviewCount": listing.users.rating_count || 0
+      } : undefined
+    }
+  };
 
   return (
     <div className="bg-background text-on-surface">
+      <SEO
+        title={`${listing.make} ${listing.model} ${listing.year}`}
+        description={description}
+        image={imageUrl}
+        url={`/car/${id}`}
+        type="article"
+        jsonLd={vehicleSchema}
+      />
       <main className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg">
+        {/* SEO Meta Tags */}
         {/* Breadcrumb - Added to match previous UX */}
         <div className="flex items-center gap-xs text-text-muted font-body-sm text-body-sm mb-lg">
           <Link to="/" className="hover:text-primary transition-colors">الرئيسية</Link>
@@ -158,6 +211,10 @@ export default function CarDetailPage() {
                   {listing.price ? Number(listing.price).toLocaleString() : 'غير محدد'}
                 </span>
                 <span className="font-headline-sm text-headline-sm text-on-surface-variant">ل.س</span>
+              </div>
+              <div className="flex items-center gap-xs mb-lg text-text-muted font-body-sm text-body-sm">
+                <span className="material-symbols-outlined text-[16px]">visibility</span>
+                <span>{listing.view_count || 0} عرض</span>
               </div>
               
               <div className="flex flex-col gap-sm">

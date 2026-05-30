@@ -1,10 +1,33 @@
 import { useState } from 'react';
+import SEO from '../components/SEO';
 
 export default function CarComparisonPage() {
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
 
+  const schemaData = {
+    "@context": "https://schema.org/",
+    "@type": "WebApplication",
+    "name": "أداة مقارنة السيارات - كارنا",
+    "description": "قارن بين مواصفات السيارات والأسعار لاتخاذ قرار شرائي أفضل",
+    "url": "https://carna.sy/compare",
+    "applicationCategory": "UtilityApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "SYP"
+    }
+  };
+
   return (
-    <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg rtl">
+    <>
+      <SEO
+        title="مقارنة السيارات"
+        description="قارن بين مواصفات السيارات والأسعار لاتخاذ قرار شرائي أفضل. أداة مقارنة مجانية وسهلة على منصة كارنا"
+        url="/compare"
+        type="website"
+        jsonLd={schemaData}
+      />
+      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg rtl">
             
       {/* Page Header */}
       <div className="mb-lg flex flex-col md:flex-row md:items-end justify-between gap-md">
@@ -223,6 +246,7 @@ export default function CarComparisonPage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

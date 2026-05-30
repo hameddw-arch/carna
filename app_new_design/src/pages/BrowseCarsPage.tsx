@@ -1,17 +1,24 @@
 import { useState, useEffect } from 'react';
 import CarCard, { type Car } from '../components/CarCard';
-import { fetchListings } from '../lib/queries';
+import { fetchListings, fetchAvailableTags } from '../lib/queries';
+import SEO from '../components/SEO';
 
 export default function BrowseCarsPage() {
   const [cars, setCars] = useState<Car[]>([]);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [filters, setFilters] = useState<any>({
     condition: '',
     city: '',
     body_type: '',
     year: '',
     min_price: '',
-    max_price: ''
+    max_price: '',
+    tag: ''
   });
+
+  useEffect(() => {
+    fetchAvailableTags().then(tags => setAvailableTags(tags)).catch(console.error);
+  }, []);
 
   const loadCars = (currentFilters: any) => {
     // Convert currentFilters to the format fetchListings expects
@@ -22,6 +29,7 @@ export default function BrowseCarsPage() {
     if (currentFilters.year && currentFilters.year !== 'الكل') dbFilters.year = parseInt(currentFilters.year);
     if (currentFilters.min_price) dbFilters.priceMin = parseInt(currentFilters.min_price);
     if (currentFilters.max_price) dbFilters.priceMax = parseInt(currentFilters.max_price);
+    if (currentFilters.tag) dbFilters.tag = currentFilters.tag;
 
     fetchListings(dbFilters).then(data => {
       const mapped = data.map(car => ({
@@ -58,6 +66,13 @@ export default function BrowseCarsPage() {
 
   return (
     <>
+      <SEO
+        title="تصفح وابحث عن السيارات - كارنا"
+        description="تصفح آلاف السيارات المستعملة والجديدة في سوريا. البحث المتقدم حسب الماركة، الموديل، السعر، الحالة، والموقع. شاهد صور كاملة وتفاصيل كل سيارة."
+        image="/carna-logo.svg"
+        url="/browse"
+        type="website"
+      />
       <section className="py-xl px-margin-desktop bg-surface-white border-b border-border-light">
         <div className="max-w-container-max mx-auto">
           <h2 className="font-headline-md text-headline-md text-text-primary mb-lg text-right">تصفح حسب نوع الهيكل</h2>
@@ -168,6 +183,32 @@ export default function BrowseCarsPage() {
                       <input value={filters.max_price} onChange={(e) => handleFilterChange('max_price', e.target.value)} className="w-1/2 border-border-light rounded-lg font-body-md text-body-md focus:ring-accent-yellow" placeholder="إلى" type="number" />
                     </div>
                   </div>
+                  {availableTags.length > 0 && (
+                    <div className="flex flex-col gap-xs text-right">
+                      <label className="font-label-sm text-label-sm text-text-muted">الوسوم</label>
+                      <div className="flex flex-wrap gap-xs">
+                        <button
+                          onClick={() => handleFilterChange('tag', '')}
+                          className={`px-md py-xs border rounded-full font-label-sm transition-colors ${
+                            !filters.tag ? 'border-primary bg-primary-container/10 text-primary' : 'border-border-light text-text-muted hover:border-primary'
+                          }`}
+                        >
+                          الكل
+                        </button>
+                        {availableTags.map(tag => (
+                          <button
+                            key={tag}
+                            onClick={() => handleFilterChange('tag', tag)}
+                            className={`px-md py-xs border rounded-full font-label-sm transition-colors ${
+                              filters.tag === tag ? 'border-primary bg-primary-container/10 text-primary' : 'border-border-light text-text-muted hover:border-primary'
+                            }`}
+                          >
+                            #{tag}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <button onClick={applyFilters} className="w-full bg-primary text-on-primary py-sm rounded-lg font-label-lg mt-md hover:brightness-110 transition-all">تطبيق الفلاتر</button>
                 </div>
               </div>

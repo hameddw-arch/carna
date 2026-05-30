@@ -10,6 +10,9 @@ export interface AuthUser {
   wallet_balance: number
   is_admin: boolean
   role?: string
+  email_notifications?: boolean
+  sms_notifications?: boolean
+  user_metadata?: Record<string, unknown>
 }
 
 const SESSION_KEY = 'carna_user'

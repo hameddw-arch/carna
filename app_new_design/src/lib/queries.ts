@@ -29,6 +29,9 @@ export async function fetchListings(filters?: {
   if (filters?.priceFrom)  query = query.gte('price', filters.priceFrom)
   if (filters?.priceTo)    query = query.lte('price', filters.priceTo)
   if (filters?.sellerType) query = query.eq('seller_type', filters.sellerType)
+  if (filters?.tag) {
+    query = query.filter('listing_tags.tag', 'eq', filters.tag)
+  }
 
   query = query.range(offset, offset + limit - 1)
 
@@ -63,6 +66,43 @@ export async function fetchListing(id: string) {
     tags: data.listing_tags?.map((t: { tag: string }) => t.tag) ?? [],
     hours: Math.floor((Date.now() - new Date(data.created_at).getTime()) / 3600000),
   }
+}
+
+export async function fetchAvailableTags() {
+  const { data, error } = await supabase
+    .from('listing_tags')
+    .select('tag')
+
+  if (error) {
+    console.warn('Failed to fetch tags:', error)
+    return []
+  }
+
+  const uniqueTags = [...new Set((data ?? []).map((t: { tag: string }) => t.tag))]
+  return uniqueTags.filter(Boolean).sort()
+}
+
+export async function incrementListingViews(listingId: string) {
+  const { data: current } = await supabase
+    .from('listings')
+    .select('view_count')
+    .eq('id', listingId)
+    .single()
+
+  const newCount = (current?.view_count ?? 0) + 1
+
+  const { data, error } = await supabase
+    .from('listings')
+    .update({ view_count: newCount })
+    .eq('id', listingId)
+    .select('view_count')
+    .single()
+
+  if (error) {
+    console.warn('Failed to increment view count:', error)
+    return null
+  }
+  return data?.view_count ?? 0
 }
 
 export async function fetchUserListings(userId: string) {
@@ -230,6 +270,41 @@ export async function deleteListing(id: string) {
   return true
 }
 
+export async function fetchAllServicesForAdmin(limit?: number) {
+  let query = supabase
+    .from('services')
+    .select(`*, users(name, phone)`)
+    .order('created_at', { ascending: false });
+    
+  if (limit) query = query.limit(limit);
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+}
+
+export async function updateServiceStatus(id: string, status: 'active' | 'inactive') {
+  const { data, error } = await supabase
+    .from('services')
+    .update({ status })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteService(id: string) {
+  const { error } = await supabase
+    .from('services')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+  return true;
+}
+
 export async function uploadListingImages(listingId: string, files: File[]) {
   if (!files || files.length === 0) return [];
 
@@ -276,6 +351,68 @@ export async function insertService(serviceData: any) {
 
   if (error) throw error
   return data
+}
+
+export async function updateService(id: string, updates: any) {
+  const { data, error } = await supabase
+    .from('services')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export async function uploadServiceImage(serviceId: string, file: File) {
+  if (!file) return null;
+  const fileExt = file.name.split('.').pop();
+  const fileName = `services/${serviceId}/${Math.random()}.${fileExt}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('workshop-images')
+    .upload(fileName, file);
+
+  if (uploadError) throw uploadError;
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('workshop-images')
+    .getPublicUrl(fileName);
+
+  return publicUrl;
+}
+
+export async function fetchServiceReviews(serviceId: string) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select(`*, users(name)`)
+    .eq('service_id', serviceId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function insertReview(reviewData: any) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .insert(reviewData)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function replyToReview(reviewId: string, replyText: string) {
+  const { error } = await supabase
+    .from('reviews')
+    .update({ reply: replyText })
+    .eq('id', reviewId);
+
+  if (error) throw error;
+  return true;
 }
 
 export async function fetchPendingTransactions() {
@@ -345,4 +482,51 @@ export async function removeFavoriteDb(userId: string, listingId: string) {
     .eq('user_id', userId)
     .eq('listing_id', listingId);
   if (error) console.error('Error removing favorite:', error);
+}
+
+export async function purchaseSubscription(userId: string, serviceId: string, tier: string, cost: number) {
+  // 1. Fetch user balance
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('wallet_balance')
+    .eq('id', userId)
+    .single();
+
+  if (userError) throw userError;
+
+  if ((user.wallet_balance || 0) < cost) {
+    throw new Error('INSUFFICIENT_FUNDS');
+  }
+
+  // 2. Deduct balance
+  const newBalance = (user.wallet_balance || 0) - cost;
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ wallet_balance: newBalance })
+    .eq('id', userId);
+
+  if (updateError) throw updateError;
+
+  // 3. Insert transaction
+  const { error: txError } = await supabase
+    .from('wallet_transactions')
+    .insert({
+      user_id: userId,
+      amount: cost,
+      type: 'debit',
+      method: 'wallet',
+      ref: `اشتراك بالباقة: ${tier}`
+    });
+
+  if (txError) throw txError;
+
+  // 4. Update service tier
+  const { error: serviceError } = await supabase
+    .from('services')
+    .update({ subscription_tier: tier })
+    .eq('id', serviceId);
+
+  if (serviceError) throw serviceError;
+
+  return newBalance;
 }
