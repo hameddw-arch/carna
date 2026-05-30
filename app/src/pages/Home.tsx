@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, ChevronDown, Loader2, ChevronLeft, CheckCircle, Shield, Zap, Users, Phone, Star, ExternalLink, Award, MapPin, User, Store } from 'lucide-react'
+import { Search, ChevronDown, Loader2, ChevronLeft, CheckCircle, Shield, Zap, Users, Phone, Star, ExternalLink, Award, MapPin, User, Store, Car, MapPinned, Wrench } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ListingCard from '../components/ListingCard'
 import { fetchListings, fetchDistinctMakes } from '../lib/queries'
@@ -141,115 +141,78 @@ export default function Home() {
     <main style={{ flex: 1 }}>
 
       {/* ══════════════════════════════════════════
-          HERO
+          HERO — Stitch flat aesthetic
       ══════════════════════════════════════════ */}
-      <section style={{ position: 'relative', minHeight: 580, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-
+      <section style={{ position: 'relative', display: 'flex', alignItems: 'center', minHeight: 540, overflow: 'hidden' }}>
         {/* Background image */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'url(https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80)',
-          backgroundSize: 'cover', backgroundPosition: 'center 40%',
-          zIndex: 0,
-        }} />
-        {/* Overlay gradient */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(100deg, rgba(10,10,10,.92) 40%, rgba(10,10,10,.55) 100%)',
-          zIndex: 1,
-        }} />
+        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+          <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80"
+            alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(20%)' }}/>
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(0,0,0,.62), rgba(0,0,0,.15) 70%, transparent)' }}/>
+        </div>
 
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 1240, margin: '0 auto', padding: '80px 24px 60px', width: '100%' }}>
-
-          {/* Headline */}
-          <div style={{ marginBottom: 36, maxWidth: 600 }}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(253,183,0,.15)', border: '1px solid rgba(253,183,0,.3)',
-              borderRadius: 'var(--r-full)', padding: '5px 14px',
-              fontSize: 12, fontWeight: 700, color: 'var(--yellow)',
-              letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 20,
-            }}>
-              منصة إعلانات السيارات السورية
-            </div>
-            <h1 style={{
-              fontSize: 'clamp(32px, 5.5vw, 58px)',
-              fontWeight: 900, color: '#fff',
-              lineHeight: 1.1, marginBottom: 16,
-            }}>
-              سيارتك الجاية —
-              <br/>
-              <span style={{ color: 'var(--yellow)' }}>هون</span>
-            </h1>
-            <p style={{ fontSize: 17, color: 'rgba(255,255,255,.65)', lineHeight: 1.7 }}>
-              آلاف الإعلانات من كل سوريا. ابحث، قارن، واشتري بثقة.
-            </p>
-          </div>
-
-          {/* Tabs */}
+        <div className="container" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
+          {/* Frosted card with right yellow accent */}
           <div style={{
-            display: 'inline-flex', gap: 4, marginBottom: 20,
-            background: 'rgba(255,255,255,.08)',
-            border: '1px solid rgba(255,255,255,.12)',
-            borderRadius: 12, padding: 4,
+            maxWidth: 600,
+            background: 'rgba(255,255,255,.94)', backdropFilter: 'blur(6px)',
+            borderRight: '8px solid var(--yellow)', borderRadius: 'var(--r-xl)',
+            padding: '40px 36px',
           }}>
-            {TABS.map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                padding: '7px 20px', borderRadius: 10, border: 'none',
-                cursor: 'pointer', fontWeight: 700, fontSize: 14,
-                fontFamily: 'var(--font)', transition: 'all 150ms ease',
-                background: activeTab === tab ? '#fff' : 'transparent',
-                color: activeTab === tab ? 'var(--dark)' : 'rgba(255,255,255,.75)',
-              }}>{tab}</button>
-            ))}
-          </div>
+            <div className="section-eyebrow" style={{ marginBottom: 14 }}>منصة إعلانات السيارات السورية</div>
+            <h1 style={{ fontSize: 'clamp(30px, 4.5vw, 44px)', fontWeight: 900, color: 'var(--text)', lineHeight: 1.15, marginBottom: 14 }}>
+              سيارتك الجاية — <span style={{ color: 'var(--yellow-dark)' }}>هون</span>
+            </h1>
+            <p style={{ fontSize: 17, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 24 }}>
+              آلاف الإعلانات الموثوقة من كل سوريا. ابحث، قارن، واشترِ بثقة.
+            </p>
 
-          {/* Search card */}
-          <div style={{
-            background: '#fff', borderRadius: 16, padding: '18px 20px',
-            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 10,
-            boxShadow: '0 24px 64px rgba(0,0,0,.4)',
-            maxWidth: 780,
-          }} className="hero-form">
-            <SelectF name="makeHero" options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make}
-              onChange={v => f('make', v === 'كل الماركات' ? '' : v)} />
-            <SelectF name="city" options={CITIES} value={filters.city}
-              onChange={v => f('city', v === 'كل المدن' ? '' : v)} />
-            <div style={{ position: 'relative' }}>
-              <select name="priceRange" className="input" style={{ appearance: 'none', paddingLeft: 32 }}
-                onChange={e => {
-                  const [from, to] = e.target.value.split('-').map(Number)
-                  setFilters(p => ({ ...p, priceFrom: from ? String(from) : '', priceTo: to ? String(to) : '' }))
-                }}>
-                <option value="">نطاق السعر</option>
-                <option value="0-3000000">أقل من 3 مليون</option>
-                <option value="3000000-7000000">3 – 7 مليون</option>
-                <option value="7000000-15000000">7 – 15 مليون</option>
-                <option value="15000000-999999999">أكثر من 15 مليون</option>
-              </select>
-              <ChevronDown size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-4)', pointerEvents: 'none' }}/>
+            {/* Tabs */}
+            <div style={{ display: 'inline-flex', gap: 4, marginBottom: 14, background: 'var(--gray-100)', borderRadius: 'var(--r-md)', padding: 4 }}>
+              {TABS.map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab)} style={{
+                  padding: '7px 18px', borderRadius: 'var(--r-sm)', border: 'none',
+                  cursor: 'pointer', fontWeight: 700, fontSize: 13.5,
+                  fontFamily: 'var(--font)', transition: 'all 150ms ease',
+                  background: activeTab === tab ? '#fff' : 'transparent',
+                  color: activeTab === tab ? 'var(--text)' : 'var(--text-3)',
+                }}>{tab}</button>
+              ))}
             </div>
-            <button className="btn btn-yellow" onClick={apply} style={{ gap: 8, paddingLeft: 20, paddingRight: 20 }}>
-              <Search size={16}/> ابحث
-            </button>
+
+            {/* Search row */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 8 }} className="hero-form">
+              <SelectF name="makeHero" options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make}
+                onChange={v => f('make', v === 'كل الماركات' ? '' : v)} />
+              <SelectF name="city" options={CITIES} value={filters.city}
+                onChange={v => f('city', v === 'كل المدن' ? '' : v)} />
+              <button className="btn btn-yellow" onClick={apply} style={{ gap: 7 }}>
+                <Search size={16}/> ابحث
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-          STATS BAR
+          STATS — overlapping chips (Stitch)
       ══════════════════════════════════════════ */}
-      <div style={{ background: 'var(--yellow)', borderBottom: '1px solid var(--yellow-dark)' }}>
-        <div style={{ maxWidth: 1240, margin: '0 auto', padding: '18px 24px', display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: 12 }}>
+      <div className="container" style={{ position: 'relative', zIndex: 5, marginTop: -36 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16 }}>
           {[
-            { n: listings.length || '٢٤٠+', l: 'إعلان متاح' },
-            { n: '١٤',  l: 'محافظة' },
-            { n: '٥٠+', l: 'ورشة معتمدة' },
-            { n: '١٠٠٠+', l: 'مستخدم مسجّل' },
+            { icon: <Car size={22}/>,     n: `${listings.length || '٢٤٠'}+`, l: 'إعلان متاح' },
+            { icon: <MapPinned size={22}/>, n: '١٤',  l: 'محافظة' },
+            { icon: <Wrench size={22}/>,  n: '٥٠+', l: 'ورشة معتمدة' },
+            { icon: <Users size={22}/>,   n: '١٠٠٠+', l: 'مستخدم مسجّل' },
           ].map(s => (
-            <div key={s.l} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--dark)', lineHeight: 1 }}>{s.n}</div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(0,0,0,.55)', marginTop: 3 }}>{s.l}</div>
+            <div key={s.l} style={{
+              background: '#fff', border: '1px solid var(--gray-200)', borderRadius: 'var(--r-lg)',
+              padding: '18px 16px', textAlign: 'center',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+            }}>
+              <span style={{ color: 'var(--gold)' }}>{s.icon}</span>
+              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', lineHeight: 1 }}>{s.n}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-3)' }}>{s.l}</div>
             </div>
           ))}
         </div>
