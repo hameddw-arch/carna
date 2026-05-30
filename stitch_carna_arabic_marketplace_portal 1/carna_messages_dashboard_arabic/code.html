@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CARNA - الرسائل</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface-container-highest": "#e2e2e2",
+                "tertiary": "#5e5e5e",
+                "secondary-container": "#33a0fd",
+                "error": "#ba1a1a",
+                "on-surface-variant": "#4f4632",
+                "secondary-fixed": "#d1e4ff",
+                "on-surface": "#1a1c1c",
+                "tertiary-fixed-dim": "#c6c6c6",
+                "surface-container": "#eeeeee",
+                "accent-yellow": "#FFC107",
+                "secondary-fixed-dim": "#9ecaff",
+                "text-primary": "#000000",
+                "surface-container-lowest": "#ffffff",
+                "on-error": "#ffffff",
+                "outline-variant": "#d4c5ab",
+                "surface-container-low": "#f3f3f3",
+                "on-primary": "#ffffff",
+                "on-secondary": "#ffffff",
+                "text-muted": "#757575",
+                "background": "#f9f9f9",
+                "error-container": "#ffdad6",
+                "tertiary-fixed": "#e2e2e2",
+                "primary-fixed-dim": "#fabd00",
+                "on-tertiary-fixed": "#1b1b1b",
+                "on-secondary-container": "#00355c",
+                "primary-fixed": "#ffdf9e",
+                "primary-container": "#ffc107",
+                "on-primary-container": "#6d5100",
+                "primary": "#785900",
+                "inverse-on-surface": "#f1f1f1",
+                "surface-variant": "#e2e2e2",
+                "surface-dim": "#dadada",
+                "verification-blue": "#2196F3",
+                "on-secondary-fixed": "#001d36",
+                "on-primary-fixed": "#261a00",
+                "secondary": "#0061a4",
+                "outline": "#827660",
+                "on-tertiary-fixed-variant": "#474747",
+                "inverse-primary": "#fabd00",
+                "surface-white": "#FFFFFF",
+                "tertiary-container": "#cbcbcb",
+                "on-tertiary": "#ffffff",
+                "on-background": "#1a1c1c",
+                "surface-container-high": "#e8e8e8",
+                "surface-bright": "#f9f9f9",
+                "surface": "#f9f9f9",
+                "on-error-container": "#93000a",
+                "border-light": "#E0E0E0",
+                "on-tertiary-container": "#555555",
+                "on-primary-fixed-variant": "#5b4300",
+                "inverse-surface": "#2f3131",
+                "on-secondary-fixed-variant": "#00497d",
+                "surface-tint": "#785900"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "xs": "8px",
+                "gutter": "16px",
+                "md": "24px",
+                "margin-mobile": "16px",
+                "xl": "48px",
+                "lg": "32px",
+                "container-max": "1280px",
+                "sm": "16px",
+                "base": "4px",
+                "margin-desktop": "40px"
+            },
+            "fontFamily": {
+                "body-md": ["Tajawal"],
+                "display-lg": ["Tajawal"],
+                "headline-sm": ["Tajawal"],
+                "headline-lg": ["Tajawal"],
+                "label-sm": ["Tajawal"],
+                "label-lg": ["Tajawal"],
+                "body-lg": ["Tajawal"],
+                "headline-md": ["Tajawal"],
+                "body-sm": ["Tajawal"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .message-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .message-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .message-scrollbar::-webkit-scrollbar-thumb {
+            background: #E0E0E0;
+            border-radius: 10px;
+        }
+        .active-chat-shadow {
+            box-shadow: inset -4px 0 0 0 #FFC107;
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- TopNavBar -->
+<header class="w-full sticky top-0 z-50 bg-surface-white border-b border-border-light">
+<div class="flex justify-between items-center h-16 px-gutter max-w-container-max mx-auto">
+<div class="flex items-center gap-12">
+<span class="text-headline-md font-bold text-on-surface">CARNA</span>
+<nav class="hidden md:flex gap-8">
+<a class="font-body-md text-tertiary hover:text-primary transition-colors duration-200" href="#">سوق السيارات</a>
+<a class="font-body-md text-tertiary hover:text-primary transition-colors duration-200" href="#">ورش العمل</a>
+<a class="font-body-md text-tertiary hover:text-primary transition-colors duration-200" href="#">خدماتنا</a>
+<a class="font-body-md text-tertiary hover:text-primary transition-colors duration-200" href="#">عن كارنا</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-6 py-2 bg-primary-container text-on-primary-container font-bold rounded-lg cursor-pointer active:opacity-80 transition-all">أضف إعلانك</button>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="text-tertiary group-hover:text-primary font-body-md">تسجيل الدخول</span>
+<span class="material-symbols-outlined text-tertiary group-hover:text-primary">person</span>
+</div>
+</div>
+</div>
+</header>
+<div class="flex h-[calc(100vh-64px)] overflow-hidden">
+<!-- SideNavBar -->
+<aside class="h-full w-64 border-l border-border-light bg-surface-container-low flex flex-col p-4 gap-4 shrink-0">
+<div class="mb-4">
+<h2 class="text-headline-sm font-bold text-primary">مرحباً بك</h2>
+<p class="text-label-lg text-tertiary">إدارة إعلاناتك</p>
+</div>
+<nav class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 p-3 text-tertiary hover:bg-surface-container-high rounded-lg transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg">لوحة التحكم</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-tertiary hover:bg-surface-container-high rounded-lg transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">directions_car</span>
+<span class="font-label-lg">إعلاناتي</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">mail</span>
+<span class="font-label-lg">الرسائل</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-tertiary hover:bg-surface-container-high rounded-lg transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-lg">المفضلة</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-tertiary hover:bg-surface-container-high rounded-lg transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-lg">الإعدادات</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-2 pt-4 border-t border-border-light">
+<button class="w-full py-3 mb-4 bg-on-surface text-surface-white rounded-lg font-bold text-label-lg transition-all hover:opacity-90 active:scale-95">ترقية الحساب</button>
+<a class="flex items-center gap-3 p-3 text-tertiary hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-lg">مركز المساعدة</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-tertiary hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-lg">تسجيل الخروج</span>
+</a>
+</div>
+</aside>
+<!-- Main Content: Messages Interface -->
+<main class="flex-grow flex flex-row overflow-hidden">
+<!-- Conversation List (Sidebar) -->
+<section class="w-1/3 min-w-[320px] max-w-[400px] border-l border-border-light bg-surface-white flex flex-col h-full">
+<div class="p-4 border-b border-border-light">
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-lg py-2 px-10 text-body-sm focus:ring-2 focus:ring-accent-yellow" placeholder="البحث في الرسائل..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2 text-tertiary">search</span>
+</div>
+</div>
+<div class="flex-grow overflow-y-auto message-scrollbar">
+<!-- Conversation Item 1 (Active) -->
+<div class="p-4 border-b border-border-light bg-surface-container-lowest active-chat-shadow cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgoKH4UYy1_LKDn9M4l4lqGd2vFaNkhBApGXBChkmSjNifRflSjB1i4KGNlHpCHK_hh7MU-YCFnRwpleMahzteJ3AM8-gVvYXI8sq5R2wj028qyfASHs_OPh0FlgEPcXgOrt2YdrCn8VpjOoH8nbSA1VTpwG64aiF187Qm0uRXVcnmVoASXeUzKkbcrzWCMwE4pGnPQE1YREWAOrpl41q2fgcx_k5dyZ2LjfHCqjhAQIQ5rBkFO-qB_Bdbr4kbMapfb6WKZ2U9MN6_"/>
+</div>
+<div>
+<h4 class="font-bold text-body-md text-on-surface">أحمد منصور</h4>
+<div class="flex items-center gap-1 mt-1">
+<div class="w-8 h-8 rounded border border-border-light overflow-hidden">
+<img alt="Car" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1pa3wZtag7Ai86uuj44OY7iUxTgnKiX7nGWQnm2j76FTqhcZ3LgrN23xvqRpJv0H4YL8stxVathCWOM7tdgWrwnLyfYQu0RJaeh351bscDArAXybC504i9I1VbhfBALpJrZuxtwyawpkdiy_lD8OfCkLsTYXHHLaT5MrWxvlw17HMK_zMCtTGdK4SlCZS91yeeUuKXajhExB9PE4PZvW71RzB8DZL23w_3wDDUWlsTRx_Q5wzUMskk9jh90fSNaAw7q86HyWI36DS"/>
+</div>
+<span class="text-xs text-tertiary">Mercedes-Benz GLE 450</span>
+</div>
+</div>
+</div>
+<div class="text-left">
+<span class="text-xs text-tertiary">10:45 ص</span>
+<div class="w-2 h-2 bg-verification-blue rounded-full mt-2 ml-auto"></div>
+</div>
+</div>
+<p class="text-body-sm text-tertiary truncate">هل السعر قابل للتفاوض البسيط؟ السيارة تبدو بحالة ممتازة...</p>
+</div>
+<!-- Conversation Item 2 -->
+<div class="p-4 border-b border-border-light hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden flex items-center justify-center text-primary font-bold">
+                                    س.م
+                                </div>
+<div>
+<h4 class="font-bold text-body-md text-on-surface">سارة محمد</h4>
+<div class="flex items-center gap-1 mt-1">
+<div class="w-8 h-8 rounded border border-border-light overflow-hidden">
+<img alt="Car" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIPzQBLPPTsPO6PGBmMlwpZqMwW92maKZnRbjHzz_ZU-K24M5R3jDdt3jsWLt5kF1hkK99qms8MMXWmKWLIuF2rqoyWACz9FG3J_j8JGOlN0nlKAWkddd2Wb9Fn15iuUOw4uP8cGaRlEeXExgeO2fM4VUoBNKyQSX7oWxZ931A_pYuHawhDTdje7HSBmKeisUXKF1kJZrBkkA-S4U6_qA91KBfPVQfBWv6-hAS0aXNKosj7ngWd9OpdHheCHiQ9eZxJIzetb9pMAGm"/>
+</div>
+<span class="text-xs text-tertiary">BMW X5 2023</span>
+</div>
+</div>
+</div>
+<div class="text-left">
+<span class="text-xs text-tertiary">أمس</span>
+</div>
+</div>
+<p class="text-body-sm text-tertiary truncate">شكراً لك، سأتواصل معك غداً لترتيب موعد المعاينة في الورشة.</p>
+</div>
+<!-- Conversation Item 3 -->
+<div class="p-4 border-b border-border-light hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP5iBoHH1xj-39sXWczURgO66nAWuOFxNpcIfDKu_uq_RI47bh25pV0MCKLjEhSjs1jHgwDoCW6wwRVDjTfsrhtI0rwFMmS4wRkCtoq26aGILL1d5OTHzzZx479vq85CKGKIs_yoHXqcH0rVR72QYTFHIuFVAEotNqjHntimS_Kw7jNEwcnP8KiDvYrF-hw3f-VA8rcIr17Dba52yGLo8oKlOOuSlPnCxCnNS-IeV6i1RZZu-xf4P8nR62EUKmGtECU4rVA0iQ8Rly"/>
+</div>
+<div>
+<h4 class="font-bold text-body-md text-on-surface">خالد العتيبي</h4>
+<div class="flex items-center gap-1 mt-1">
+<div class="w-8 h-8 rounded border border-border-light overflow-hidden">
+<img alt="Car" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9vZUSTEvc4MuqSgX0UsFV4srsik21BrNEoqhzJJWWgqmjXGYVwOXCxxzemP8KAyH_PMybtOYdpd5GH4AvIK6sUIOzO8uYMu37vPJ6FlKgLZGJc5E7tfPqSb7ECE7QLq1h4zlF9LTTQE5pRSBNE3OnLFFOhEN_08OcQh3enp50gc-bmdX-6gUcekU5BwvppfRSgni3e3Y_EohximahPEMjilUPlgh5haioyAyulhrhGLHJj0ChuVT7ZlMG5lwOQ7PzOOgWsQsd_WaV"/>
+</div>
+<span class="text-xs text-tertiary">Toyota Land Cruiser</span>
+</div>
+</div>
+</div>
+<div class="text-left">
+<span class="text-xs text-tertiary">23 مايو</span>
+</div>
+</div>
+<p class="text-body-sm text-tertiary truncate">كم كيلو متر قطعت السيارة حتى الآن؟</p>
+</div>
+</div>
+</section>
+<!-- Chat Window -->
+<section class="flex-grow flex flex-col h-full bg-background relative">
+<!-- Chat Header -->
+<header class="p-4 bg-surface-white border-b border-border-light flex justify-between items-center z-10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAptde4Z2WMWxo17q3sNaUyAM4O-aIqsG7b_Lf2X_sFjioUmYovEg7NJrDJl27GA6-xGidETqKvdMCVOudheM_--uB_CLUbZQUr5hka5H7z380F5EyG4rpsdn-jhpp7rO7VCJHeXpbPPLHJyC-bR5HTfeyIKJAqIDUnpUmP4NztfWG1I6oriOF0Trv9U4OGq4hSqxFyalz08MfKlrjeLt3k5plfOwNqEidilwXg8ipRecjYiz3Ryjwi_wjm2Y7m8ImG-Ibw-NELPW1M"/>
+</div>
+<div>
+<h3 class="font-bold text-body-md text-on-surface">أحمد منصور</h3>
+<div class="flex items-center gap-1">
+<span class="text-xs text-tertiary">مستفسر عن:</span>
+<span class="text-xs font-bold text-primary">Mercedes-Benz GLE 450</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-tertiary hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">call</span>
+</button>
+<button class="p-2 text-tertiary hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Disclaimer Banner -->
+<div class="bg-primary-container/10 border-b border-primary-container/30 px-4 py-2 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+<p class="text-xs font-medium text-on-primary-container">تنبيه: كارنا هي منصة عرض فقط، وليست مسؤولة عن أي عمليات بيع أو دفع تتم بين المستخدمين.</p>
+</div>
+<!-- Messages Area -->
+<div class="flex-grow overflow-y-auto p-6 space-y-4 message-scrollbar flex flex-col">
+<!-- Date Separator -->
+<div class="flex justify-center my-4">
+<span class="px-3 py-1 bg-surface-container-high text-tertiary text-xs rounded-full">اليوم</span>
+</div>
+<!-- Received Message -->
+<div class="flex flex-col items-start max-w-[80%]">
+<div class="bg-surface-white p-3 rounded-xl rounded-tr-none border border-border-light">
+<p class="text-body-sm text-on-surface">السلام عليكم، لقد رأيت إعلان المرسيدس GLE 450. هل ما زالت متوفرة؟</p>
+</div>
+<span class="text-[10px] text-tertiary mt-1 px-1">10:30 ص</span>
+</div>
+<!-- Sent Message -->
+<div class="flex flex-col items-end max-w-[80%] self-end">
+<div class="bg-primary-container p-3 rounded-xl rounded-tl-none">
+<p class="text-body-sm text-on-primary-container">وعليكم السلام، نعم السيارة لا تزال متوفرة. يمكنك معاينتها في أي وقت بمدينة الرياض.</p>
+</div>
+<div class="flex items-center gap-1 mt-1 px-1">
+<span class="text-[10px] text-tertiary">10:35 ص</span>
+<span class="material-symbols-outlined text-[10px] text-verification-blue">done_all</span>
+</div>
+</div>
+<!-- Received Message -->
+<div class="flex flex-col items-start max-w-[80%]">
+<div class="bg-surface-white p-3 rounded-xl rounded-tr-none border border-border-light">
+<p class="text-body-sm text-on-surface">ممتاز. هل السعر قابل للتفاوض البسيط؟ السيارة تبدو بحالة ممتازة في الصور.</p>
+</div>
+<span class="text-[10px] text-tertiary mt-1 px-1">10:45 ص</span>
+</div>
+</div>
+<!-- Message Input -->
+<footer class="p-4 bg-surface-white border-t border-border-light">
+<div class="flex items-center gap-3">
+<button class="p-2 text-tertiary hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<div class="flex-grow relative">
+<textarea class="w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-body-sm focus:ring-1 focus:ring-accent-yellow resize-none" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+</div>
+<button class="w-12 h-12 flex items-center justify-center bg-primary-container text-on-primary-container rounded-lg font-bold transition-all hover:opacity-90 active:scale-95 shadow-sm">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</footer>
+</section>
+</main>
+</div>
+<!-- Micro-interaction for input auto-expand -->
+<script>
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if(this.scrollHeight > 150) {
+                this.style.overflowY = 'scroll';
+                this.style.height = '150px';
+            } else {
+                this.style.overflowY = 'hidden';
+            }
+        });
+    </script>
+</body></html>

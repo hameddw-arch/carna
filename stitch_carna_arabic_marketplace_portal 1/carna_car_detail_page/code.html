@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#1a1c1c",
+                    "text-muted": "#757575",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#5b4300",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface": "#f9f9f9",
+                    "on-primary-fixed": "#261a00",
+                    "tertiary-container": "#cbcbcb",
+                    "tertiary": "#5e5e5e",
+                    "on-error-container": "#93000a",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-primary": "#fabd00",
+                    "on-secondary-fixed": "#001d36",
+                    "secondary-fixed-dim": "#9ecaff",
+                    "on-primary-container": "#6d5100",
+                    "outline": "#827660",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#dadada",
+                    "primary-fixed": "#ffdf9e",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "on-error": "#ffffff",
+                    "on-surface": "#1a1c1c",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f1f1f1",
+                    "outline-variant": "#d4c5ab",
+                    "surface-container-low": "#f3f3f3",
+                    "on-secondary-container": "#00355c",
+                    "secondary": "#0061a4",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#e8e8e8",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface-white": "#FFFFFF",
+                    "surface-container": "#eeeeee",
+                    "inverse-surface": "#2f3131",
+                    "secondary-container": "#33a0fd",
+                    "primary": "#785900",
+                    "on-tertiary-container": "#555555",
+                    "on-surface-variant": "#4f4632",
+                    "background": "#f9f9f9",
+                    "on-secondary-fixed-variant": "#00497d",
+                    "surface-variant": "#e2e2e2",
+                    "text-primary": "#000000",
+                    "surface-tint": "#785900",
+                    "surface-bright": "#f9f9f9",
+                    "primary-container": "#ffc107",
+                    "verification-blue": "#2196F3",
+                    "secondary-fixed": "#d1e4ff",
+                    "primary-fixed-dim": "#fabd00",
+                    "on-tertiary": "#ffffff",
+                    "accent-yellow": "#FFC107",
+                    "border-light": "#E0E0E0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "sm": "16px",
+                    "lg": "32px",
+                    "margin-desktop": "40px",
+                    "base": "4px",
+                    "gutter": "16px",
+                    "container-max": "1280px",
+                    "xl": "48px",
+                    "md": "24px",
+                    "xs": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Tajawal"],
+                    "body-lg": ["Tajawal"],
+                    "label-lg": ["Tajawal"],
+                    "headline-sm": ["Tajawal"],
+                    "label-sm": ["Tajawal"],
+                    "body-md": ["Tajawal"],
+                    "headline-md": ["Tajawal"],
+                    "body-sm": ["Tajawal"],
+                    "headline-lg": ["Tajawal"],
+                    "display-lg": ["Tajawal"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "display-lg": ["40px", {"lineHeight": "52px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+      }
+      body {
+        font-family: 'Tajawal', sans-serif;
+        background-color: #f9f9f9;
+        color: #1a1c1c;
+      }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface border-b border-border-light z-50">
+<div class="flex justify-between items-center px-margin-desktop max-w-container-max mx-auto w-full h-16">
+<div class="flex items-center gap-lg">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">CARNA</h1>
+<nav class="hidden md:flex gap-md">
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">Cars for Sale</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Workshops</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Financing</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">About Us</a>
+</nav>
+</div>
+<div class="flex items-center gap-sm">
+<div class="hidden md:flex items-center gap-xs">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors"><span class="material-symbols-outlined" data-icon="favorite">favorite</span></button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors"><span class="material-symbols-outlined" data-icon="account_circle">account_circle</span></button>
+</div>
+<button class="bg-primary-container text-on-primary-container px-md py-xs rounded-lg font-label-lg text-label-lg scale-95 active:scale-100 transition-transform">Post an Ad</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+<!-- Left Column: Image Gallery & Details -->
+<div class="lg:col-span-8 space-y-lg">
+<!-- Gallery -->
+<section class="space-y-sm">
+<div class="w-full aspect-video rounded-lg overflow-hidden border border-border-light bg-surface-container">
+<img alt="Mercedes-Benz GLE 450" class="w-full h-full object-cover" data-alt="A professional front-quarter studio shot of a sleek 2023 Mercedes-Benz GLE 450 in metallic obsidian black. The car is parked in a modern, high-contrast architectural setting with sharp shadows and soft overhead lighting. The visual style is clean and corporate, emphasizing the vehicle's premium metallic finish and sophisticated design lines against a neutral, high-key background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_i6fGGY_OWIdX2sCgrhhWYckNsV2Z7Yb5eN1bJ4Aj7Ybj7FFadiOUOmo3DCYpNQN4_43_STpeITA7UoUVnOXH6gVai11CALv6Gk21JstffFPCmXGTfxucTClruwGRgNiLiiM-B77alCjidua97WZ3WLk78e7St1Bvr9h1vK3VqUL1U0PWUbIsKXP_hEs0XUP9GqPdCT-NSfDwcKQ_sYSXksyxujyKUyV4qn1mbqcLrg5d-VnoXSdYtGWC9sKzy4kjyP1C9Cg7od3B"/>
+</div>
+<div class="grid grid-cols-4 gap-sm">
+<div class="aspect-square rounded-lg overflow-hidden border border-border-light bg-surface-container cursor-pointer hover:border-primary transition-colors">
+<img alt="Thumbnail 1" class="w-full h-full object-cover" data-alt="A detailed close-up shot of the luxurious interior of a modern high-end vehicle, showcasing the perforated leather steering wheel and high-resolution digital dashboard. The lighting is soft and ambient, highlighting the premium materials and minimalist design language. The color palette is dominated by deep blacks and cool silver accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB22Xrubx1-Y_zKSy7t0t_E-hvxacuHtQPe4HtO1YEIYGgJ1iIu7SiUTNT1NAyxu_T_yvhJbfYF7W5V-mIUgNBDodg_STz4DF8Ewwo_-T2mOi2rCxpS6GcaNqcSe_HXLpsfxqFFJuc_LBHzHLgzXgs5Jify6O6hY9IVeugYUIRi57qo4QL5Femv2qGjUyIutxRPLKNDP2IjsZPLVQxrN94eWfmuEZbyDPpZJmshTQBnO6OEzT94JlrwuDfjhAmVlGXQIS3bkZ_EbAy_"/>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden border border-border-light bg-surface-container cursor-pointer hover:border-primary transition-colors">
+<img alt="Thumbnail 2" class="w-full h-full object-cover" data-alt="A sleek rear-view shot of a luxury sedan parked in a minimalist concrete plaza. The lighting is late afternoon sun, creating long, dramatic shadows and emphasizing the car's aerodynamic curves and high-tech LED taillight signature. The aesthetic is sharp and professional, perfectly aligned with a corporate automotive brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeAiGxbhWgZrY04Wco8Bh0ouImBHDf07zektWKjRz9H5WDpAke5lRyi9sl6sIMdwmS_jo2Logh_-rQBX02b8ScdjI9-WiZDaRXxvUFb8kRfhWtPxQc2tQRAVZsM9nFBJGl2Ryuz-rG9yPKMYjq57s7HWiDGiftAkxtDA-pjkw7lCJYqzw4F79W-tPqgD7r0Hx5NBeHiVQeNn5THiQjrzWY_91h1wyVNgTTHPoyjeaNrkR8Sr9W2OuQIuGJAK3GRgX2ZvlWF0tIWa2c"/>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden border border-border-light bg-surface-container cursor-pointer hover:border-primary transition-colors">
+<img alt="Thumbnail 3" class="w-full h-full object-cover" data-alt="An artistic close-up of a high-performance alloy wheel and brake caliper of a premium vehicle. The lighting is high-key and directional, making the metallic textures and precision engineering stand out. The scene is clean and clinical, representing the master craftsmanship and reliability of the CARNA brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGiLYnplKVmAHKLB-w-z_WTxEIdwZipoStl4TMMZPSNW2XJNjNxojxWSB-f87baBaTFyh6gwnd7IWvUffnVq9Wirj65KoDfGePsrS-AG7k1Mapy021cYLgowvXZpPSIIAJzjhe2fiO42kM5E7T3NrFH9WlkU8y5yA0k1StWw5NStd0-LzupItkJOnlgZHi9jGhg5yhNepo3lB7GzijfgtdLxfhGydjmJfvnqZHI3MC74VRMstEJM99mNxUOooEO8HNWLB3gYoGQcH-"/>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden border border-border-light bg-surface-container cursor-pointer hover:border-primary transition-colors">
+<img alt="Thumbnail 4" class="w-full h-full object-cover" data-alt="A low-angle shot of a high-end car's front grille and emblem, glowing under sophisticated studio lighting. The image captures the essence of power and prestige, using a palette of deep greys and bright metallic highlights. The background is a blurred, modern garage setting, maintaining a focus on automotive excellence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwynHQo24cZTbAOks_lU7vF9Kic8uC-_3yD9bre7uVJPtbROOMbhEPM76dafMjiejmly1BsG_oCNqZ-jnncn_ZoAco0m5tjdm3Y5wuplVK4SQyHiBy9dEwKqs6ZMFOV4jduR3ctdD6gph8ACpiZeY0Bca1zW890EDuW5b42NLGAMPCTGHLJ-DiLU70yswQOIT1Jw17EGH7slFmQ2ij8AD1Rgi3tLn0r1QO5dttIldm-VtNJZUEe4csAjWn96Ixd34ddk3UAuMShkLp"/>
+</div>
+</div>
+</section>
+<!-- Specs Grid -->
+<section class="bg-surface-white border border-border-light rounded-lg p-md">
+<h3 class="font-headline-sm text-headline-sm mb-md border-b border-border-light pb-xs">المواصفات الأساسية</h3>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-y-lg gap-x-md">
+<div class="flex flex-col gap-base">
+<span class="font-label-sm text-label-sm text-text-muted">المحرك</span>
+<span class="font-body-md text-body-md font-bold">3.0L V6 Turbo</span>
+</div>
+<div class="flex flex-col gap-base">
+<span class="font-label-sm text-label-sm text-text-muted">نوع الوقود</span>
+<span class="font-body-md text-body-md font-bold">بنزين</span>
+</div>
+<div class="flex flex-col gap-base">
+<span class="font-label-sm text-label-sm text-text-muted">ناقل الحركة</span>
+<span class="font-body-md text-body-md font-bold">أوتوماتيك 9 سرعات</span>
+</div>
+<div class="flex flex-col gap-base">
+<span class="font-label-sm text-label-sm text-text-muted">المسافة المقطوعة</span>
+<span class="font-body-md text-body-md font-bold">12,500 كم</span>
+</div>
+<div class="flex flex-col gap-base">
+<span class="font-label-sm text-label-sm text-text-muted">الموقع</span>
+<span class="font-body-md text-body-md font-bold">دمشق، المزة</span>
+</div>
+<div class="flex flex-col gap-base">
+<span class="font-label-sm text-label-sm text-text-muted">اللون الخارجي</span>
+<span class="font-body-md text-body-md font-bold">أسود ملكي</span>
+</div>
+</div>
+</section>
+<!-- Safety Tips -->
+<section class="bg-surface-container-low border border-border-light rounded-lg p-md">
+<div class="flex items-center gap-xs mb-sm">
+<span class="material-symbols-outlined text-verification-blue" data-icon="shield">shield</span>
+<h3 class="font-headline-sm text-headline-sm">نصائح الأمان</h3>
+</div>
+<ul class="space-y-xs list-disc pr-md font-body-sm text-body-sm text-on-surface-variant">
+<li>لا تقم بتحويل أي مبالغ مالية قبل معاينة السيارة وفحصها.</li>
+<li>قابل البائع في مكان عام وآمن للقيام بالمعاينة.</li>
+<li>تأكد من فحص أوراق السيارة الثبوتية بشكل قانوني.</li>
+<li>استخدم مراكز الصيانة المعتمدة في كارنا لإجراء الفحص الفني.</li>
+</ul>
+</section>
+</div>
+<!-- Right Column: Info, Seller, Calculator -->
+<div class="lg:col-span-4 space-y-lg">
+<!-- Main Info Card -->
+<section class="bg-surface-white border border-border-light rounded-lg p-md">
+<div class="flex justify-between items-start mb-sm">
+<span class="bg-secondary-container text-on-secondary-container px-xs py-1 rounded font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            مفحوصة ومضمونة
+                        </span>
+<button class="text-text-muted hover:text-error transition-colors flex items-center gap-1 font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="report">report</span>
+                            تبليغ عن الإعلان
+                        </button>
+</div>
+<h2 class="font-headline-md text-headline-md font-bold mb-xs">Mercedes-Benz GLE 450 2023</h2>
+<div class="flex items-baseline gap-xs mb-lg">
+<span class="font-display-lg text-display-lg font-bold text-primary">85,000</span>
+<span class="font-headline-sm text-headline-sm text-on-surface-variant">USD</span>
+</div>
+<div class="flex flex-col gap-sm">
+<button class="w-full bg-primary-container text-on-primary-container py-md rounded-lg font-headline-sm text-headline-sm font-bold flex justify-center items-center gap-xs hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined" data-icon="call">call</span>
+                            اتصال بالبائع
+                        </button>
+<button class="w-full border border-on-background py-md rounded-lg font-headline-sm text-headline-sm font-bold flex justify-center items-center gap-xs hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+                            إرسال رسالة
+                        </button>
+</div>
+</section>
+<!-- Seller Info -->
+<section class="bg-surface-white border border-border-light rounded-lg p-md">
+<h3 class="font-label-sm text-label-sm text-text-muted mb-md">معلومات البائع</h3>
+<div class="flex items-center gap-md mb-md">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="person">person</span>
+</div>
+<div>
+<p class="font-headline-sm text-headline-sm font-bold">أحمد المصطفى</p>
+<span class="bg-surface-variant px-xs py-0.5 rounded font-label-sm text-label-sm">مالك</span>
+</div>
+</div>
+<div class="flex items-center gap-xs text-text-muted font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
+                        عضو منذ 2021
+                    </div>
+</section>
+<!-- Financing Calculator -->
+<section class="bg-surface-white border border-border-light rounded-lg p-md">
+<h3 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="calculate">calculate</span>
+                        حاسبة التمويل
+                    </h3>
+<div class="space-y-lg">
+<div class="space-y-base">
+<div class="flex justify-between">
+<span class="font-label-lg text-label-lg">الدفعة الأولى</span>
+<span class="font-body-md text-body-md font-bold text-primary" id="downpayment-val">25,500 USD</span>
+</div>
+<input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" id="downpayment-range" max="68000" min="17000" oninput="updateCalculator()" step="500" type="range" value="25500"/>
+</div>
+<div class="space-y-base">
+<div class="flex justify-between">
+<span class="font-label-lg text-label-lg">مدة التمويل</span>
+<span class="font-body-md text-body-md font-bold text-primary" id="duration-val">36 شهر</span>
+</div>
+<input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" id="duration-range" max="60" min="12" oninput="updateCalculator()" step="12" type="range" value="36"/>
+</div>
+<div class="p-md bg-surface-container rounded-lg flex justify-between items-center">
+<span class="font-label-lg text-label-lg">القسط الشهري التقريبي</span>
+<span class="font-headline-md text-headline-md font-bold text-primary" id="monthly-payment">1,850 USD</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-auto bg-surface-container border-t border-border-light">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-lg max-w-container-max mx-auto w-full">
+<div class="mb-md md:mb-0">
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">CARNA</h2>
+<p class="font-body-sm text-body-sm text-text-muted mt-base">© 2024 CARNA... والكار كارنا. All rights reserved.</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-md">
+<a class="font-body-sm text-body-sm text-text-muted hover:text-on-surface transition-opacity" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-text-muted hover:text-on-surface transition-opacity" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-text-muted hover:text-on-surface transition-opacity" href="#">Contact Support</a>
+<a class="font-body-sm text-body-sm text-text-muted hover:text-on-surface transition-opacity" href="#">Sitemap</a>
+<a class="font-body-sm text-body-sm text-text-muted hover:text-on-surface transition-opacity" href="#">Workshop Directory</a>
+</nav>
+</div>
+</footer>
+<script>
+        function updateCalculator() {
+            const dp = document.getElementById('downpayment-range').value;
+            const duration = document.getElementById('duration-range').value;
+            const price = 85000;
+            
+            document.getElementById('downpayment-val').innerText = Number(dp).toLocaleString() + ' USD';
+            document.getElementById('duration-val').innerText = duration + ' شهر';
+            
+            // Very simple interest/payment logic for UI demonstration
+            const remaining = price - dp;
+            const interest = 1.05; // 5% flat for demo
+            const total = remaining * interest;
+            const monthly = Math.round(total / duration);
+            
+            document.getElementById('monthly-payment').innerText = monthly.toLocaleString() + ' USD';
+        }
+        
+        // Initial calc
+        updateCalculator();
+    </script>
+</body></html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "tertiary-container": "#cbcbcb",
+                    "surface-container-high": "#e8e8e8",
+                    "on-error": "#ffffff",
+                    "background": "#f9f9f9",
+                    "surface-variant": "#e2e2e2",
+                    "primary-container": "#ffc107",
+                    "surface-container": "#eeeeee",
+                    "secondary-fixed": "#d1e4ff",
+                    "on-background": "#1a1c1c",
+                    "on-primary-container": "#6d5100",
+                    "surface-container-lowest": "#ffffff",
+                    "text-primary": "#000000",
+                    "surface-tint": "#785900",
+                    "accent-yellow": "#FFC107",
+                    "verification-blue": "#2196F3",
+                    "on-secondary-container": "#00355c",
+                    "on-secondary-fixed": "#001d36",
+                    "on-primary-fixed": "#261a00",
+                    "border-light": "#E0E0E0",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#fabd00",
+                    "surface": "#f9f9f9",
+                    "primary-fixed": "#ffdf9e",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#00497d",
+                    "on-primary-fixed-variant": "#5b4300",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#d4c5ab",
+                    "on-surface": "#1a1c1c",
+                    "error-container": "#ffdad6",
+                    "surface-white": "#FFFFFF",
+                    "on-tertiary-container": "#555555",
+                    "text-muted": "#757575",
+                    "primary": "#785900",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "surface-bright": "#f9f9f9",
+                    "inverse-on-surface": "#f1f1f1",
+                    "tertiary-fixed": "#e2e2e2",
+                    "secondary": "#0061a4",
+                    "surface-container-low": "#f3f3f3",
+                    "outline": "#827660",
+                    "inverse-surface": "#2f3131",
+                    "error": "#ba1a1a",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#5e5e5e",
+                    "secondary-fixed-dim": "#9ecaff",
+                    "surface-container-highest": "#e2e2e2",
+                    "secondary-container": "#33a0fd",
+                    "on-surface-variant": "#4f4632",
+                    "inverse-primary": "#fabd00",
+                    "surface-dim": "#dadada"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px",
+                    "xl": "48px",
+                    "sm": "16px",
+                    "margin-desktop": "40px",
+                    "lg": "32px",
+                    "xs": "8px",
+                    "gutter": "16px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Tajawal"],
+                    "body-sm": ["Tajawal"],
+                    "headline-md": ["Tajawal"],
+                    "label-sm": ["Tajawal"],
+                    "body-lg": ["Tajawal"],
+                    "body-md": ["Tajawal"],
+                    "headline-lg": ["Tajawal"],
+                    "label-lg": ["Tajawal"],
+                    "headline-sm": ["Tajawal"]
+            },
+            "fontSize": {
+                    "display-lg": ["40px", {"lineHeight": "52px", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Tajawal', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E0E0E0; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<nav class="bg-surface-white w-full sticky top-0 z-50 border-b border-border-light">
+<div class="flex justify-between items-center h-16 px-gutter max-w-container-max mx-auto">
+<div class="flex items-center gap-md">
+<span class="text-headline-md font-headline-md font-bold text-on-surface">CARNA</span>
+<div class="hidden md:flex items-center bg-surface-container-low px-sm py-xs rounded-lg border border-border-light w-96">
+<span class="material-symbols-outlined text-tertiary" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full px-xs" placeholder="البحث عن إعلانات، مستخدمين، أو ورشات..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="relative p-2 text-tertiary hover:bg-surface-container transition-colors rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border border-surface-white"></span>
+</button>
+<div class="h-8 w-px bg-border-light mx-xs"></div>
+<div class="flex items-center gap-xs cursor-pointer group">
+<div class="text-left hidden md:block">
+<p class="font-label-lg text-label-lg text-on-surface">أدمن كارنا</p>
+<p class="font-label-sm text-label-sm text-tertiary">مدير النظام</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged male administrator in a clean white studio setting. He wears a dark business suit and has a confident, approachable expression. The lighting is bright and corporate, reflecting the high-contrast light-mode aesthetic of the dashboard. The background is a soft, out-of-focus modern office environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_pmCkdcVCZo6nXAKhq5QTyAmEwm26IwP6WypmDan8xsveZidY5JeMCjR4tYSY3N8VPf4kyJhkq5BnxiD0Jo84qq0l-HZZYiv9__EoL4yGO_hZrUtgw_FXI-or3MWLX6Kla4JrK_Pvun0nRlQi7iNKZ4KU1L3_91jGlTVQTPiW1BWy4V5a-dAP1EAunFt9KJ6tPZnFVjWCNj55zyDODpiGvjlW6dDZ3iCumTQfgF1FbXA1puhgAi9Ja7lvNgxQXiKpl0tnit9cZMFQ"/>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<div class="flex max-w-container-max mx-auto relative">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col p-4 gap-4 h-[calc(100vh-64px)] w-64 sticky top-16 border-l border-border-light bg-surface-container-low">
+<div class="flex flex-col gap-1 flex-grow">
+<!-- Dashboard Active Item -->
+<a class="flex items-center gap-xs px-sm py-2 text-on-primary-container bg-primary-container rounded-lg font-bold cursor-pointer active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-lg text-label-lg">لوحة التحكم</span>
+</a>
+<a class="flex items-center gap-xs px-sm py-2 text-tertiary hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="directions_car">directions_car</span>
+<span class="font-label-lg text-label-lg">إعلانات السيارات</span>
+</a>
+<a class="flex items-center gap-xs px-sm py-2 text-tertiary hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="handyman">handyman</span>
+<span class="font-label-lg text-label-lg">الورشات</span>
+</a>
+<a class="flex items-center gap-xs px-sm py-2 text-tertiary hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-lg text-label-lg">المستخدمين</span>
+</a>
+<a class="flex items-center gap-xs px-sm py-2 text-tertiary hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="card_membership">card_membership</span>
+<span class="font-label-lg text-label-lg">الاشتراكات</span>
+</a>
+<a class="flex items-center gap-xs px-sm py-2 text-tertiary hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="report">report</span>
+<span class="font-label-lg text-label-lg">البلاغات</span>
+</a>
+</div>
+<div class="border-t border-border-light pt-4 flex flex-col gap-1">
+<a class="flex items-center gap-xs px-sm py-2 text-tertiary hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-lg text-label-lg">الإعدادات</span>
+</a>
+<a class="flex items-center gap-xs px-sm py-2 text-error hover:bg-error-container transition-all rounded-lg cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-lg text-label-lg">تسجيل الخروج</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-grow p-gutter md:p-lg overflow-x-hidden">
+<header class="mb-lg">
+<h1 class="font-headline-lg text-headline-lg mb-2">نظرة عامة على النظام</h1>
+<p class="text-body-md text-tertiary">متابعة الأداء الحي للمنصة والنشاطات الأخيرة.</p>
+</header>
+<!-- Overview Statistics KPIs -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md mb-xl">
+<div class="bg-surface-white border border-border-light p-md rounded-lg">
+<div class="flex justify-between items-start mb-xs">
+<span class="material-symbols-outlined p-2 bg-surface-container rounded-lg text-primary" data-icon="group">group</span>
+<span class="flex items-center text-success text-body-sm text-green-600 font-bold">
+<span class="material-symbols-outlined text-[18px]" data-icon="trending_up">trending_up</span>
+                            12%
+                        </span>
+</div>
+<p class="text-tertiary font-label-lg text-label-lg">إجمالي المستخدمين</p>
+<p class="font-headline-md text-headline-md mt-1">24,502</p>
+</div>
+<div class="bg-surface-white border border-border-light p-md rounded-lg">
+<div class="flex justify-between items-start mb-xs">
+<span class="material-symbols-outlined p-2 bg-surface-container rounded-lg text-primary" data-icon="directions_car">directions_car</span>
+<span class="flex items-center text-success text-body-sm text-green-600 font-bold">
+<span class="material-symbols-outlined text-[18px]" data-icon="trending_up">trending_up</span>
+                            8%
+                        </span>
+</div>
+<p class="text-tertiary font-label-lg text-label-lg">إعلانات نشطة</p>
+<p class="font-headline-md text-headline-md mt-1">1,840</p>
+</div>
+<div class="bg-surface-white border border-border-light p-md rounded-lg">
+<div class="flex justify-between items-start mb-xs">
+<span class="material-symbols-outlined p-2 bg-surface-container rounded-lg text-primary" data-icon="verified">verified</span>
+<span class="flex items-center text-error text-body-sm text-red-600 font-bold">
+<span class="material-symbols-outlined text-[18px]" data-icon="trending_down">trending_down</span>
+                            3%
+                        </span>
+</div>
+<p class="text-tertiary font-label-lg text-label-lg">ورشات متميزة</p>
+<p class="font-headline-md text-headline-md mt-1">156</p>
+</div>
+<div class="bg-surface-white border border-border-light p-md rounded-lg border-r-4 border-r-accent-yellow">
+<div class="flex justify-between items-start mb-xs">
+<span class="material-symbols-outlined p-2 bg-primary-container/20 rounded-lg text-primary" data-icon="payments">payments</span>
+<span class="flex items-center text-success text-body-sm text-green-600 font-bold">
+<span class="material-symbols-outlined text-[18px]" data-icon="trending_up">trending_up</span>
+                            24%
+                        </span>
+</div>
+<p class="text-tertiary font-label-lg text-label-lg">إجمالي الإيرادات (SYP)</p>
+<p class="font-headline-md text-headline-md mt-1">42.5M</p>
+</div>
+</div>
+<!-- Dashboard Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Ads Management Table (Left/Main Column) -->
+<div class="lg:col-span-2 flex flex-col gap-md">
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden">
+<div class="p-md flex justify-between items-center border-b border-border-light bg-surface-container-low">
+<h2 class="font-headline-sm text-headline-sm">إدارة الإعلانات الأخيرة</h2>
+<button class="text-primary font-label-lg text-label-lg hover:underline">عرض الكل</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container text-tertiary text-label-lg">
+<th class="p-md font-medium">السيارة</th>
+<th class="p-md font-medium">البائع</th>
+<th class="p-md font-medium">الحالة</th>
+<th class="p-md font-medium">الإجراءات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-light text-body-md">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-md">
+<div class="flex items-center gap-xs">
+<div class="w-12 h-12 bg-surface-container rounded overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A side view of a high-end silver BMW sedan parked in a sleek, modern garage with neutral grey walls. The lighting is sharp and professional, highlighting the car's metallic finish. This professional car photography matches the minimalist and fast aesthetic of the CARNA marketplace, utilizing a clean, high-contrast light-mode style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCURbVjfPIxJccGOoFh-gTXlMfpsTDSaS1crT_s6kICCvLvS-ZovOuJCBkzWJWIF4PqReMjk_ISXTW83e2rim5sF17FeVWkyFspm1AUL6U_2gcNOSrEcB-8KNGad2vnjdmOySY8E9GNz0v9n_qwuIonI3vLF5RQpCfuR6Km7RGSM7vTTIoZ_v1YPs5oUkIjKzwHgUeFTNLP2Tmws6yOLoXARz6qLmGPGxDLniE8uF4az250qvOu2k9Zf6GXq1Wg0tqkhXSIbhSJHLiZ"/>
+</div>
+<div>
+<p class="font-bold">BMW M4 2023</p>
+<p class="text-label-sm text-tertiary">350,000,000 SYP</p>
+</div>
+</div>
+</td>
+<td class="p-md">أحمد المحمد</td>
+<td class="p-md">
+<span class="px-2 py-1 bg-primary-container/20 text-on-primary-container rounded text-label-sm font-bold">بانتظار الموافقة</span>
+</td>
+<td class="p-md">
+<div class="flex gap-xs">
+<button class="w-8 h-8 flex items-center justify-center bg-green-50 text-green-600 rounded hover:bg-green-100"><span class="material-symbols-outlined" data-icon="check">check</span></button>
+<button class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-600 rounded hover:bg-red-100"><span class="material-symbols-outlined" data-icon="close">close</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-md">
+<div class="flex items-center gap-xs">
+<div class="w-12 h-12 bg-surface-container rounded overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A front-facing shot of a clean, white Toyota Camry in an urban daytime setting. The background is a slightly blurred city street, emphasizing the vehicle's sharp lines. The lighting is natural and bright, reinforcing a professional and reliable image for the car marketplace dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhpETchODkKpBnDt_bgX3yrAsqCOziz0bwEh5shEvE-UX6T7NZ7MQmbTffIt3YqdgbXNZ4Dm2I8VTXjzJf2QMzc1J_zCF2oebUYu6Nb_M71dmDPLoz8m-006iDOvPCGcswULCvJQw0ustNJWNewaQEwUhjf4FFyuovoo6QO1khD4w_XVzHA3wk6pBjZFgJN4UebgavYePorgFtQxIrFvRAnP6nqcUH-znsVzl-tUkR7aHrzF9ZbNr3dTCa5H4vOBcPUBfP4lzlNNO7"/>
+</div>
+<div>
+<p class="font-bold">Toyota Camry 2021</p>
+<p class="text-label-sm text-tertiary">180,000,000 SYP</p>
+</div>
+</div>
+</td>
+<td class="p-md">سارة العلي</td>
+<td class="p-md">
+<span class="px-2 py-1 bg-verification-blue/10 text-verification-blue rounded text-label-sm font-bold">منشور</span>
+</td>
+<td class="p-md">
+<button class="w-8 h-8 flex items-center justify-center bg-surface-container text-tertiary rounded hover:bg-surface-container-high"><span class="material-symbols-outlined" data-icon="delete">delete</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-md">
+<div class="flex items-center gap-xs">
+<div class="w-12 h-12 bg-surface-container rounded overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A dynamic shot of a black Porsche 911 on a winding asphalt road during the golden hour. The low-angle lighting creates dramatic highlights on the car's curves. This high-end automotive photography is designed to showcase the premium nature of the CARNA listings within a minimalist dashboard framework." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3s2WVpaZuwjg-pHF2KH3MfUY6VUDWb8cuIfj2U70Dv1GAuC4doPd0sKnJUvsYJuU91N-tY-3TCD3JDc39LDll9CM7Trzpy9psuIFIlHazAc5mo3kqEJGIuNCdxcgiIB8Cee3oQtgE3aVnwJJqbe4WYuJPm_Rj1pptNrasGtTFB6JPALpw7TxbHnqkuforMguU8LCOzOyldKAtnyaUNL8xXdOsKqHq7K7E7kptRy_S5oEzaaIU2ewu-OB7u9ApBUcUkh1wx4VlUd3L"/>
+</div>
+<div>
+<p class="font-bold">Porsche 911 2019</p>
+<p class="text-label-sm text-tertiary">890,000,000 SYP</p>
+</div>
+</div>
+</td>
+<td class="p-md">معرض النجوم</td>
+<td class="p-md">
+<span class="px-2 py-1 bg-tertiary-container/30 text-tertiary rounded text-label-sm font-bold">منتهي</span>
+</td>
+<td class="p-md">
+<button class="w-8 h-8 flex items-center justify-center bg-surface-container text-tertiary rounded hover:bg-surface-container-high"><span class="material-symbols-outlined" data-icon="refresh">refresh</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Workshops Oversight -->
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden">
+<div class="p-md flex justify-between items-center border-b border-border-light bg-surface-container-low">
+<h2 class="font-headline-sm text-headline-sm">مراقبة الورشات</h2>
+<button class="bg-accent-yellow text-on-surface px-sm py-1 rounded font-bold text-label-lg hover:opacity-90 transition-opacity">إضافة ورشة</button>
+</div>
+<div class="p-md space-y-4">
+<div class="flex items-center justify-between p-sm border border-border-light rounded-lg hover:border-primary transition-colors">
+<div class="flex items-center gap-md">
+<div class="w-14 h-14 bg-surface-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="garage">garage</span>
+</div>
+<div>
+<p class="font-bold text-body-lg">أوتو برو للصيانة</p>
+<div class="flex items-center gap-xs">
+<span class="px-2 py-0.5 bg-primary-container text-on-primary-container text-[10px] font-bold rounded">PREMIUM</span>
+<span class="text-label-sm text-verification-blue flex items-center"><span class="material-symbols-outlined text-[14px]" data-icon="verified" data-weight="fill" style="font-variation-settings: 'FILL' 1;">verified</span> موثق</span>
+</div>
+</div>
+</div>
+<div class="text-left">
+<p class="text-label-sm text-tertiary">آخر تحديث</p>
+<p class="text-body-sm">منذ ساعتين</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-sm border border-border-light rounded-lg hover:border-primary transition-colors">
+<div class="flex items-center gap-md">
+<div class="w-14 h-14 bg-surface-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="construction">construction</span>
+</div>
+<div>
+<p class="font-bold text-body-lg">مركز الشام الفني</p>
+<div class="flex items-center gap-xs">
+<span class="px-2 py-0.5 bg-surface-container text-tertiary text-[10px] font-bold rounded">BASIC</span>
+<span class="text-label-sm text-tertiary">بانتظار التوثيق</span>
+</div>
+</div>
+</div>
+<div class="text-left">
+<p class="text-label-sm text-tertiary">آخر تحديث</p>
+<p class="text-body-sm">أمس</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar (User Mgmt, Reports, Messages) -->
+<div class="flex flex-col gap-lg">
+<!-- Reports & Support Tickets -->
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden">
+<div class="p-md border-b border-border-light bg-error-container/10">
+<h2 class="font-headline-sm text-headline-sm text-error flex items-center gap-xs">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+                                بلاغات وطلبات دعم
+                            </h2>
+</div>
+<div class="p-md space-y-md">
+<div class="flex gap-sm">
+<div class="w-2 h-2 mt-2 bg-error rounded-full flex-shrink-0"></div>
+<div>
+<p class="font-bold text-body-md">بلاغ عن إعلان مضلل</p>
+<p class="text-body-sm text-tertiary mb-1">الرقم المرجعي: #88219</p>
+<p class="text-label-sm text-error">عالي الأهمية</p>
+</div>
+</div>
+<div class="flex gap-sm">
+<div class="w-2 h-2 mt-2 bg-primary rounded-full flex-shrink-0"></div>
+<div>
+<p class="font-bold text-body-md">مشكلة في تسجيل الدخول</p>
+<p class="text-body-sm text-tertiary mb-1">المستخدم: محمد حسن</p>
+<p class="text-label-sm text-primary">قيد المعالجة</p>
+</div>
+</div>
+<button class="w-full border border-border-light py-2 rounded font-bold text-label-lg hover:bg-surface-container transition-colors">عرض جميع التذاكر</button>
+</div>
+</div>
+<!-- User Management Overview -->
+<div class="bg-surface-white border border-border-light rounded-lg p-md">
+<h2 class="font-headline-sm text-headline-sm mb-md">أحدث المستخدمين</h2>
+<div class="space-y-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-bold text-tertiary">م</div>
+<div class="flex-grow">
+<p class="font-bold text-label-lg">ماهر الخضر</p>
+<p class="text-label-sm text-tertiary">بائع | دمشق</p>
+</div>
+<span class="text-label-sm text-tertiary">الآن</span>
+</div>
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-bold text-tertiary">ر</div>
+<div class="flex-grow">
+<p class="font-bold text-label-lg">رنا الصالح</p>
+<p class="text-label-sm text-tertiary">مشتري | حلب</p>
+</div>
+<span class="text-label-sm text-tertiary">منذ 5 د</span>
+</div>
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-bold text-tertiary">ي</div>
+<div class="flex-grow">
+<p class="font-bold text-label-lg">ياسر عيسى</p>
+<p class="text-label-sm text-tertiary">بائع | حمص</p>
+</div>
+<span class="text-label-sm text-tertiary">منذ 15 د</span>
+</div>
+</div>
+<div class="mt-md pt-md border-t border-border-light text-center">
+<a class="text-primary font-bold text-label-lg" href="#">إدارة جميع المستخدمين</a>
+</div>
+</div>
+<!-- System Health / Quick Stats -->
+<div class="bg-surface-white border border-border-light rounded-lg p-md">
+<h2 class="font-label-lg text-label-lg font-bold mb-md">حالة النظام</h2>
+<div class="space-y-sm">
+<div>
+<div class="flex justify-between text-label-sm mb-1">
+<span>مساحة التخزين</span>
+<span>65%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[65%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-label-sm mb-1">
+<span>تحميل الخادم</span>
+<span>12%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-green-500 w-[12%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Bottom NavBar (Hidden on Desktop) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface-white border-t border-border-light flex justify-around items-center h-16 px-4 z-50">
+<a class="flex flex-col items-center text-primary" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px]">الرئيسية</span>
+</a>
+<a class="flex flex-col items-center text-tertiary" href="#">
+<span class="material-symbols-outlined" data-icon="directions_car">directions_car</span>
+<span class="text-[10px]">الإعلانات</span>
+</a>
+<a class="flex flex-col items-center text-tertiary" href="#">
+<span class="material-symbols-outlined" data-icon="handyman">handyman</span>
+<span class="text-[10px]">الورشات</span>
+</a>
+<a class="flex flex-col items-center text-tertiary" href="#">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+<span class="text-[10px]">بلاغات</span>
+</a>
+<a class="flex flex-col items-center text-tertiary" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-[10px]">إعدادات</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for active state scaling
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mousedown', () => el.classList.add('scale-95'));
+            el.addEventListener('mouseup', () => el.classList.remove('scale-95'));
+            el.addEventListener('mouseleave', () => el.classList.remove('scale-95'));
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        const searchContainer = searchInput?.parentElement;
+        if (searchInput && searchContainer) {
+            searchInput.addEventListener('focus', () => {
+                searchContainer.classList.add('border-primary');
+                searchContainer.classList.add('ring-2');
+                searchContainer.classList.add('ring-primary-container/30');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchContainer.classList.remove('border-primary');
+                searchContainer.classList.remove('ring-2');
+                searchContainer.classList.remove('ring-primary-container/30');
+            });
+        }
+    </script>
+</body></html>

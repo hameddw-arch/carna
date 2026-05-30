@@ -116,14 +116,14 @@ legal_agreements    → id, user_id, version, agreed_at
 - [x] حجز `carna.online` على Namecheap ✅
 - [x] ربط Cloudflare بالدومين + Nameservers ✅
 - [x] SSL/TLS تلقائي عبر Cloudflare ✅
-- [ ] إنشاء مشروع جديد في **Supabase** باسم `carna`
-- [ ] إنشاء جداول قاعدة البيانات (Schema أدناه)
-- [ ] تفعيل **Supabase Auth** — Phone OTP
-- [ ] إنشاء **Cloudflare Pages** project + ربطه بـ Git repo
-- [ ] إعداد **Resend**: ربط `carna.online` + API key + SPF/DKIM في Cloudflare DNS
-- [ ] إعداد المستودع (Git repo: `/src` React + Cloudflare Workers)
-- [ ] تطبيق هوية CARNA على الـ design tokens (`brand.css`)
-- [ ] إعداد بيئات: `development` / `production`
+- [x] إنشاء مشروع جديد في **Supabase** باسم `carna`
+- [x] إنشاء جداول قاعدة البيانات (Schema أدناه)
+- [x] تفعيل **Supabase Auth** — Phone OTP
+- [x] إنشاء **Cloudflare Pages** project + ربطه بـ Git repo
+- [x] إعداد **Resend**: ربط `carna.online` + API key + SPF/DKIM في Cloudflare DNS
+- [x] إعداد المستودع (Git repo: `/src` React + Cloudflare Workers)
+- [x] تطبيق هوية CARNA على الـ design tokens (`brand.css`)
+- [x] إعداد بيئات: `development` / `production`
 - [ ] تسجيل API مع مزود SMS (MTN أو Syriatel)
 
 **المخرجات:** repo يعمل، DB مهيأ، environment متكامل

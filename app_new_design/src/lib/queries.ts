@@ -230,6 +230,43 @@ export async function deleteListing(id: string) {
   return true
 }
 
+export async function uploadListingImages(listingId: string, files: File[]) {
+  if (!files || files.length === 0) return [];
+
+  const uploadPromises = files.map(async (file, index) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${listingId}/${Math.random()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    // Upload to Supabase Storage bucket 'workshop-images'
+    const { error: uploadError } = await supabase.storage
+      .from('workshop-images')
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('workshop-images')
+      .getPublicUrl(filePath);
+
+    // Insert into listing_images
+    const { error: dbError } = await supabase
+      .from('listing_images')
+      .insert({
+        listing_id: listingId,
+        url: publicUrl,
+        order: index
+      });
+
+    if (dbError) throw dbError;
+
+    return publicUrl;
+  });
+
+  return Promise.all(uploadPromises);
+}
+
 export async function insertService(serviceData: any) {
   const { data, error } = await supabase
     .from('services')
@@ -239,4 +276,73 @@ export async function insertService(serviceData: any) {
 
   if (error) throw error
   return data
+}
+
+export async function fetchPendingTransactions() {
+  const { data, error } = await supabase
+    .from('wallet_transactions')
+    .select(`*, users(name, phone)`)
+    .eq('type', 'pending')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function approveTransaction(transactionId: string, userId: string, amount: number) {
+  // Update transaction status to credit
+  const { error: txError } = await supabase
+    .from('wallet_transactions')
+    .update({ type: 'credit', ref: 'تم تأكيد الدفع - شحن رصيد' })
+    .eq('id', transactionId);
+
+  if (txError) throw txError;
+
+  // Fetch current user balance
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('wallet_balance')
+    .eq('id', userId)
+    .single();
+
+  if (userError) throw userError;
+
+  // Increment balance
+  const newBalance = (user.wallet_balance || 0) + amount;
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ wallet_balance: newBalance })
+    .eq('id', userId);
+
+  if (updateError) throw updateError;
+  return true;
+}
+
+export async function fetchFavoritesDb(userId: string) {
+  const { data, error } = await supabase
+    .from('favorites')
+    .select('listing_id')
+    .eq('user_id', userId);
+  
+  if (error) {
+    console.error('Error fetching favorites:', error);
+    return [];
+  }
+  return data.map(d => d.listing_id);
+}
+
+export async function addFavoriteDb(userId: string, listingId: string) {
+  const { error } = await supabase
+    .from('favorites')
+    .insert({ user_id: userId, listing_id: listingId });
+  if (error) console.error('Error adding favorite:', error);
+}
+
+export async function removeFavoriteDb(userId: string, listingId: string) {
+  const { error } = await supabase
+    .from('favorites')
+    .delete()
+    .eq('user_id', userId)
+    .eq('listing_id', listingId);
+  if (error) console.error('Error removing favorite:', error);
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchAdminStats, fetchAllListingsForAdmin, updateListingStatus, deleteListing } from '../lib/queries';
+import { fetchAdminStats, fetchAllListingsForAdmin, updateListingStatus, deleteListing, fetchPendingTransactions, approveTransaction } from '../lib/queries';
 import logoDark from '../assets/carna logo.svg';
 
 
@@ -8,6 +8,7 @@ export default function AdminDashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<any>(null);
   const [listings, setListings] = useState<any[]>([]);
+  const [pendingTxs, setPendingTxs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // States for governorates and logs
@@ -61,6 +62,19 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleApproveTransaction = async (txId: string, userId: string, amount: number) => {
+    if (!window.confirm('هل تريد تأكيد استلام الحوالة وإضافة الرصيد؟')) return;
+    try {
+      await approveTransaction(txId, userId, amount);
+      setPendingTxs(prev => prev.filter(tx => tx.id !== txId));
+      addLog(`تم شحن رصيد بقيمة ${amount} للمستخدم`, 'add', 'green', 'payments');
+      alert('تم تأكيد الحوالة بنجاح وتحديث رصيد المستخدم');
+    } catch (error) {
+      console.error('Error approving transaction:', error);
+      alert('حدث خطأ أثناء تأكيد العملية');
+    }
+  };
+
   const handleToggleGovernorate = (name: string) => {
     setGovernorates(prev => prev.map(g => {
       if (g.name === name) {
@@ -92,10 +106,12 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     Promise.all([
       fetchAdminStats(),
-      fetchAllListingsForAdmin(5)
-    ]).then(([s, l]) => {
+      fetchAllListingsForAdmin(5),
+      fetchPendingTransactions()
+    ]).then(([s, l, txs]) => {
       setStats(s);
       setListings(l);
+      setPendingTxs(txs);
     }).finally(() => setLoading(false));
   }, []);
 
@@ -304,6 +320,47 @@ export default function AdminDashboardPage() {
                         </td>
                       </tr>
                     ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Pending Wallet Topups */}
+            <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm lg:col-span-2">
+              <div className="p-md flex justify-between items-center border-b border-border-light">
+                <h2 className="font-headline-sm text-headline-sm">طلبات شحن المحفظة المعلقة</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-right">
+                  <thead className="bg-surface-container-low text-tertiary text-label-sm border-b border-border-light">
+                    <tr>
+                      <th className="p-md font-medium">المستخدم</th>
+                      <th className="p-md font-medium">المبلغ</th>
+                      <th className="p-md font-medium">طريقة الدفع</th>
+                      <th className="p-md font-medium">تاريخ الطلب</th>
+                      <th className="p-md font-medium text-center">إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border-light text-body-sm">
+                    {pendingTxs.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="p-md text-center text-tertiary">لا توجد طلبات معلقة</td>
+                      </tr>
+                    ) : (
+                      pendingTxs.map(tx => (
+                        <tr key={tx.id} className="hover:bg-surface-container-lowest transition-colors">
+                          <td className="p-md font-bold">{tx.users?.name || 'مستخدم غير معروف'} <br/><span className="text-[11px] text-tertiary">{tx.users?.phone}</span></td>
+                          <td className="p-md text-orange-500 font-bold">{tx.amount.toLocaleString()} ل.س</td>
+                          <td className="p-md">{tx.method}</td>
+                          <td className="p-md text-tertiary">{new Date(tx.created_at).toLocaleDateString('ar-EG')}</td>
+                          <td className="p-md text-center">
+                            <button onClick={() => handleApproveTransaction(tx.id, tx.user_id, tx.amount)} className="bg-green-500 text-white px-md py-xs rounded hover:bg-green-600 transition-colors font-bold text-xs shadow-sm">
+                              تأكيد الشحن
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

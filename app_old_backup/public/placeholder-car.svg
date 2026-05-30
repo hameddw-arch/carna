@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F4F5F7"/>
+      <stop offset="1" stop-color="#E7E9ED"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="450" fill="url(#bg)"/>
+  <!-- car silhouette -->
+  <g transform="translate(300 215)" fill="#C2C7CF">
+    <path d="M-150 30 L-150 55 Q-150 70 -135 70 L-118 70 Q-118 44 -88 44 Q-58 44 -58 70 L58 70 Q58 44 88 44 Q118 44 118 70 L135 70 Q150 70 150 55 L150 28 L138 -2 Q132 -18 112 -22 L40 -40 Q10 -55 -20 -55 L-80 -55 Q-110 -55 -125 -38 Z"/>
+  </g>
+  <!-- wheels -->
+  <g fill="#9AA0AA">
+    <circle cx="212" cy="285" r="20"/>
+    <circle cx="388" cy="285" r="20"/>
+  </g>
+  <!-- CARNA accent dot -->
+  <circle cx="300" cy="350" r="5" fill="#FDB700"/>
+  <text x="300" y="385" text-anchor="middle" font-family="Cairo, sans-serif" font-size="22" font-weight="800" fill="#9AA0AA" letter-spacing="2">CARNA</text>
+</svg>
