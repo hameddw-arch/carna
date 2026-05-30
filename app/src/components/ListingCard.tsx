@@ -1,4 +1,4 @@
-import { MapPin, Gauge, Fuel, Heart, Clock, GitCompare } from 'lucide-react'
+import { MapPin, Gauge, Fuel, Heart, Clock, GitCompare, Star, Store, Camera } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { addToCompare, removeFromCompare, isInCompare } from '../lib/compare'
@@ -83,15 +83,15 @@ export default function ListingCard({ listing }: { listing: Listing }) {
               <div style={{
                 background: 'var(--dark)', color: 'var(--yellow)',
                 padding: '4px 9px', borderRadius: 6,
-                fontSize: 11, fontWeight: 700,
-              }}>⭐ مميز</div>
+                fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4,
+              }}><Star size={11} fill="currentColor"/> مميز</div>
             )}
             {listing.seller_type === 'dealer' && (
               <div style={{
                 background: '#0053FA', color: '#fff',
                 padding: '3px 8px', borderRadius: 6,
-                fontSize: 11, fontWeight: 700,
-              }}>🏪 وكيل</div>
+                fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4,
+              }}><Store size={11}/> وكيل</div>
             )}
           </div>
 
@@ -103,8 +103,9 @@ export default function ListingCard({ listing }: { listing: Listing }) {
               padding: '3px 8px', borderRadius: 6,
               fontSize: 11, fontWeight: 600,
               backdropFilter: 'blur(4px)',
+              display: 'flex', alignItems: 'center', gap: 4,
             }}>
-              📷 {listing.imageCount}
+              <Camera size={11}/> {listing.imageCount}
             </div>
           )}
 

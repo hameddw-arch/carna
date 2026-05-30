@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { Loader2, Check, ChevronRight, Trash2 } from 'lucide-react'
+import { Loader2, Check, ChevronRight, Trash2, Lock } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -168,7 +168,7 @@ export default function EditListing() {
             border: `1.5px solid ${form.hide_phone ? '#3B82F6' : 'var(--gray-200)'}`,
           }}>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>🔒 إخفاء رقم الهاتف</div>
+              <div style={{ fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}><Lock size={14}/> إخفاء رقم الهاتف</div>
               <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>المشترون يتواصلون عبر الرسائل فقط</div>
             </div>
             <div style={{ width: 44, height: 24, borderRadius: 12, background: form.hide_phone ? '#3B82F6' : 'var(--gray-300)', position: 'relative', transition: 'all 200ms ease', flexShrink: 0 }}>

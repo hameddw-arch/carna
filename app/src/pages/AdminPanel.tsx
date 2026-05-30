@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Check, X, Eye, Users, Clock, RefreshCw, Wrench } from 'lucide-react'
+import { Check, X, Eye, Users, Clock, RefreshCw, Wrench, MapPin, Phone, MessageCircle, Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Link } from 'react-router-dom'
 import { emailSellerListingApproved, emailSellerListingRejected } from '../lib/emails'
@@ -251,10 +251,10 @@ export default function AdminPanel() {
                         <span style={{ fontSize: 11, fontWeight: 700, background: '#EDE9FE', color: '#7C3AED', padding: '2px 10px', borderRadius: 9999 }}>{ws.subscription_tier}</span>
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, fontSize: 13, color: 'var(--text-3)', marginBottom: 8 }}>
-                        <span>📍 {ws.city}</span>
-                        <span>📞 {ws.phone}</span>
-                        {ws.whatsapp && <span>💬 {ws.whatsapp}</span>}
-                        {ws.inspection && <span style={{ color: '#3B82F6', fontWeight: 600 }}>🔍 يقدم فحص</span>}
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><MapPin size={12}/> {ws.city}</span>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Phone size={12}/> {ws.phone}</span>
+                        {ws.whatsapp && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><MessageCircle size={12}/> {ws.whatsapp}</span>}
+                        {ws.inspection && <span style={{ color: '#3B82F6', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}><Search size={12}/> يقدم فحص</span>}
                       </div>
                       {ws.service_types?.length > 0 && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>

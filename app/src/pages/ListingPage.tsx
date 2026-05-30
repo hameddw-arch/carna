@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { MapPin, Calendar, Gauge, Fuel, Settings, Palette, User, ChevronRight, ChevronLeft, Share2, Star, Shield, Phone, MessageCircle, Loader2 } from 'lucide-react'
+import { MapPin, Calendar, Gauge, Fuel, Settings, Palette, User, ChevronRight, ChevronLeft, Share2, Star, Shield, Phone, MessageCircle, Loader2, Camera, Lock, Search, Store } from 'lucide-react'
 import { fetchListing, fetchListings } from '../lib/queries'
 import { supabase } from '../lib/supabase'
 import { threadKey } from '../lib/chat'
@@ -113,7 +113,7 @@ export default function ListingPage() {
 
               {/* Counter */}
               <span style={{ position: 'absolute', bottom: 16, left: 16, background: 'rgba(255,255,255,0.9)', color: 'var(--color-black)', fontSize: 13, fontWeight: 700, padding: '6px 14px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)' }}>
-                📷 {activeImg + 1} / {images.length}
+<Camera size={13} style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }}/>{activeImg + 1} / {images.length}
               </span>
             </div>
 
@@ -209,7 +209,7 @@ export default function ListingPage() {
               </button>
               {listing.hide_phone ? (
                 <div style={{ width: '100%', textAlign: 'center', marginBottom: 10, fontSize: 13, color: 'var(--text-3)', background: 'var(--gray-100)', borderRadius: 12, padding: '13px 20px' }}>
-                  🔒 البائع يفضّل التواصل عبر الرسائل
+<span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Lock size={13}/> البائع يفضّل التواصل عبر الرسائل</span>
                 </div>
               ) : showPhone && listing.users?.phone ? (
                 <a href={`tel:${listing.users.phone}`} className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', marginBottom: 10, fontSize: 16, padding: '13px 20px', fontWeight: 800, direction: 'ltr' }}>
@@ -230,7 +230,7 @@ export default function ListingPage() {
                   background: '#ECFDF5', border: '1px solid #A7F3D0',
                   textDecoration: 'none', color: '#065F46', fontSize: 13, fontWeight: 600,
                 }}>
-                <span style={{ fontSize: 18 }}>🔍</span>
+                <Search size={20} style={{ flexShrink: 0 }}/>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 13 }}>احجز فحصاً قبل الشراء</div>
                   <div style={{ fontSize: 12, fontWeight: 400, opacity: .75 }}>مراكز فحص معتمدة في {listing.city}</div>
@@ -246,8 +246,8 @@ export default function ListingPage() {
                 </div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 16 }}>{listing.users?.name ?? 'مستخدم كارنا'}</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>
-                    {listing.seller_type === 'dealer' ? '🏢 وكيل / معرض' : '👤 مالك مباشر'}
+                  <div style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 5 }}>
+                    {listing.seller_type === 'dealer' ? <><Store size={13}/> وكيل / معرض</> : <><User size={13}/> مالك مباشر</>}
                   </div>
                 </div>
               </div>

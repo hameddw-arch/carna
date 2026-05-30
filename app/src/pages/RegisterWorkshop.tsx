@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
-import { ChevronRight, Check, Loader2, Plus, X, Image } from 'lucide-react'
+import { ChevronRight, Check, Loader2, Plus, X, Image, Store, MapPin, Phone, Wrench, Camera, Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import SEO from '../components/SEO'
@@ -10,7 +10,7 @@ const SERVICE_TYPES = ['تشخيص إلكتروني','صيانة عامة','فح
 const TIERS = [
   { id: 'free',    label: 'مجاني',   price: 'مجاناً',     color: '#6B7280', desc: 'ظهور أساسي في القائمة العامة' },
   { id: 'basic',   label: 'أساسي',   price: 'تواصل معنا', color: '#0053FA', desc: 'شعار + قائمة خدمات + أولوية في البحث' },
-  { id: 'premium', label: 'مميز ⭐', price: 'تواصل معنا', color: '#FDB700', desc: 'كل مميزات الأساسي + شارة ذهبية + ظهور دائم أعلى' },
+  { id: 'premium', label: 'مميز', price: 'تواصل معنا', color: '#FDB700', desc: 'كل مميزات الأساسي + شارة ذهبية + ظهور دائم أعلى' },
 ]
 const STEPS = ['المعلومات الأساسية', 'صور الورشة', 'الخدمات', 'الباقة']
 const MAX_IMAGES = 5
@@ -320,7 +320,7 @@ export default function RegisterWorkshop() {
               cursor: 'pointer', marginBottom: 24,
             }} onClick={() => set('inspection', !form.inspection)}>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 700 }}>🔍 خدمة فحص ما قبل الشراء</div>
+                <div style={{ fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}><Search size={14}/> خدمة فحص ما قبل الشراء</div>
                 <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>ورشتك تقدم فحص السيارات للمشترين</div>
               </div>
               <div style={{ width: 44, height: 24, borderRadius: 12, background: form.inspection ? '#3B82F6' : 'var(--gray-300)', position: 'relative', transition: 'all 200ms ease', flexShrink: 0 }}>
@@ -371,12 +371,12 @@ export default function RegisterWorkshop() {
               {/* Summary */}
               <div style={{ background: 'var(--gray-100)', borderRadius: 12, padding: '14px 16px', marginBottom: 20 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>ملخص الطلب:</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 5, fontSize: 13, color: 'var(--text-2)' }}>
-                  <span>🏪 {form.name}</span>
-                  <span>📍 {form.city} · 📞 {form.phone}</span>
-                  <span>🔧 {form.service_types.slice(0,3).join('، ')}{form.service_types.length > 3 ? ` +${form.service_types.length-3}` : ''}</span>
-                  {images.length > 0 && <span>📷 {images.length} صورة</span>}
-                  {form.inspection && <span>🔍 يقدم خدمة الفحص</span>}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 7, fontSize: 13, color: 'var(--text-2)' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}><Store size={13} style={{ color: 'var(--text-4)' }}/> {form.name}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}><MapPin size={13} style={{ color: 'var(--text-4)' }}/> {form.city} <span style={{ color: 'var(--gray-300)' }}>·</span> <Phone size={13} style={{ color: 'var(--text-4)' }}/> {form.phone}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}><Wrench size={13} style={{ color: 'var(--text-4)' }}/> {form.service_types.slice(0,3).join('، ')}{form.service_types.length > 3 ? ` +${form.service_types.length-3}` : ''}</span>
+                  {images.length > 0 && <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}><Camera size={13} style={{ color: 'var(--text-4)' }}/> {images.length} صورة</span>}
+                  {form.inspection && <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}><Search size={13} style={{ color: 'var(--text-4)' }}/> يقدم خدمة الفحص</span>}
                 </div>
               </div>
 

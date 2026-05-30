@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { MapPin, Phone, Shield, Clock, ChevronRight, CheckCircle, Loader2, Star, ExternalLink } from 'lucide-react'
+import { MapPin, Phone, Shield, Clock, ChevronRight, CheckCircle, Loader2, Star, ExternalLink, Search, Wrench, Award, Zap } from 'lucide-react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { fetchService } from '../lib/queries'
 import { supabase } from '../lib/supabase'
@@ -106,7 +106,7 @@ export default function ServicePage() {
                 }}>
                   {service.logo_url
                     ? <img src={service.logo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
-                    : (service.name?.[0] ?? '🔧')
+                    : (service.name?.[0] ?? <Wrench size={26}/>)
                   }
                 </div>
                 <div style={{ flex: 1 }}>
@@ -118,8 +118,9 @@ export default function ServicePage() {
                       </span>
                     )}
                     {tier !== 'free' && (
-                      <span style={{ background: tier === 'premium' ? '#FEF3C7' : '#EFF6FF', color: tColor, fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 'var(--r-full)' }}>
-                        {tier === 'premium' ? '🏆 مميز' : '🔵 أساسي'}
+                      <span style={{ background: tier === 'premium' ? '#FEF3C7' : '#EFF6FF', color: tColor, fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 'var(--r-full)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        {tier === 'premium' ? <Award size={12}/> : <Zap size={12}/>}
+                        {tier === 'premium' ? 'مميز' : 'أساسي'}
                       </span>
                     )}
                   </div>
@@ -134,15 +135,15 @@ export default function ServicePage() {
 
               {/* Stats */}
               <div style={{ display: 'flex', gap: 24, padding: '16px 0', borderTop: '1px solid var(--gray-100)', borderBottom: '1px solid var(--gray-100)', marginBottom: 20 }}>
-                <Stat label="التقييم" value={service.rating > 0 ? `${service.rating} ⭐` : 'لا يوجد'}/>
+                <Stat label="التقييم" value={service.rating > 0 ? service.rating : 'لا يوجد'} star={service.rating > 0}/>
                 <Stat label="عدد التقييمات" value={reviews.length > 0 ? reviews.length : '—'}/>
                 <Stat label="فحوصات منجزة" value={service.inspections_count > 0 ? `${service.inspections_count}+` : '—'}/>
               </div>
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {service.inspection && (
-                  <span style={{ background: '#ECFDF5', color: '#065F46', fontSize: 12, fontWeight: 700, padding: '5px 12px', borderRadius: 'var(--r-full)', border: '1px solid #A7F3D0' }}>
-                    🔍 يقدّم فحص ما قبل الشراء
+                  <span style={{ background: '#ECFDF5', color: '#065F46', fontSize: 12, fontWeight: 700, padding: '5px 12px', borderRadius: 'var(--r-full)', border: '1px solid #A7F3D0', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <Search size={12}/> يقدّم فحص ما قبل الشراء
                   </span>
                 )}
                 {service.category && (
@@ -346,7 +347,7 @@ export default function ServicePage() {
 
               {service.inspection && (
                 <div style={{ marginTop: 18, background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 12, padding: '12px 14px', fontSize: 13, color: '#065F46', lineHeight: 1.6 }}>
-                  <strong>🔍 فحص ما قبل الشراء:</strong> هذه الورشة تقدّم خدمة الفحص الفني قبل شراء السيارة.
+                  <strong style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><Search size={13}/> فحص ما قبل الشراء:</strong> هذه الورشة تقدّم خدمة الفحص الفني قبل شراء السيارة.
                 </div>
               )}
             </div>
@@ -378,10 +379,12 @@ function toEmbedUrl(url: string): string {
   }
 }
 
-function Stat({ label, value }: { label: string; value: string | number }) {
+function Stat({ label, value, star }: { label: string; value: string | number; star?: boolean }) {
   return (
     <div style={{ textAlign: 'center' }}>
-      <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>{value}</div>
+      <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+        {value}{star && <Star size={15} fill="var(--yellow)" style={{ color: 'var(--yellow)' }}/>}
+      </div>
       <div style={{ fontSize: 12, color: 'var(--text-4)', marginTop: 2 }}>{label}</div>
     </div>
   )

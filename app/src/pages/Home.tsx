@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, ChevronDown, Loader2, ChevronLeft, CheckCircle, Shield, Zap, Users, Phone, Star, ExternalLink } from 'lucide-react'
+import { Search, ChevronDown, Loader2, ChevronLeft, CheckCircle, Shield, Zap, Users, Phone, Star, ExternalLink, Award, MapPin, User, Store } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ListingCard from '../components/ListingCard'
 import { fetchListings, fetchDistinctMakes } from '../lib/queries'
@@ -343,8 +343,8 @@ export default function Home() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
               <div>
                 <div className="section-eyebrow">مميزة</div>
-                <h2 className="section-title">
-                  <span style={{ background: 'var(--yellow)', borderRadius: 8, padding: '2px 10px', marginLeft: 10, fontSize: 14 }}>⭐</span>
+                <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ background: 'var(--yellow)', borderRadius: 8, padding: '5px', display: 'inline-flex', color: 'var(--dark)' }}><Star size={15} fill="currentColor"/></span>
                   إعلانات مميزة
                 </h2>
               </div>
@@ -368,7 +368,7 @@ export default function Home() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
               <div>
                 <div className="section-eyebrow">ورشات وخدمات</div>
-                <h2 className="section-title">🏆 ورشات موصى بها</h2>
+                <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Award size={20} style={{ color: 'var(--yellow-dark)' }}/> ورشات موصى بها</h2>
               </div>
               <Link to="/services" className="btn btn-outline" style={{ fontSize: 13, gap: 4 }}>
                 كل الورشات <ChevronLeft size={14}/>
@@ -415,7 +415,8 @@ export default function Home() {
                           position: 'absolute', top: 10, right: 10,
                           background: 'var(--yellow)', color: 'var(--dark)',
                           fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 'var(--r-full)',
-                        }}>🏆 مميز</span>
+                          display: 'flex', alignItems: 'center', gap: 4,
+                        }}><Award size={11}/> مميز</span>
                       )}
 
                       {/* No-image fallback: big initial */}
@@ -432,8 +433,8 @@ export default function Home() {
                         <div style={{ fontSize: 15, fontWeight: 800, color: cover ? '#fff' : (isPremium ? '#fff' : 'var(--text)'), marginBottom: 2, lineHeight: 1.3 }}>
                           {ws.name}
                         </div>
-                        <div style={{ fontSize: 12, color: cover ? 'rgba(255,255,255,.75)' : (isPremium ? 'rgba(255,255,255,.6)' : 'var(--text-4)') }}>
-                          📍 {ws.city}
+                        <div style={{ fontSize: 12, color: cover ? 'rgba(255,255,255,.75)' : (isPremium ? 'rgba(255,255,255,.6)' : 'var(--text-4)'), display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <MapPin size={11}/> {ws.city}
                         </div>
                       </div>
                     </div>
@@ -442,8 +443,8 @@ export default function Home() {
                     <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14, minHeight: 22 }}>
                         {ws.inspection && (
-                          <span style={{ fontSize: 11, fontWeight: 700, background: '#ECFDF5', color: '#065F46', padding: '3px 8px', borderRadius: 6 }}>
-                            🔍 فحص
+                          <span style={{ fontSize: 11, fontWeight: 700, background: '#ECFDF5', color: '#065F46', padding: '3px 8px', borderRadius: 6, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                            <Search size={10}/> فحص
                           </span>
                         )}
                         {ws.service_types?.slice(0, 2).map((s: string) => (
@@ -588,9 +589,9 @@ export default function Home() {
                 {/* Seller type toggle */}
                 <div style={{ display: 'flex', gap: 8, background: 'var(--gray-100)', borderRadius: 12, padding: 4, width: 'fit-content' }}>
                   {[
-                    { val: '',           label: 'الكل' },
-                    { val: 'individual', label: '👤 من صاحبها' },
-                    { val: 'dealer',     label: '🏪 من وكيل' },
+                    { val: '',           label: 'الكل',      icon: null },
+                    { val: 'individual', label: 'من صاحبها', icon: <User size={13}/> },
+                    { val: 'dealer',     label: 'من وكيل',   icon: <Store size={13}/> },
                   ].map(opt => (
                     <button key={opt.val}
                       onClick={() => { f('sellerType', opt.val); load({ sellerType: (opt.val as 'individual' | 'dealer') || undefined, city: filters.city || undefined, make: filters.make || undefined }) }}
@@ -598,11 +599,12 @@ export default function Home() {
                         padding: '7px 16px', borderRadius: 9, border: 'none',
                         cursor: 'pointer', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 600,
                         transition: 'all 150ms ease',
+                        display: 'flex', alignItems: 'center', gap: 5,
                         background: filters.sellerType === opt.val ? '#fff' : 'transparent',
                         color: filters.sellerType === opt.val ? 'var(--text)' : 'var(--text-3)',
                         boxShadow: filters.sellerType === opt.val ? 'var(--shadow-sm)' : 'none',
                       }}>
-                      {opt.label}
+                      {opt.icon} {opt.label}
                     </button>
                   ))}
                 </div>

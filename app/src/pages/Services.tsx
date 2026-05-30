@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { MapPin, Phone, Shield, ChevronDown, CheckCircle, Zap, Award, Clock } from 'lucide-react'
+import { MapPin, Phone, Shield, ChevronDown, CheckCircle, Zap, Award, Clock, Search, Wrench } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { fetchServices } from '../lib/queries'
 
@@ -27,7 +27,7 @@ const TIERS = [
     price: 'تواصل معنا',
     color: '#0053FA',
     bg: '#EFF6FF',
-    badge: '🔵 أساسي',
+    badge: 'أساسي',
     features: ['كل المجاني +', 'شعار الورشة', 'قائمة الخدمات المفصّلة', 'ساعات العمل', 'واتساب مباشر', 'ظهور في نتائج البحث'],
     cta: 'اشترك الآن',
   },
@@ -37,7 +37,7 @@ const TIERS = [
     price: 'تواصل معنا',
     color: '#D97706',
     bg: '#FFFBEB',
-    badge: '🏆 موصى به',
+    badge: 'موصى به',
     highlight: true,
     features: ['كل الأساسي +', 'تصدّر القائمة دائماً', 'شارة "موصى به" ذهبية', 'إعلان بارز في صفحة الورشات', 'عداد الفحوصات المنجزة', 'تقرير أداء شهري'],
     cta: 'احصل على مميز',
@@ -106,7 +106,7 @@ export default function Services() {
       <div style={{ background: 'linear-gradient(100deg, #0f2744, #1a3a6a)', borderBottom: '2px solid var(--yellow)' }}>
         <div className="container" style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-            <div style={{ fontSize: 32 }}>🔍</div>
+            <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(255,255,255,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--yellow)', flexShrink: 0 }}><Search size={24}/></div>
             <div>
               <div style={{ color: '#fff', fontSize: 16, fontWeight: 800, marginBottom: 2 }}>
                 فحص فني قبل الشراء
@@ -190,8 +190,8 @@ export default function Services() {
               <button key={cat}
                 onClick={() => setCategory(cat)}
                 className={`tag ${category === cat ? 'active' : ''}`}
-                style={{ fontSize: 13 }}>
-                {cat === 'فحص فني' ? '🔍 فحص فني' : cat}
+                style={{ fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                {cat === 'فحص فني' ? <><Search size={12}/> فحص فني</> : cat}
               </button>
             ))}
           </div>
@@ -219,8 +219,8 @@ export default function Services() {
             <button
               onClick={() => setShowInspectionOnly(!showInspectionOnly)}
               className={`tag ${showInspectionOnly ? 'active' : ''}`}
-              style={{ fontSize: 13, flexShrink: 0 }}>
-              🔍 فحص فني فقط
+              style={{ fontSize: 13, flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              <Search size={12}/> فحص فني فقط
             </button>
           </div>
         </div>
@@ -319,7 +319,10 @@ function WorkshopCard({ service, premium = false }: { service: any; premium?: bo
             color: tierColor[tier],
             padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700,
           }}>
-            {tier === 'premium' ? '🏆 مميز' : '🔵 أساسي'}
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              {tier === 'premium' ? <Award size={11}/> : <Zap size={11}/>}
+              {tier === 'premium' ? 'مميز' : 'أساسي'}
+            </span>
           </div>
         )}
 
@@ -335,7 +338,7 @@ function WorkshopCard({ service, premium = false }: { service: any; premium?: bo
           }}>
             {service.logo_url
               ? <img src={service.logo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
-              : (service.name?.[0] ?? '🔧')
+              : (service.name?.[0] ?? <Wrench size={22}/>)
             }
           </div>
 
@@ -361,8 +364,8 @@ function WorkshopCard({ service, premium = false }: { service: any; premium?: bo
         {/* Badges row */}
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
           {service.inspection && (
-            <span style={{ background: '#ECFDF5', color: '#065F46', fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 'var(--r-full)', border: '1px solid #A7F3D0' }}>
-              🔍 فحص فني
+            <span style={{ background: '#ECFDF5', color: '#065F46', fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 'var(--r-full)', border: '1px solid #A7F3D0', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <Search size={11}/> فحص فني
             </span>
           )}
           {service.category && (
