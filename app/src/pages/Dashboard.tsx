@@ -161,7 +161,7 @@ export default function Dashboard() {
                       boxShadow: 'var(--shadow-sm)',
                     }}>
                       <img
-                        src={listing.listing_images?.[0]?.url ?? 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=120&h=80&fit=crop'}
+                        src={listing.listing_images?.[0]?.url ?? '/placeholder-car.svg'}
                         alt={listing.title}
                         style={{ width: 100, height: 68, objectFit: 'cover', borderRadius: 10, flexShrink: 0 }}
                       />

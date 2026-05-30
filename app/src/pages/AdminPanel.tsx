@@ -204,7 +204,7 @@ export default function AdminPanel() {
                 <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-3)' }}>لا يوجد إعلانات</div>
               ) : listings.map(listing => (
                 <div key={listing.id} style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--gray-200)', display: 'flex', gap: 16, padding: 16, alignItems: 'flex-start' }}>
-                  <img src={listing.listing_images?.[0]?.url ?? 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=120&h=80&fit=crop'}
+                  <img src={listing.listing_images?.[0]?.url ?? '/placeholder-car.svg'}
                     alt="" style={{ width: 110, height: 74, objectFit: 'cover', borderRadius: 10, flexShrink: 0 }}/>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{listing.title}</div>

@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 
-const PLACEHOLDER = 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=338&fit=crop'
+const PLACEHOLDER = '/placeholder-car.svg'
 
 export async function fetchListings(filters?: {
   city?: string
