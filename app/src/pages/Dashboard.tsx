@@ -10,7 +10,7 @@ const STATUS: Record<string, { label: string; color: string; bg: string }> = {
   active:   { label: 'نشط',          color: '#16A34A', bg: '#DCFCE7' },
   rejected: { label: 'مرفوض',        color: '#DC2626', bg: '#FEE2E2' },
   expired:  { label: 'منتهي',        color: '#6B7280', bg: '#F3F4F6' },
-  sold:     { label: 'مباع',         color: '#0053FA', bg: '#EFF6FF' },
+  sold:     { label: 'مباع',         color: '#2196F3', bg: '#EFF6FF' },
 }
 
 const TABS = [
@@ -102,9 +102,9 @@ export default function Dashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginTop: 28 }}>
             {[
               { label: 'إعلانات نشطة',   value: active,  color: '#22C55E' },
-              { label: 'قيد المراجعة',   value: pending, color: '#FDB700' },
+              { label: 'قيد المراجعة',   value: pending, color: '#FFC107' },
               { label: 'مشاهدات',        value: views,   color: '#60A5FA' },
-              { label: 'رصيد المحفظة',   value: `${balance.toLocaleString()} ل.س`, color: '#FDB700' },
+              { label: 'رصيد المحفظة',   value: `${balance.toLocaleString()} ل.س`, color: '#FFC107' },
             ].map(s => (
               <div key={s.label} style={{ background: 'rgba(255,255,255,.06)', borderRadius: 12, padding: '14px 16px' }}>
                 <div style={{ fontSize: 20, fontWeight: 900, color: s.color, lineHeight: 1 }}>{s.value}</div>

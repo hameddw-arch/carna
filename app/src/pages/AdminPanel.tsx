@@ -177,7 +177,7 @@ export default function AdminPanel() {
         <MiniStat label="نشطة"           value={stats.active}            color="#16A34A" icon={<Check size={16}/>}/>
         <MiniStat label="مرفوضة"         value={stats.rejected}          color="#DC2626" icon={<X size={16}/>}/>
         <MiniStat label="ورشات معلقة"    value={stats.pending_workshops} color="#7C3AED" icon={<Wrench size={16}/>}/>
-        <MiniStat label="مستخدمون"       value={stats.total_users}       color="#0053FA" icon={<Users size={16}/>}/>
+        <MiniStat label="مستخدمون"       value={stats.total_users}       color="#2196F3" icon={<Users size={16}/>}/>
       </div>
 
       {/* Tabs */}
@@ -408,7 +408,7 @@ export default function AdminPanel() {
               <StatCard icon={<Check size={24}/>}   label="إعلانات نشطة"       value={stats.active}            color="#16A34A"/>
               <StatCard icon={<X size={24}/>}       label="إعلانات مرفوضة"     value={stats.rejected}          color="#DC2626"/>
               <StatCard icon={<Wrench size={24}/>}  label="ورشات معلقة"        value={stats.pending_workshops} color="#7C3AED"/>
-              <StatCard icon={<Users size={24}/>}   label="إجمالي المستخدمين"  value={stats.total_users}       color="#0053FA"/>
+              <StatCard icon={<Users size={24}/>}   label="إجمالي المستخدمين"  value={stats.total_users}       color="#2196F3"/>
             </div>
           )}
         </>

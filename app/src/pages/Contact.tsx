@@ -17,7 +17,7 @@ export default function Contact() {
             title="البريد الإلكتروني"
             value="info@carna.online"
             href="mailto:info@carna.online"
-            color="#0053FA"
+            color="#2196F3"
           />
           <ContactCard
             icon={<MessageCircle size={20}/>}

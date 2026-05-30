@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 
 const TIER_ICONS = [<Zap size={22}/>, <Star size={22}/>, <Crown size={22}/>]
-const TIER_COLORS = ['#0053FA', '#7C3AED', '#D97706']
+const TIER_COLORS = ['#2196F3', '#7C3AED', '#D97706']
 
 export default function Packages() {
   const { user }          = useAuth()

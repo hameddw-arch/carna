@@ -100,7 +100,7 @@ export default function EditListing() {
               {[
                 { v: 'active', label: 'نشط', color: '#16A34A' },
                 { v: 'paused', label: 'موقوف مؤقتاً', color: '#D97706' },
-                { v: 'sold',   label: 'تم البيع', color: '#0053FA' },
+                { v: 'sold',   label: 'تم البيع', color: '#2196F3' },
               ].map(s => (
                 <button key={s.v} onClick={() => set('status', s.v)} type="button" style={{
                   padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontFamily: 'var(--font)',

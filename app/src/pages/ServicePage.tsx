@@ -66,7 +66,7 @@ export default function ServicePage() {
   if (!service) return null
 
   const tier = service.subscription_tier ?? 'free'
-  const tierColor: Record<string, string> = { premium: '#D97706', basic: '#0053FA', free: '#6B7280' }
+  const tierColor: Record<string, string> = { premium: '#D97706', basic: '#2196F3', free: '#6B7280' }
   const tColor = tierColor[tier]
   const serviceTypes: string[] = service.service_types ?? []
 
@@ -93,7 +93,7 @@ export default function ServicePage() {
             {/* Header card */}
             <div style={{
               background: '#fff', borderRadius: 20, padding: '28px',
-              border: tier === 'premium' ? '2px solid #F59E0B' : '1px solid var(--gray-200)',
+              border: tier === 'premium' ? '2px solid #C79100' : '1px solid var(--gray-200)',
               marginBottom: 20, boxShadow: 'var(--shadow-sm)',
             }}>
               <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', marginBottom: 20 }}>
@@ -113,7 +113,7 @@ export default function ServicePage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
                     <h1 style={{ fontSize: 22, fontWeight: 900 }}>{service.name}</h1>
                     {service.verified && (
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#EFF6FF', color: '#0053FA', fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 'var(--r-full)' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#EFF6FF', color: '#2196F3', fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 'var(--r-full)' }}>
                         <Shield size={12}/> معتمد
                       </span>
                     )}
@@ -243,8 +243,8 @@ export default function ServicePage() {
                       <button key={n} onClick={() => setStars(n)}
                         onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(0)}
                         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2 }}>
-                        <Star size={28} fill={(hover || stars) >= n ? '#FDB700' : 'none'}
-                          stroke={(hover || stars) >= n ? '#FDB700' : '#D1D5DB'}
+                        <Star size={28} fill={(hover || stars) >= n ? '#FFC107' : 'none'}
+                          stroke={(hover || stars) >= n ? '#FFC107' : '#D1D5DB'}
                           style={{ transition: 'all 150ms' }}/>
                       </button>
                     ))}
@@ -289,7 +289,7 @@ export default function ServicePage() {
                         </div>
                         <div style={{ display: 'flex', gap: 2 }}>
                           {[1,2,3,4,5].map(n => (
-                            <Star key={n} size={14} fill={r.rating >= n ? '#FDB700' : 'none'} stroke={r.rating >= n ? '#FDB700' : '#D1D5DB'}/>
+                            <Star key={n} size={14} fill={r.rating >= n ? '#FFC107' : 'none'} stroke={r.rating >= n ? '#FFC107' : '#D1D5DB'}/>
                           ))}
                         </div>
                       </div>

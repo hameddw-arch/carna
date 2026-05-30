@@ -25,7 +25,7 @@ const TIERS = [
     key: 'basic',
     name: 'أساسي',
     price: 'تواصل معنا',
-    color: '#0053FA',
+    color: '#2196F3',
     bg: '#EFF6FF',
     badge: 'أساسي',
     features: ['كل المجاني +', 'شعار الورشة', 'قائمة الخدمات المفصّلة', 'ساعات العمل', 'واتساب مباشر', 'ظهور في نتائج البحث'],
@@ -298,7 +298,7 @@ export default function Services() {
 function WorkshopCard({ service, premium = false }: { service: any; premium?: boolean }) {
   const tierColor: Record<string, string> = {
     premium: '#D97706',
-    basic:   '#0053FA',
+    basic:   '#2196F3',
     free:    '#6B7280',
   }
   const tier = service.subscription_tier ?? 'free'
@@ -307,7 +307,7 @@ function WorkshopCard({ service, premium = false }: { service: any; premium?: bo
     <Link to={`/services/${service.id}`} style={{ textDecoration: 'none', display: 'block' }}>
       <div className="card" style={{
         padding: '20px',
-        border: premium ? '2px solid #F59E0B' : '1px solid var(--gray-200)',
+        border: premium ? '2px solid #C79100' : '1px solid var(--gray-200)',
         position: 'relative',
       }}>
 
@@ -386,7 +386,7 @@ function WorkshopCard({ service, premium = false }: { service: any; premium?: bo
             <div style={{ display: 'flex', gap: 1 }}>
               {[1,2,3,4,5].map(i => (
                 <svg key={i} width="12" height="12" viewBox="0 0 24 24"
-                  fill={i <= Math.round(service.rating) ? '#FDB700' : '#E5E6EA'}>
+                  fill={i <= Math.round(service.rating) ? '#FFC107' : '#E5E6EA'}>
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
               ))}
