@@ -8,7 +8,6 @@ import { supabase } from '../lib/supabase'
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const CITIES = ['كل المدن','دمشق','ريف دمشق','حلب','اللاذقية','طرطوس','حماة','حمص','دير الزور','الرقة','درعا','السويداء','إدلب','القنيطرة','الحسكة']
-const TABS   = ['الكل','مستعملة','جديدة','قطع غيار']
 
 const BRAND_DATA = [
   { name: 'تويوتا',   logo: '/brands/toyota.svg',   color: '#EB0A1E' },
@@ -50,7 +49,6 @@ function BodySvg({ d, w = 80, h = 36 }: { d: string; w?: number; h?: number }) {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function Home() {
-  const [activeTab,  setActiveTab]  = useState('الكل')
   const [listings,   setListings]   = useState<any[]>([])
   const [featured,   setFeatured]   = useState<any[]>([])
   const [brands,     setBrands]     = useState(BRAND_DATA)
@@ -141,82 +139,69 @@ export default function Home() {
     <main style={{ flex: 1 }}>
 
       {/* ══════════════════════════════════════════
-          HERO — Stitch flat aesthetic
+          HERO — Stitch light centered
       ══════════════════════════════════════════ */}
-      <section style={{ position: 'relative', display: 'flex', alignItems: 'center', minHeight: 540, overflow: 'hidden' }}>
-        {/* Background image */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-          <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80"
-            alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(20%)' }}/>
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(0,0,0,.62), rgba(0,0,0,.15) 70%, transparent)' }}/>
-        </div>
+      <section style={{ background: 'var(--gray-100)', padding: '56px 0 48px', borderBottom: '1px solid var(--gray-200)' }}>
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <h1 style={{ fontSize: 'clamp(26px, 3.6vw, 38px)', fontWeight: 800, color: 'var(--text)', lineHeight: 1.3, marginBottom: 28 }}>
+            كارنا... والكار كارنا
+            <br/>
+            <span style={{ color: 'var(--gold)' }}>وجهتك الأولى للسيارات والورشات</span>
+          </h1>
 
-        <div className="container" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
-          {/* Frosted card with right yellow accent */}
+          {/* Search box */}
           <div style={{
-            maxWidth: 600,
-            background: 'rgba(255,255,255,.94)', backdropFilter: 'blur(6px)',
-            borderRight: '8px solid var(--yellow)', borderRadius: 'var(--r-xl)',
-            padding: '40px 36px',
-          }}>
-            <div className="section-eyebrow" style={{ marginBottom: 14 }}>منصة إعلانات السيارات السورية</div>
-            <h1 style={{ fontSize: 'clamp(30px, 4.5vw, 44px)', fontWeight: 900, color: 'var(--text)', lineHeight: 1.15, marginBottom: 14 }}>
-              سيارتك الجاية — <span style={{ color: 'var(--yellow-dark)' }}>هون</span>
-            </h1>
-            <p style={{ fontSize: 17, color: 'var(--text-3)', lineHeight: 1.7, marginBottom: 24 }}>
-              آلاف الإعلانات الموثوقة من كل سوريا. ابحث، قارن، واشترِ بثقة.
-            </p>
-
-            {/* Tabs */}
-            <div style={{ display: 'inline-flex', gap: 4, marginBottom: 14, background: 'var(--gray-100)', borderRadius: 'var(--r-md)', padding: 4 }}>
-              {TABS.map(tab => (
-                <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                  padding: '7px 18px', borderRadius: 'var(--r-sm)', border: 'none',
-                  cursor: 'pointer', fontWeight: 700, fontSize: 13.5,
-                  fontFamily: 'var(--font)', transition: 'all 150ms ease',
-                  background: activeTab === tab ? '#fff' : 'transparent',
-                  color: activeTab === tab ? 'var(--text)' : 'var(--text-3)',
-                }}>{tab}</button>
-              ))}
-            </div>
-
-            {/* Search row */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 8 }} className="hero-form">
+            width: '100%', maxWidth: 920,
+            background: '#fff', border: '1px solid var(--gray-200)', borderRadius: 'var(--r-xl)',
+            padding: 16,
+            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 12, alignItems: 'end',
+          }} className="hero-form">
+            <HeroField label="الماركة">
               <SelectF name="makeHero" options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make}
                 onChange={v => f('make', v === 'كل الماركات' ? '' : v)} />
+            </HeroField>
+            <HeroField label="المدينة">
               <SelectF name="city" options={CITIES} value={filters.city}
                 onChange={v => f('city', v === 'كل المدن' ? '' : v)} />
-              <button className="btn btn-yellow" onClick={apply} style={{ gap: 7 }}>
-                <Search size={16}/> ابحث
-              </button>
-            </div>
+            </HeroField>
+            <HeroField label="نطاق السعر">
+              <div style={{ position: 'relative' }}>
+                <select name="priceRange" className="input" style={{ appearance: 'none', paddingLeft: 30 }}
+                  onChange={e => {
+                    const [from, to] = e.target.value.split('-').map(Number)
+                    setFilters(p => ({ ...p, priceFrom: from ? String(from) : '', priceTo: to ? String(to) : '' }))
+                  }}>
+                  <option value="">كل الأسعار</option>
+                  <option value="0-3000000">أقل من 3 مليون</option>
+                  <option value="3000000-7000000">3 – 7 مليون</option>
+                  <option value="7000000-15000000">7 – 15 مليون</option>
+                  <option value="15000000-999999999">أكثر من 15 مليون</option>
+                </select>
+                <ChevronDown size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-4)', pointerEvents: 'none' }}/>
+              </div>
+            </HeroField>
+            <button className="btn btn-yellow" onClick={apply} style={{ gap: 7, height: 46 }}>
+              <Search size={16}/> ابحث
+            </button>
+          </div>
+
+          {/* Trust chips */}
+          <div style={{ display: 'flex', gap: 24, marginTop: 28, flexWrap: 'wrap', justifyContent: 'center' }}>
+            {[
+              { icon: <Car size={18}/>,       n: `${listings.length || '٢٤٠'}+`, l: 'إعلان متاح' },
+              { icon: <MapPinned size={18}/>, n: '١٤',  l: 'محافظة' },
+              { icon: <Wrench size={18}/>,    n: '٥٠+', l: 'ورشة معتمدة' },
+              { icon: <Users size={18}/>,     n: '١٠٠٠+', l: 'مستخدم' },
+            ].map(s => (
+              <div key={s.l} style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-2)' }}>
+                <span style={{ color: 'var(--gold)' }}>{s.icon}</span>
+                <span style={{ fontWeight: 800, fontSize: 16 }}>{s.n}</span>
+                <span style={{ fontSize: 13, color: 'var(--text-3)' }}>{s.l}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
-
-      {/* ══════════════════════════════════════════
-          STATS — overlapping chips (Stitch)
-      ══════════════════════════════════════════ */}
-      <div className="container" style={{ position: 'relative', zIndex: 5, marginTop: -36 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16 }}>
-          {[
-            { icon: <Car size={22}/>,     n: `${listings.length || '٢٤٠'}+`, l: 'إعلان متاح' },
-            { icon: <MapPinned size={22}/>, n: '١٤',  l: 'محافظة' },
-            { icon: <Wrench size={22}/>,  n: '٥٠+', l: 'ورشة معتمدة' },
-            { icon: <Users size={22}/>,   n: '١٠٠٠+', l: 'مستخدم مسجّل' },
-          ].map(s => (
-            <div key={s.l} style={{
-              background: '#fff', border: '1px solid var(--gray-200)', borderRadius: 'var(--r-lg)',
-              padding: '18px 16px', textAlign: 'center',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            }}>
-              <span style={{ color: 'var(--gold)' }}>{s.icon}</span>
-              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', lineHeight: 1 }}>{s.n}</div>
-              <div style={{ fontSize: 12, color: 'var(--text-3)' }}>{s.l}</div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* ══════════════════════════════════════════
           BRANDS
@@ -710,6 +695,15 @@ export default function Home() {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+function HeroField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, textAlign: 'right' }}>
+      <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-3)' }}>{label}</label>
+      {children}
+    </div>
+  )
+}
 
 function SelectF({ options, value, onChange, name }: { options: string[]; value: string; onChange: (v: string) => void; name?: string }) {
   return (
