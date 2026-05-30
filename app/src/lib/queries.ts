@@ -49,7 +49,7 @@ export async function fetchListings(filters?: {
 export async function fetchListing(id: string) {
   const { data, error } = await supabase
     .from('listings')
-    .select(`*, listing_images(url, "order"), listing_tags(tag)`)
+    .select(`*, listing_images(url, "order"), listing_tags(tag), users(name, phone, rating, rating_count)`)
     .eq('id', id)
     .single()
 

@@ -16,6 +16,7 @@ export default function ListingPage() {
   const [loading,   setLoading]   = useState(true)
   const [activeImg, setActiveImg] = useState(0)
   const [saved,     setSaved]     = useState(false)
+  const [showPhone, setShowPhone] = useState(false)
 
   function startChat() {
     if (!user) return navigate('/login')
@@ -206,10 +207,20 @@ export default function ListingPage() {
                 <MessageCircle size={18} />
                 راسل البائع
               </button>
-              <button className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', marginBottom: 10, fontSize: 15, padding: '13px 20px' }}>
-                <Phone size={16} />
-                اطلب رقم الهاتف
-              </button>
+              {listing.hide_phone ? (
+                <div style={{ width: '100%', textAlign: 'center', marginBottom: 10, fontSize: 13, color: 'var(--text-3)', background: 'var(--gray-100)', borderRadius: 12, padding: '13px 20px' }}>
+                  🔒 البائع يفضّل التواصل عبر الرسائل
+                </div>
+              ) : showPhone && listing.users?.phone ? (
+                <a href={`tel:${listing.users.phone}`} className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', marginBottom: 10, fontSize: 16, padding: '13px 20px', fontWeight: 800, direction: 'ltr' }}>
+                  <Phone size={16} /> {listing.users.phone}
+                </a>
+              ) : (
+                <button onClick={() => setShowPhone(true)} className="btn btn-outline" style={{ width: '100%', justifyContent: 'center', marginBottom: 10, fontSize: 15, padding: '13px 20px' }}>
+                  <Phone size={16} />
+                  اطلب رقم الهاتف
+                </button>
+              )}
 
               {/* Inspection CTA */}
               <a href={`/services?city=${encodeURIComponent(listing.city ?? '')}&category=فحص فني`}

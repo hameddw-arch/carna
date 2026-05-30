@@ -22,6 +22,7 @@ export default function EditListing() {
   const [form, setForm] = useState({
     make: '', model: '', year: '', city: '', price: '', km: '',
     fuel: 'بنزين', transmission: 'أوتوماتيك', color: '', description: '', status: 'active',
+    hide_phone: false,
   })
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
@@ -36,6 +37,7 @@ export default function EditListing() {
         city: data.city ?? '', price: String(data.price ?? ''), km: String(data.km ?? ''),
         fuel: data.fuel ?? 'بنزين', transmission: data.transmission ?? 'أوتوماتيك',
         color: data.color ?? '', description: data.description ?? '', status: data.status ?? 'active',
+        hide_phone: data.hide_phone ?? false,
       })
       setLoading(false)
     })
@@ -49,7 +51,7 @@ export default function EditListing() {
       make: form.make, model: form.model, year: Number(form.year),
       city: form.city, price: Number(form.price), km: Number(form.km),
       fuel: form.fuel, transmission: form.transmission, color: form.color,
-      description: form.description, status: form.status,
+      description: form.description, status: form.status, hide_phone: form.hide_phone,
     }).eq('id', id)
     setSaving(false)
     setSaved(true)
@@ -157,6 +159,22 @@ export default function EditListing() {
           <Field label="الوصف">
             <textarea className="input" rows={4} value={form.description} onChange={e => set('description', e.target.value)} style={{ resize: 'vertical' }}/>
           </Field>
+
+          {/* Hide phone toggle */}
+          <div onClick={() => setForm(f => ({ ...f, hide_phone: !f.hide_phone }))} style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '14px 16px', borderRadius: 12, marginBottom: 16, cursor: 'pointer',
+            background: form.hide_phone ? '#EFF6FF' : 'var(--gray-100)',
+            border: `1.5px solid ${form.hide_phone ? '#3B82F6' : 'var(--gray-200)'}`,
+          }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700 }}>🔒 إخفاء رقم الهاتف</div>
+              <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>المشترون يتواصلون عبر الرسائل فقط</div>
+            </div>
+            <div style={{ width: 44, height: 24, borderRadius: 12, background: form.hide_phone ? '#3B82F6' : 'var(--gray-300)', position: 'relative', transition: 'all 200ms ease', flexShrink: 0 }}>
+              <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#fff', position: 'absolute', top: 3, right: form.hide_phone ? 3 : undefined, left: form.hide_phone ? undefined : 3, transition: 'all 200ms ease' }}/>
+            </div>
+          </div>
 
           <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
             <button className="btn btn-yellow" onClick={save} disabled={saving} style={{ flex: 1, justifyContent: 'center', fontSize: 15 }}>
