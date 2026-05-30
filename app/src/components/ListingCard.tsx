@@ -65,31 +65,19 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             className="listing-card__image"
             loading="lazy"
           />
-          {/* Price badge */}
-          <div style={{
-            position: 'absolute', top: 10, right: 10,
-            background: 'var(--yellow)', color: 'var(--dark)',
-            padding: '5px 11px', borderRadius: 10,
-            fontSize: 14, fontWeight: 800,
-            boxShadow: '0 2px 10px rgba(0,0,0,.2)',
-            lineHeight: 1.3,
-          }}>
-            {price}
-            <span style={{ fontSize: 10, fontWeight: 600, marginRight: 3 }}>ل.س</span>
-          </div>
-          {/* Seller type badge — top left */}
-          <div style={{ position: 'absolute', top: 10, left: 10, display: 'flex', flexDirection: 'column', gap: 5 }}>
+          {/* Badges — top right (Stitch) */}
+          <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'flex-end' }}>
             {listing.featured && (
               <div style={{
-                background: 'var(--dark)', color: 'var(--yellow)',
-                padding: '4px 9px', borderRadius: 6,
+                background: 'var(--yellow)', color: '#1A1C1C',
+                padding: '4px 9px', borderRadius: 'var(--r-sm)',
                 fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4,
               }}><Star size={11} fill="currentColor"/> مميز</div>
             )}
             {listing.seller_type === 'dealer' && (
               <div style={{
-                background: '#2196F3', color: '#fff',
-                padding: '3px 8px', borderRadius: 6,
+                background: 'var(--blue)', color: '#fff',
+                padding: '4px 9px', borderRadius: 'var(--r-sm)',
                 fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4,
               }}><Store size={11}/> وكيل</div>
             )}
@@ -140,40 +128,42 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         </div>
 
         {/* Content */}
-        <div style={{ padding: '14px 16px 16px' }}>
-          <div style={{
-            fontSize: 15, fontWeight: 700, color: 'var(--text)',
-            marginBottom: 10, lineHeight: 1.4,
-          }}>
-            {listing.title}
+        <div style={{ padding: '16px' }}>
+          {/* Title + year */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', lineHeight: 1.4, flex: 1 }}>
+              {listing.title}
+            </div>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--yellow-dark)', background: 'var(--yellow-light)', padding: '2px 8px', borderRadius: 'var(--r-sm)', flexShrink: 0 }}>
+              {listing.year}
+            </span>
           </div>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
-            <Chip icon={<MapPin size={11}/>} text={listing.city} />
-            <Chip icon={<Gauge size={11}/>}  text={`${typeof listing.km === 'number' ? listing.km.toLocaleString() : listing.km} كم`} />
-            <Chip icon={<Fuel size={11}/>}   text={listing.fuel} />
+          {/* Location */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: 'var(--text-3)', marginBottom: 12 }}>
+            <MapPin size={14}/> {listing.city}
           </div>
+          {/* Specs grid */}
+          <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--text-2)', marginBottom: 14 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Gauge size={15}/> {typeof listing.km === 'number' ? listing.km.toLocaleString() : listing.km} كم</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Fuel size={15}/> {listing.fuel}</span>
+          </div>
+          {/* Price footer */}
           <div style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            borderTop: '1px solid var(--gray-100)', paddingTop: 10,
+            borderTop: '1px solid var(--gray-200)', paddingTop: 12,
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--text-4)' }}>
-              <Clock size={11}/> {timeLabel}
+            <div style={{ fontSize: 19, fontWeight: 800, color: 'var(--text)', lineHeight: 1 }}>
+              {price} <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-3)' }}>ل.س</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               {listing.sellerRating != null && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                   <Stars rating={listing.sellerRating}/>
-                  {(listing.sellerRatingCount ?? 0) > 0 && (
-                    <span style={{ fontSize: 11, color: 'var(--text-4)' }}>({listing.sellerRatingCount})</span>
-                  )}
                 </div>
               )}
-              <div style={{
-                fontSize: 12, fontWeight: 600, color: 'var(--text-3)',
-                background: 'var(--gray-100)', padding: '2px 8px', borderRadius: 6,
-              }}>
-                {listing.year}
-              </div>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: 'var(--text-4)' }}>
+                <Clock size={11}/> {timeLabel}
+              </span>
             </div>
           </div>
         </div>
@@ -194,15 +184,3 @@ function Stars({ rating }: { rating: number }) {
   )
 }
 
-function Chip({ icon, text }: { icon: React.ReactNode; text: string }) {
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 4,
-      fontSize: 12, color: 'var(--text-2)',
-      background: 'var(--gray-100)', padding: '3px 9px',
-      borderRadius: 'var(--r-full)', fontWeight: 500,
-    }}>
-      {icon} {text}
-    </span>
-  )
-}
