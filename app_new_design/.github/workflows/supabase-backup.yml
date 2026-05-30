@@ -1,0 +1,34 @@
+name: Supabase Daily Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Run daily at 2:00 AM UTC
+  workflow_dispatch: # Allow running manually from the Actions tab
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PostgreSQL Client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+        
+      - name: Backup Database
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo "Error: SUPABASE_DB_URL is not set in repository secrets."
+            exit 1
+          fi
+          
+          echo "Starting database backup..."
+          # Dump the database in custom format (compressed)
+          pg_dump "$SUPABASE_DB_URL" -Fc > carna_backup_$(date +%Y%m%d).dump
+          echo "Backup completed."
+          
+      - name: Upload Backup Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: carna-database-backup
+          path: carna_backup_*.dump
+          retention-days: 30 # Retain backups for 30 days
