@@ -211,12 +211,12 @@ export default function Home() {
             boxShadow: '0 24px 64px rgba(0,0,0,.4)',
             maxWidth: 780,
           }} className="hero-form">
-            <SelectF options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make}
+            <SelectF name="makeHero" options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make}
               onChange={v => f('make', v === 'كل الماركات' ? '' : v)} />
-            <SelectF options={CITIES} value={filters.city}
+            <SelectF name="city" options={CITIES} value={filters.city}
               onChange={v => f('city', v === 'كل المدن' ? '' : v)} />
             <div style={{ position: 'relative' }}>
-              <select className="input" style={{ appearance: 'none', paddingLeft: 32 }}
+              <select name="priceRange" className="input" style={{ appearance: 'none', paddingLeft: 32 }}
                 onChange={e => {
                   const [from, to] = e.target.value.split('-').map(Number)
                   setFilters(p => ({ ...p, priceFrom: from ? String(from) : '', priceTo: to ? String(to) : '' }))
@@ -542,22 +542,22 @@ export default function Home() {
                   </button>
                 </div>
                 <FGroup label="المدينة">
-                  <SelectF options={CITIES} value={filters.city} onChange={v => f('city', v === 'كل المدن' ? '' : v)}/>
+                  <SelectF name="citySidebar" options={CITIES} value={filters.city} onChange={v => f('city', v === 'كل المدن' ? '' : v)}/>
                 </FGroup>
                 <FGroup label="الماركة">
-                  <SelectF options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make}
+                  <SelectF name="makeSidebar" options={['كل الماركات', ...brands.map(b => b.name)]} value={filters.make}
                     onChange={v => f('make', v === 'كل الماركات' ? '' : v)}/>
                 </FGroup>
                 <FGroup label="سنة الصنع">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                    <input className="input" placeholder="من" style={{ fontSize: 13 }} value={filters.yearFrom} onChange={e => f('yearFrom', e.target.value)}/>
-                    <input className="input" placeholder="إلى" style={{ fontSize: 13 }} value={filters.yearTo} onChange={e => f('yearTo', e.target.value)}/>
+                    <input name="yearFrom" className="input" placeholder="من" style={{ fontSize: 13 }} value={filters.yearFrom} onChange={e => f('yearFrom', e.target.value)}/>
+                    <input name="yearTo" className="input" placeholder="إلى" style={{ fontSize: 13 }} value={filters.yearTo} onChange={e => f('yearTo', e.target.value)}/>
                   </div>
                 </FGroup>
                 <FGroup label="السعر (مليون ل.س)" last>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                    <input className="input" placeholder="من" style={{ fontSize: 13 }} value={filters.priceFrom} onChange={e => f('priceFrom', e.target.value)}/>
-                    <input className="input" placeholder="إلى" style={{ fontSize: 13 }} value={filters.priceTo} onChange={e => f('priceTo', e.target.value)}/>
+                    <input name="priceFrom" className="input" placeholder="من" style={{ fontSize: 13 }} value={filters.priceFrom} onChange={e => f('priceFrom', e.target.value)}/>
+                    <input name="priceTo" className="input" placeholder="إلى" style={{ fontSize: 13 }} value={filters.priceTo} onChange={e => f('priceTo', e.target.value)}/>
                   </div>
                 </FGroup>
                 <button className="btn btn-yellow" onClick={apply} style={{ width: '100%', marginTop: 4 }}>
@@ -746,10 +746,10 @@ export default function Home() {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function SelectF({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) {
+function SelectF({ options, value, onChange, name }: { options: string[]; value: string; onChange: (v: string) => void; name?: string }) {
   return (
     <div style={{ position: 'relative' }}>
-      <select className="input" style={{ appearance: 'none', paddingLeft: 28 }} value={value || options[0]} onChange={e => onChange(e.target.value)}>
+      <select name={name} className="input" style={{ appearance: 'none', paddingLeft: 28 }} value={value || options[0]} onChange={e => onChange(e.target.value)}>
         {options.map(o => <option key={o}>{o}</option>)}
       </select>
       <ChevronDown size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-4)', pointerEvents: 'none' }}/>

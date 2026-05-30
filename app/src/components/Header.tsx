@@ -48,7 +48,7 @@ export default function Header() {
             position: 'absolute', right: 12, top: '50%',
             transform: 'translateY(-50%)', color: 'var(--text-4)', pointerEvents: 'none',
           }}/>
-          <input className="input" style={{ paddingRight: 36, fontSize: 14 }} placeholder="دوّر على سيارتك..."/>
+          <input name="search" className="input" style={{ paddingRight: 36, fontSize: 14 }} placeholder="دوّر على سيارتك..."/>
         </div>
 
         {/* Auth area */}
