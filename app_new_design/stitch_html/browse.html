@@ -1,0 +1,620 @@
+<!DOCTYPE html><html dir="rtl" lang="ar"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CARNA | كارنا... والكار كارنا</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .urgent-badge {
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#f9f9f9",
+                    "on-tertiary-fixed": "#1b1b1b",
+                    "inverse-primary": "#fabd00",
+                    "tertiary-fixed-dim": "#c6c6c6",
+                    "on-primary-container": "#6d5100",
+                    "on-background": "#1a1c1c",
+                    "on-tertiary": "#ffffff",
+                    "border-light": "#E0E0E0",
+                    "on-primary": "#ffffff",
+                    "text-muted": "#757575",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-container": "#ffc107",
+                    "surface-container-highest": "#e2e2e2",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#261a00",
+                    "secondary": "#0061a4",
+                    "primary-fixed": "#ffdf9e",
+                    "tertiary": "#5e5e5e",
+                    "surface-container": "#eeeeee",
+                    "inverse-on-surface": "#f1f1f1",
+                    "primary-fixed-dim": "#fabd00",
+                    "on-secondary-container": "#00355c",
+                    "secondary-fixed-dim": "#9ecaff",
+                    "on-primary-fixed-variant": "#5b4300",
+                    "surface-variant": "#e2e2e2",
+                    "secondary-container": "#33a0fd",
+                    "tertiary-container": "#cbcbcb",
+                    "on-secondary": "#ffffff",
+                    "surface": "#f9f9f9",
+                    "on-surface": "#1a1c1c",
+                    "on-tertiary-container": "#555555",
+                    "verification-blue": "#2196F3",
+                    "surface-dim": "#dadada",
+                    "surface-container-low": "#f3f3f3",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed-variant": "#00497d",
+                    "primary": "#785900",
+                    "text-primary": "#000000",
+                    "inverse-surface": "#2f3131",
+                    "outline": "#827660",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e8e8e8",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "on-error": "#ffffff",
+                    "accent-yellow": "#FFC107",
+                    "surface-white": "#FFFFFF",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface-bright": "#f9f9f9",
+                    "on-surface-variant": "#4f4632",
+                    "surface-tint": "#785900",
+                    "on-secondary-fixed": "#001d36",
+                    "outline-variant": "#d4c5ab",
+                    "secondary-fixed": "#d1e4ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "margin-mobile": "16px",
+                    "xl": "48px",
+                    "lg": "32px",
+                    "container-max": "1280px",
+                    "margin-desktop": "40px",
+                    "sm": "16px",
+                    "xs": "8px",
+                    "gutter": "16px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Tajawal"],
+                    "display-lg": ["Tajawal"],
+                    "body-md": ["Tajawal"],
+                    "label-sm": ["Tajawal"],
+                    "headline-sm": ["Tajawal"],
+                    "headline-lg-mobile": ["Tajawal"],
+                    "body-lg": ["Tajawal"],
+                    "headline-lg": ["Tajawal"],
+                    "headline-md": ["Tajawal"],
+                    "label-lg": ["Tajawal"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-lg": ["40px", {"lineHeight": "52px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface-white">
+<!-- Section 1: Header -->
+<header class="bg-surface-white border-b border-border-light sticky top-0 z-50">
+<div class="flex flex-row-reverse justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-md">
+<img alt="شعار كارنا" class="h-10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5YfP122qhgoJimEUt_-MwAb0xStHgmFO0BxaU3owwYX7oqdHfq6_F_-SYNijqnRsnZa6tiArzcajbHhsUkM1-1JeCHpA_xGYoOPZFY_qHRhfdfNAIG3WhAXFJckTXgdbLPwsVW5ugCs1RSLtESVgHCfTTvHm7LDHMXgK4XvqZ_UdjKvLCUmjiASD3oE8vsub5Al1sO-ugZw7WRSxhHqooggtfRiErJlZ8fqjMENjS5X7Lzog73CZ7-Ch1DvxdMeUNcKw1DJkxebj6">
+</div>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-lg text-label-lg transition-all" href="#">السيارات</a>
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">الورشات</a>
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">العروض</a>
+</nav>
+<div class="flex items-center gap-sm">
+<button class="bg-primary-container text-on-primary-container px-sm py-xs rounded-lg font-label-lg text-label-lg hover:bg-inverse-primary transition-all active:scale-95">
+                    + أضف إعلانك مجاناً
+                </button>
+</div>
+</div>
+</header>
+<!-- Section 2: Hero Section -->
+<section class="bg-surface-container-low py-xl px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max mx-auto flex flex-col items-center text-center">
+<h1 class="font-headline-lg text-headline-lg text-text-primary mb-lg leading-tight">
+                كارنا... والكار كارنا <br>
+<span class="text-primary">وجهتك الأولى للسيارات والورشات</span>
+</h1>
+<div class="w-full max-w-4xl bg-surface-white rounded-xl border border-border-light p-md grid grid-cols-1 md:grid-cols-5 gap-sm items-end">
+<div class="flex flex-col gap-xs text-right">
+<label class="font-label-sm text-label-sm text-text-muted">الماركة</label>
+<select class="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow focus:border-accent-yellow">
+<option>اختر الماركة</option>
+<option>تويوتا</option>
+<option>مرسيدس</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs text-right">
+<label class="font-label-sm text-label-sm text-text-muted">الموديل</label>
+<select class="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow focus:border-accent-yellow">
+<option>اختر الموديل</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs text-right">
+<label class="font-label-sm text-label-sm text-text-muted">المدينة</label>
+<select class="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow focus:border-accent-yellow">
+<option>كل المدن</option>
+<option>بغداد</option>
+<option>أربيل</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs text-right">
+<label class="font-label-sm text-label-sm text-text-muted">السعر</label>
+<select class="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow focus:border-accent-yellow">
+<option>كل الأسعار</option>
+</select>
+</div>
+<button class="bg-accent-yellow text-text-primary h-[42px] rounded-lg font-headline-sm text-headline-sm hover:brightness-95 transition-all">
+                    ابحث
+                </button>
+</div>
+</div>
+</section>
+<!-- Section 3: Brands Carousel -->
+<section class="py-lg border-b border-border-light overflow-hidden">
+<div class="max-w-container-max mx-auto px-margin-desktop flex items-center gap-lg animate-fade-in">
+<div class="flex-shrink-0 font-label-lg text-label-lg text-text-muted whitespace-nowrap">أبرز الماركات:</div>
+<div class="flex gap-md overflow-x-auto pb-xs no-scrollbar">
+<!-- Brand items -->
+<div class="w-16 h-16 rounded-full border border-border-light bg-surface-white flex items-center justify-center flex-shrink-0 cursor-pointer hover:border-primary transition-colors">
+<img class="w-10 h-10 object-contain" data-alt="Minimalist Toyota logo on a clean white background, reflecting a professional corporate automotive marketplace style with soft studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRDY63XRFGd1WxYS-ilhhnXUqD-ntfC-ZqEaIsVmb3DkVAyQwjdshdPItX8AayDoVp67QD9CKrW3_Dkrt5U8Kzu8GUQDx37TBRf1XAUnZPM6nPPi6q6ylvOARUS4E4AyDJaM0VAZtKrrnj_YSbZwlII7NWQMBV2XKSmVzGOxSfNPgt6NZ19tAJ_bIUFkU9kxktFHaI_94yBRIGqiDO_VHmwU3Nc56lKo6r7DO0z56Ozc2P9W6mX8Yy91LLwi0Crhe9H4uh2A-yWUwU">
+</div>
+<div class="w-16 h-16 rounded-full border border-border-light bg-surface-white flex items-center justify-center flex-shrink-0 cursor-pointer hover:border-primary transition-colors">
+<img class="w-10 h-10 object-contain" data-alt="Sleek Mercedes-Benz emblem centered in a circular white badge, high contrast and professional corporate aesthetic for a luxury car trading platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJlR7ndYtyLz0uEuonnC5UTVCEAbdhUluCiH4A99kYtFpLYHA5aVRdeW_wR2jeGc3N5QFLsqK11SqTiNUQylDq44-N9qHBSDOHqcQ4UKftFTJZRR2yGmWb7uT6DB8h4yZWNMJA6Ibj3MfxUqmLgJN5YrxSrcbnAe-Ou00FGS6OH1YT3I5w2mX-5KM7fYAt-tzBTppd1VVTemikBayg_3Ht64wPGPiSQqb7QGD2_unjQl_kijaixlAvF7oNQoilfrlUBOm_s5sDB9pc">
+</div>
+<div class="w-16 h-16 rounded-full border border-border-light bg-surface-white flex items-center justify-center flex-shrink-0 cursor-pointer hover:border-primary transition-colors">
+<img class="w-10 h-10 object-contain" data-alt="Classic BMW circular logo displayed on a minimalist white background, part of a professional car dealership directory with clean lines and premium vibes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPJScaDe_GMbOt7fUE2oV1vmrPyVPBpsz0x3Tnu9kQSRAd1whbN_MA1CkEem_eayxlPrF7DiikyqNGmyQ29rGeZTO283w9JmIJOI8kkESH61Y03dQYupdSZZWj6WedxXN-S-22sSnJ12e8N7dklmwlBn7DrNNA_NSgmC0FXTjwZ2j5H7dHvWJjkiUUU-wRDfUXGa3PsCbfQqlLT_kKTyXAF0KMV24VcSSkpWRnd64nD1g65oO3m_z4e8ZQa32prGUC7cKcSbtBEWft">
+</div>
+<div class="w-16 h-16 rounded-full border border-border-light bg-surface-white flex items-center justify-center flex-shrink-0 cursor-pointer hover:border-primary transition-colors">
+<img class="w-10 h-10 object-contain" data-alt="Hyundai automotive brand logo in a minimalist circular frame, soft lighting and high-speed information scanning aesthetic for a car marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHiOk05FT70Bo1TN-nbeeKLUPdAWxWAXgMdXp6W6mHu6DPs9n0hniU8TMiGizNrLDhVK9nNkdViKDO3qJa7rMCIbIvwKLqMQocBqBPNHWnLLInQOar4dJrY5qCpi0nz5zVQDfdGcLk2pHYSP7UZffbcNxQuAZfOd12CXbaBupreFbGiuRZV6w2in1WQmzKB567Jz3vIDIbNlFe7oEDogNBH3n48iI_I_ezQjrCe3A_hxb2xXscLvQOV-Zuci_EoVy6yV7wvAjPTOjO">
+</div>
+<div class="w-16 h-16 rounded-full border border-border-light bg-surface-white flex items-center justify-center flex-shrink-0 cursor-pointer hover:border-primary transition-colors">
+<img class="w-10 h-10 object-contain" data-alt="New Kia logo in black, centered in a white circular border, corporate modern design language for a fast and reliable car service app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSTnCB0Pn52jyvIsLRfiMfsR1cwmQZpfoTqcMWj6dLlMX3_rzSPYBiaN9881kwdO0yePCvXhN-ail4R0-89cjNvyWj9HzHBWQ60UpmKUStEFVEcHWBAx58hFecDP3AnhMUwBkMzHgWOCwRlw2pWtqWbP67ES4JDNvjAMVMLd8-Gj0xOOqwx7el2EHB8T1UZ_9Gf1llpMxDyhVZVhNN7ljfL-EMY9ht5IHbzUScRzsNLqj_9o8WzQ5c7NAatPV4uDBlctXWL4GI5ozb">
+</div>
+<div class="w-16 h-16 rounded-full border border-border-light bg-surface-white flex items-center justify-center flex-shrink-0 cursor-pointer hover:border-primary transition-colors">
+<img class="w-10 h-10 object-contain" data-alt="Nissan brand logo within a clean white circle, minimalist focus and flat card UI philosophy for high-end automotive trading." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0RCb-F-fRuO8ez5PyX1Lh2tUSGcZoeUngF3lZQIpp0sf9FuvpmfqCLgZnCGmS7K_FR4i63pzSSdgw7ht87exj3ECECLY4NBtJqwr2ntM9PK5ARN_fSMPyAKZm7re3gQ59HhW5AAn18CD3OW46iGIjKOt1mqALfG3edB5Ws4PwKkFn8592GztzGbpeYjJOpb35nAVpA7dnXHYR2iPGykRgZbWoBJH9wuKXHXj4r3pPEONFyPytdkNR-8COgoC0Di38gItA8pVt9P9Z">
+</div>
+</div>
+</div>
+</section><section class="py-xl px-margin-desktop bg-surface-white border-b border-border-light">
+<div class="max-w-container-max mx-auto">
+<h2 class="font-headline-md text-headline-md text-text-primary mb-lg text-right">تصفح حسب نوع الهيكل</h2>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-md">
+<!-- Sedan -->
+<div class="bg-surface-white border border-border-light rounded-xl p-md flex flex-col items-center justify-center gap-sm cursor-pointer hover:border-accent-yellow transition-all group">
+<img alt="سيدان" class="w-16 h-16 object-contain group-hover:scale-110 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRe7Pmv-uausgCO9nVynpcVDrV1nvpTH9hX9k_Zlxkm3etuHtRPblF3Ne-3MpVf-rRsbGSj-uk8jdArl1JFPsEV_SdqL2nzQdf7DbXz68Xh7-x-GQ2jE9C1TdlU84D-iNF3RNeKFNT1aUsfCPcro4QByXeTaXiuakagbby-NoU1oeF1kUqQStZWoUKJCY0MgJ464tAVRK7G8098f9E7HbWOCnwRyH5vxPCJT0QfHBKgxvdiDAB6ZOBjaLzaZZWLK4-7LPy9OYPNMvE">
+<span class="font-label-lg text-label-lg text-text-primary">سيدان</span>
+</div>
+<!-- SUV -->
+<div class="bg-surface-white border border-border-light rounded-xl p-md flex flex-col items-center justify-center gap-sm cursor-pointer hover:border-accent-yellow transition-all group">
+<img alt="سف ففع رباعى" class="w-16 h-16 object-contain group-hover:scale-110 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDzLB_DdIsV0yI_jPKOOtDdHqr_4j6Qa0wgDZub-ZlXgruuS671MMfQBw2d6XLriTwavvJ2cpnJaO7JT6_N13vNq8Zk4kXdmo_WAQ-cQAmAHf4dBoKptevCpsUGiTOVVYZJEYTdfV2we_7AGGhrOVWQT3O4avebPt0UTenQL7J9_6aPUeOPh8PG5DLQtjN_EtPgcf2CX-fc9seJrkhAzVFdpv6doNulUF3EHHb5vgtdmhXo07eNUrYmFgglmJP7FCAIYfLSzbNFim1">
+<span class="font-label-lg text-label-lg text-text-primary">دفع رباعى (SUV)</span>
+</div>
+<!-- Pickup -->
+<div class="bg-surface-white border border-border-light rounded-xl p-md flex flex-col items-center justify-center gap-sm cursor-pointer hover:border-accent-yellow transition-all group">
+<img alt="بيكاب" class="w-16 h-16 object-contain group-hover:scale-110 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGXnaoi4LIdN540d-TrpwWf66L88-rmqZJSeAnuiTI3CekFwH5NFxk0s75eidTygb-yDhxS6gB9O_xsj4OKu8FI7-JJTY1kKc3llDaSP3Lb8AP40nIEZ0mr_iz0Y1DBejXUj8IxA2VVf5xQRSzlXgYPVE42hU1simn8QJjwtEyD0-9URZiL3tMlod6fLnqV7vZpfyCaZY3zK6Jkv3e7krHWchbPsQ2os8EdQOL68hlUywhTbjg-yPRaOeVXQnXinjNyMga954JS_w1">
+<span class="font-label-lg text-label-lg text-text-primary">بيكاب</span>
+</div>
+<!-- Van -->
+<div class="bg-surface-white border border-border-light rounded-xl p-md flex flex-col items-center justify-center gap-sm cursor-pointer hover:border-accent-yellow transition-all group">
+<img alt="فان" class="w-16 h-16 object-contain group-hover:scale-110 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPEsE-Jv_FTcfRGnLoipy2y16ya_75NJIMHMR7KuXCXRpOFjvKVFp3jg2OfrsUFG1hiGOkQTPekyjID7DEQK0Ni1nZle-LW4ZAv0ixhV-mrB6UyVar5RBstj9RNeMDCT3ke12X-RBaqKIC3HtAIzU8V_bBPTw6JZ4Fv_2eLNRmddQHeVD9fMmyI5Al_PjQqonXS8UmJuXLM7UAeeo1l3Ujao2r-TJcQ8-oMnE-rUjQTDEi3qKtReEV61lYvEEvXlI8vUa9ekpe6D1C">
+<span class="font-label-lg text-label-lg text-text-primary">فان</span>
+</div>
+<!-- Hatchback -->
+<div class="bg-surface-white border border-border-light rounded-xl p-md flex flex-col items-center justify-center gap-sm cursor-pointer hover:border-accent-yellow transition-all group">
+<img alt="هاتشباك" class="w-16 h-16 object-contain group-hover:scale-110 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADf9kt3gs-aOWpfXuu2cu58dcr4RRVanPtUv0MW6BODK2oMdODxRUzCwbmEb2g5yVuuEpsKz3_9fMNF03NQwsfDzK2pNIYrR1yadmfWP3TU-Dlsf2G-WRmwnysGutoUH0TtLy31n8XwQZyRvX8tpKc_-QQlC2EgprtfiYzyKKZiFDWwGfBg9JrTkd5zNPUXgmaZDSnw6ZIYwxnpooOC72X5zR4eQTO7Z00AAw34sVUhHsZFaruGfK-cTkKLloLaAa5qBaaRO9EVJ3V">
+<span class="font-label-lg text-label-lg text-text-primary">هاتشباك</span>
+</div>
+<!-- Coupe -->
+<div class="bg-surface-white border border-border-light rounded-xl p-md flex flex-col items-center justify-center gap-sm cursor-pointer hover:border-accent-yellow transition-all group">
+<img alt="كوبيه" class="w-16 h-16 object-contain group-hover:scale-110 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXNLZep3ROC_TvWHwtiv2q6fpj7icKPRMXlrUcSmPMpqE3tNXHLKofju06UVkSXkfpre-YeaMToUzfHHVdfA7TiAiyuQu7NpEBT-w9jvQYGan97-G1f_lCtlMBY6IGl6jWr2Qpls2iSzinBGSNWEk_EMMi7oxPYVmYJtrWp7WwK_Kf7r6CxBWUX-oxPjAFUG54rumex8IBpGY4YPO8juTvmUwyxip2ZnkE9tTZzAtm8uQa2Y8To3b0Bec9sxQgOijPKzSfpapQvFCC">
+<span class="font-label-lg text-label-lg text-text-primary">كوبيه</span>
+</div>
+</div>
+</div>
+</section><section class="py-xl px-margin-desktop bg-surface-container-low">
+<div class="max-w-container-max mx-auto">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-headline-md text-headline-md text-text-primary">جميع السيارات المعروضة</h2>
+<div class="flex items-center gap-xs font-label-lg text-label-lg text-text-muted">
+<span class="">ترتيب حسب:</span>
+<select class="bg-transparent border-none focus:ring-0 font-bold text-primary">
+<option>الأحدث أولاً</option>
+<option>السعر: من الأقل للأعلى</option>
+<option>السعر: من الأعلى للأقل</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col md:flex-row-reverse gap-lg">
+<!-- Sidebar Filters (Right) -->
+<aside class="w-full md:w-1/4 flex flex-col gap-sm">
+<div class="bg-surface-white border border-border-light rounded-xl p-md">
+<h3 class="font-headline-sm text-headline-sm text-text-primary mb-md">الفلاتر</h3>
+<div class="space-y-md"><div class="flex flex-col gap-xs"><label class="font-label-sm text-label-sm text-text-muted">حالة السيارة</label><div class="flex gap-xs"><button class="flex-1 py-2 border border-primary bg-primary-container/10 text-primary rounded-lg font-label-lg">الكل</button><button class="flex-1 py-2 border border-border-light text-text-muted rounded-lg font-label-lg hover:border-primary transition-colors">جديد</button><button class="flex-1 py-2 border border-border-light text-text-muted rounded-lg font-label-lg hover:border-primary transition-colors">مستعمل</button></div></div><div class="flex flex-col gap-xs text-right"><label class="font-label-sm text-label-sm text-text-muted">المحافظة</label><select class="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow"><option>كل المحافظات</option><option>دمشق</option><option>ريف دمشق</option><option>حلب</option><option>حمص</option><option>اللاذقية</option><option>طرطوس</option><option>حماة</option><option>السويداء</option><option>درعا</option><option>القنيطرة</option><option>دير الزور</option><option>الحسكة</option><option>الرقة</option><option>إدلب</option></select></div><div class="flex flex-col gap-xs text-right"><label class="font-label-sm text-label-sm text-text-muted">الفئة</label><select class="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow"><option>جميع الفئات</option><option>سيدان</option><option>دفع رباعي (SUV)</option><option>بيك أب</option><option>هاتشباك</option></select></div><div class="flex flex-col gap-xs text-right"><label class="font-label-sm text-label-sm text-text-muted">سنة الصنع</label><select class="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow"><option>الكل</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option><option>2020</option><option>2019</option><option>أقدم</option></select></div><div class="flex flex-col gap-xs text-right"><label class="font-label-sm text-label-sm text-text-muted">السعر</label><div class="flex gap-xs"><input class="w-1/2 border-border-light rounded-lg font-body-md text-body-md focus:ring-accent-yellow" placeholder="من" type="number"><input class="w-1/2 border-border-light rounded-lg font-body-md text-body-md focus:ring-accent-yellow" placeholder="إلى" type="number"></div></div><div class="flex flex-col gap-xs text-right"><label class="font-label-sm text-label-sm text-text-muted">نوع الوقود</label><select class="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow"><option>الكل</option><option>بنزين</option><option>ديزل</option><option>كهرباء</option><option>هجين (Hybrid)</option></select></div><div class="flex flex-col gap-xs text-right"><label class="font-label-sm text-label-sm text-text-muted">ناقل الحركة</label><select class="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow"><option>الكل</option><option>أوتوماتيك</option><option>يدوي (عادي)</option></select></div><button class="w-full bg-primary text-on-primary py-sm rounded-lg font-label-lg mt-md hover:brightness-110 transition-all">تطبيق الفلاتر</button></div>
+</div>
+</aside>
+<!-- Main Grid (Left) -->
+<main class="w-full md:w-3/4">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<!-- Reuse Card Style 1 -->
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden relative group hover:border-accent-yellow transition-all">
+<div class="h-40 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmHQo8hNT8A_Y10Qpm8GSYpaJPnDB7xmddFbDMENQd_eRXodYKibdQa4RiXjOstWmWYXCQmpk7uUKj8kccVsfYY7tadmKQ5OyU2oIpD8WKjbfB4Qzr3uGowm1VJ5DFJbUruMo1wk-2bf5lAqOVM81akqZ31OhgCbnVjL543r25tigMzZEWokgTTxowQAB0_MvW20VFC3To1nJhZ2aEBjzv9JXTZsHO5Zr7hXOzyA_esdqN4kXCW0pSgc8IiXA6kFMCu0-lbCSO8o7_">
+</div>
+<div class="p-sm">
+<h3 class="font-headline-sm text-headline-sm text-text-primary mb-xs">نيسان ألتيما 2021</h3>
+<p class="font-headline-sm text-headline-sm text-primary mb-sm font-bold">$18,200</p>
+<div class="flex items-center gap-sm text-secondary">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-sm text-body-sm text-text-muted">البصرة</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+<span class="font-body-sm text-body-sm text-text-muted">45k كم</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Reuse Card Style 2 -->
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden relative group hover:border-accent-yellow transition-all">
+<div class="h-40 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4Y-fYmmrq_3CQthXwC7W_AX0C2LLfP6ce1hgGWYexnMz9FAoyLmmk4hViZ5Vw90GpIPD94v5QF3GdxlvbTU079e8JZzCd_tafeMQK9fzCJITKFaZgCrGIFvzfeHNcEkYwzsKdPCvLOMKO1OqA7AFAuHJf5RGJR9fxMiF-yGjy-AK8XsJVVhC4RidzoLXbS7Oq2Jq_AvsCJQ-DG9JxzduqIfwV4tt-rmFpe1kFcKnUwNrDebOntP9iQpQLRolPchJLYfU72EOcInbw">
+</div>
+<div class="p-sm">
+<h3 class="font-headline-sm text-headline-sm text-text-primary mb-xs">تويوتا كامري 2023</h3>
+<p class="font-headline-sm text-headline-sm text-primary mb-sm font-bold">$25,500</p>
+<div class="flex items-center gap-sm text-secondary">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-sm text-body-sm text-text-muted">بغداد</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+<span class="font-body-sm text-body-sm text-text-muted">12k كم</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Reuse Card Style 3 -->
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden relative group hover:border-accent-yellow transition-all">
+<div class="h-40 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkc-s1TpKN_pETgfnMMXmIt7eUjbT36ja0kUn8h_aacc6exljaerhOlzy09T7k3P9RdOXdOTZqMZKkAhmanhKSl_Ssh5CK5IO44FeUMtlmwK3ibvQ4MfVQIJS62Zx8nzuFnRKkBnQljVR6wJnxMZ8G4gegH18E2-l3Ni7BiSPH_L922R9u53OJUyicJDDbT2w42KmKVrOwjgwZQlyK-3EfWdymcHrCA_PTTLS6GoWPDxWZurBTBpD-_qHq7rJwCeOxJex_LBk9lOhb">
+</div>
+<div class="p-sm">
+<h3 class="font-headline-sm text-headline-sm text-text-primary mb-xs">مرسيدس GLE 450</h3>
+<p class="font-headline-sm text-headline-sm text-primary mb-sm font-bold">$68,000</p>
+<div class="flex items-center gap-sm text-secondary">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-sm text-body-sm text-text-muted">أربيل</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+<span class="font-body-sm text-body-sm text-text-muted">25k كم</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-xl flex justify-center">
+<button class="px-xl py-sm border border-primary text-primary rounded-lg font-label-lg hover:bg-primary-container/10 transition-all">مشاهدة المزيد من السيارات</button>
+</div>
+</main>
+</div>
+</div>
+</section>
+<!-- Section 4: Featured & Urgent Cars -->
+<section class="py-xl px-margin-desktop bg-surface-white">
+<div class="max-w-container-max mx-auto">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-headline-md text-headline-md text-text-primary">السيارات المميزة والمستعجلة</h2>
+<a class="text-secondary font-label-lg text-label-lg hover:underline" href="#">عرض الكل</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+<!-- Car Card 1 -->
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden relative group hover:border-accent-yellow transition-all">
+<div class="absolute top-0 right-0 z-10">
+<div class="bg-accent-yellow text-text-primary px-sm py-1 font-label-sm text-label-sm shadow-sm">مستعجل</div>
+</div>
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A modern luxury sedan parked in a high-key studio setting, bright white lighting and sharp details, reflecting a professional and high-intent car trading environment with a flat aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4Y-fYmmrq_3CQthXwC7W_AX0C2LLfP6ce1hgGWYexnMz9FAoyLmmk4hViZ5Vw90GpIPD94v5QF3GdxlvbTU079e8JZzCd_tafeMQK9fzCJITKFaZgCrGIFvzfeHNcEkYwzsKdPCvLOMKO1OqA7AFAuHJf5RGJR9fxMiF-yGjy-AK8XsJVVhC4RidzoLXbS7Oq2Jq_AvsCJQ-DG9JxzduqIfwV4tt-rmFpe1kFcKnUwNrDebOntP9iQpQLRolPchJLYfU72EOcInbw">
+</div>
+<div class="p-sm">
+<h3 class="font-headline-sm text-headline-sm text-text-primary mb-xs">تويوتا كامري 2023</h3>
+<p class="font-headline-sm text-headline-sm text-primary mb-sm font-bold">$25,500</p>
+<div class="flex items-center gap-sm text-secondary">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-sm text-body-sm text-text-muted">بغداد</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span class="font-body-sm text-body-sm text-text-muted">2023</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+<span class="font-body-sm text-body-sm text-text-muted">12k كم</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Car Card 2 -->
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden relative group hover:border-accent-yellow transition-all">
+<div class="absolute top-0 right-0 z-10">
+<div class="bg-accent-yellow text-text-primary px-sm py-1 font-label-sm text-label-sm shadow-sm">مستعجل</div>
+</div>
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A sleek black SUV shown in a clean, bright industrial space, emphasize performance and clarity for rapid scanning, corporate modern aesthetic for an automotive directory." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkc-s1TpKN_pETgfnMMXmIt7eUjbT36ja0kUn8h_aacc6exljaerhOlzy09T7k3P9RdOXdOTZqMZKkAhmanhKSl_Ssh5CK5IO44FeUMtlmwK3ibvQ4MfVQIJS62Zx8nzuFnRKkBnQljVR6wJnxMZ8G4gegH18E2-l3Ni7BiSPH_L922R9u53OJUyicJDDbT2w42KmKVrOwjgwZQlyK-3EfWdymcHrCA_PTTLS6GoWPDxWZurBTBpD-_qHq7rJwCeOxJex_LBk9lOhb">
+</div>
+<div class="p-sm">
+<h3 class="font-headline-sm text-headline-sm text-text-primary mb-xs">مرسيدس GLE 450</h3>
+<p class="font-headline-sm text-headline-sm text-primary mb-sm font-bold">$68,000</p>
+<div class="flex items-center gap-sm text-secondary">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-sm text-body-sm text-text-muted">أربيل</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span class="font-body-sm text-body-sm text-text-muted">2022</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+<span class="font-body-sm text-body-sm text-text-muted">25k كم</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Car Card 3 -->
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden relative group hover:border-accent-yellow transition-all">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Classic white sedan in a minimalist showroom environment, soft diffuse lighting highlighting the clean lines of the car, professional high-contrast UI focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmHQo8hNT8A_Y10Qpm8GSYpaJPnDB7xmddFbDMENQd_eRXodYKibdQa4RiXjOstWmWYXCQmpk7uUKj8kccVsfYY7tadmKQ5OyU2oIpD8WKjbfB4Qzr3uGowm1VJ5DFJbUruMo1wk-2bf5lAqOVM81akqZ31OhgCbnVjL543r25tigMzZEWokgTTxowQAB0_MvW20VFC3To1nJhZ2aEBjzv9JXTZsHO5Zr7hXOzyA_esdqN4kXCW0pSgc8IiXA6kFMCu0-lbCSO8o7_">
+</div>
+<div class="p-sm">
+<h3 class="font-headline-sm text-headline-sm text-text-primary mb-xs">نيسان ألتيما 2021</h3>
+<p class="font-headline-sm text-headline-sm text-primary mb-sm font-bold">$18,200</p>
+<div class="flex items-center gap-sm text-secondary">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-sm text-body-sm text-text-muted">البصرة</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span class="font-body-sm text-body-sm text-text-muted">2021</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+<span class="font-body-sm text-body-sm text-text-muted">45k كم</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Car Card 4 -->
+<div class="bg-surface-white border border-border-light rounded-lg overflow-hidden relative group hover:border-accent-yellow transition-all">
+<div class="absolute top-0 right-0 z-10">
+<div class="bg-accent-yellow text-text-primary px-sm py-1 font-label-sm text-label-sm shadow-sm">مستعجل</div>
+</div>
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Luxury sport car in a bright studio, vibrant accents and clean background, emphasizing mastery and belonging in the automotive industry, minimalist professional style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRyLr253_kjYplv-C8TLB1WDwRma6cwzw4UFcXnZoQV6TWIYvdk-0d5yOn5NIIdDyvCGasFsZXHGJ0uZUsat6yRqQOeSJz0eWgMPoKn8cVJozKlEEGqa2T2gSi8ZINS-HmtN7uDqH-DfrCJc85rAmSvO6vFSBAJ827YFsXWNFdHI78FwMDfBjfMRzDGQ8Mv8mnYXnoX9FUQrL_C-4kQNr_rf74e7EMG8DsNYdnwYF4_sWRCrqjv7uNCKONOJRLrDBOOZPC6bRAwv7e">
+</div>
+<div class="p-sm">
+<h3 class="font-headline-sm text-headline-sm text-text-primary mb-xs">هيونداي إلنترا 2024</h3>
+<p class="font-headline-sm text-headline-sm text-primary mb-sm font-bold">$22,900</p>
+<div class="flex items-center gap-sm text-secondary">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-sm text-body-sm text-text-muted">النجف</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span class="font-body-sm text-body-sm text-text-muted">2024</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+<span class="font-body-sm text-body-sm text-text-muted">0 كم</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Sponsorship Banner -->
+<section class="bg-surface-container py-md">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="bg-secondary-container/10 border border-secondary-container/30 rounded-lg p-sm flex items-center justify-between text-secondary">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+<p class="font-body-md text-body-md font-medium">سوق آمن وموثوق: جميع السيارات المستعجلة تخضع للفحص المبدئي</p>
+</div>
+<button class="bg-secondary text-on-secondary px-sm py-1 rounded-lg font-label-lg text-label-lg">اعرف المزيد</button>
+</div>
+</div>
+</section>
+<!-- Section 6: Top Workshops -->
+<section class="py-xl px-margin-desktop">
+<div class="max-w-container-max mx-auto">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-headline-md text-headline-md text-text-primary">أبرز ورشات الصيانة</h2>
+<a class="text-secondary font-label-lg text-label-lg hover:underline" href="#">استكشف الورشات</a>
+</div>
+<div class="flex gap-md overflow-x-auto pb-sm no-scrollbar">
+<!-- Workshop Card 1 -->
+<div class="min-w-[300px] bg-surface-white border border-border-light rounded-lg p-sm flex items-center gap-sm hover:border-verification-blue transition-all">
+<div class="w-16 h-16 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional car mechanic logo displayed on a clean workshop uniform, representing trustworthiness and expertise in the automotive repair industry, minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVVQkJJxTeMD1sbzbo4RghEqYS_PRNSnaTUDUaYogrnzkSH--C6yosPeO5lz442Um10NKrlXpH8kGa3YbF3EmBk2-3gqTWhdulXQzi9BnbIf7zrk8jeAujCGzQyB5AptccKpOd9knZ9wy4GR3k63iMlCqYlNinsyRKlRqd8SNr-qPICdxcvtvNpV5kuefNnkn6i35VLqe_Vv36-CVOYoWWi2Zg4alU4T0za1CUa1y4SzWPl58dJ84LsYJwP-A5PiBCdnZM8LTGs9mI">
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-1">
+<h4 class="font-headline-sm text-headline-sm text-text-primary">مركز التميز</h4>
+<span class="material-symbols-outlined text-verification-blue text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted mb-xs">صيانة المحركات والبرمجة</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center text-accent-yellow">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-label-sm text-text-primary mr-1">4.8</span>
+</div>
+<button class="text-secondary font-label-sm text-label-sm border border-secondary rounded px-2 py-0.5 hover:bg-secondary hover:text-white transition-all">عرض الخدمات</button>
+</div>
+</div>
+</div>
+<!-- Workshop Card 2 -->
+<div class="min-w-[300px] bg-surface-white border border-border-light rounded-lg p-sm flex items-center gap-sm hover:border-verification-blue transition-all">
+<div class="w-16 h-16 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Modern automotive repair shop sign in a bright, clean garage setting, emphasizing master craftsmanship and professional automotive care services, high-contrast flat UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYOhTTNVnEYR1jcyoaLhoMDCBAgwEfoAim2n677F6K-abIKwkqtlVHr2JPfwqYZ8fZIZGzPAdp6KUp5WfJwsrBAVTiIhVzbOQ_mghrNkmUkyn4kqc_qNyZkn-1CBCb_sEbkSEupakG1uI25WrRPboOUE7pT4DMj-Frgysa9WTRlHGwaNidP2kojM4io7WrIkA7k5UYNkkzsiYDx0xqivil9JQjZjOsv7I2FXqAO6Ty4g6xxQHKfTymg5kaIr9xI-VOYC7LANEIM0Hb">
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-1">
+<h4 class="font-headline-sm text-headline-sm text-text-primary">ورشة المحترف</h4>
+<span class="material-symbols-outlined text-verification-blue text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted mb-xs">كهرباء وتكييف سيارات</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center text-accent-yellow">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-label-sm text-text-primary mr-1">4.9</span>
+</div>
+<button class="text-secondary font-label-sm text-label-sm border border-secondary rounded px-2 py-0.5 hover:bg-secondary hover:text-white transition-all">عرض الخدمات</button>
+</div>
+</div>
+</div>
+<!-- Workshop Card 3 -->
+<div class="min-w-[300px] bg-surface-white border border-border-light rounded-lg p-sm flex items-center gap-sm hover:border-verification-blue transition-all">
+<div class="w-16 h-16 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Specialized tools on a clean workbench in a high-end automotive service center, reflecting precision and mastery, minimalist and professional visual language." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9dc2AUftFJspg3YT0WlNALirbst_mtIeT67VLNAWjYBz-Jf1_rZTSSzprHHIzJj-cmBWItNS0u6mpMfIdIkWClvPDvdlsSdckKmDqft6jRRKQfLRhnBKq1fTu-CIDsyNizsBfmt4ORqoqpAnsEpekLFZRUJK1R2i-sYVPyuPuXjpUZWShEzWbFFb51zkd3YlXisxF_v1KlRWG7Qh5np7Vu9FdVhpcPSRR4zh-RPvQfluAr1_YCw84_hCCD5HB3uNQXCKOmTa7ib_N">
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-1">
+<h4 class="font-headline-sm text-headline-sm text-text-primary">الأمانة للأصباغ</h4>
+<span class="material-symbols-outlined text-verification-blue text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted mb-xs">حدادة وصبغ حراري</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center text-accent-yellow">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-label-sm text-text-primary mr-1">4.5</span>
+</div>
+<button class="text-secondary font-label-sm text-label-sm border border-secondary rounded px-2 py-0.5 hover:bg-secondary hover:text-white transition-all">عرض الخدمات</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 7: B2B Pricing Portal -->
+<section class="py-xl px-margin-desktop bg-surface-container-low">
+<div class="max-w-container-max mx-auto text-center">
+<h2 class="font-headline-md text-headline-md text-text-primary mb-md">باقات اشتراك الورشات والمعارض</h2>
+<p class="font-body-lg text-body-lg text-text-muted mb-xl max-w-2xl mx-auto">انضم إلى أكبر منصة سيارات في المنطقة وعزز مبيعاتك وأعمالك عبر باقاتنا الاحترافية</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg max-w-5xl mx-auto">
+<!-- Tier 1 -->
+<div class="bg-surface-white border border-border-light rounded-xl p-lg flex flex-col items-center hover:border-text-muted transition-all">
+<h3 class="font-headline-sm text-headline-sm text-text-primary mb-xs">باقة مجانية</h3>
+<div class="text-display-lg font-display-lg text-text-primary mb-md">$0 <span class="text-body-sm font-body-sm text-text-muted">/شهرياً</span></div>
+<ul class="text-right w-full space-y-sm mb-lg">
+<li class="flex items-center gap-xs font-body-md text-body-md"><span class="material-symbols-outlined text-verification-blue">check</span> 3 إعلانات سيارات</li>
+<li class="flex items-center gap-xs font-body-md text-body-md"><span class="material-symbols-outlined text-verification-blue">check</span> ملف ورشة أساسي</li>
+<li class="flex items-center gap-xs font-body-md text-body-md opacity-40"><span class="material-symbols-outlined">close</span> ترويج الإعلانات</li>
+</ul>
+<button class="mt-auto w-full border border-border-light py-xs rounded-lg font-label-lg text-label-lg hover:bg-surface-container transition-all">ابدأ الآن</button>
+</div>
+<!-- Tier 2 -->
+<div class="bg-surface-white border-2 border-secondary rounded-xl p-lg flex flex-col items-center relative overflow-hidden scale-105 shadow-md">
+<div class="absolute top-4 left-[-35px] bg-secondary text-white py-1 px-10 -rotate-45 font-label-sm text-label-sm">رائجة</div>
+<h3 class="font-headline-sm text-headline-sm text-secondary mb-xs">باقة متوسطة</h3>
+<div class="text-display-lg font-display-lg text-text-primary mb-md">$49 <span class="text-body-sm font-body-sm text-text-muted">/شهرياً</span></div>
+<ul class="text-right w-full space-y-sm mb-lg">
+<li class="flex items-center gap-xs font-body-md text-body-md"><span class="material-symbols-outlined text-verification-blue">check</span> 15 إعلان سيارة</li>
+<li class="flex items-center gap-xs font-body-md text-body-md"><span class="material-symbols-outlined text-verification-blue">check</span> ملف ورشة موثق</li>
+<li class="flex items-center gap-xs font-body-md text-body-md"><span class="material-symbols-outlined text-verification-blue">check</span> 3 إعلانات مميزة</li>
+</ul>
+<button class="mt-auto w-full bg-secondary text-on-secondary py-xs rounded-lg font-label-lg text-label-lg hover:brightness-110 transition-all">اختر الباقة</button>
+</div>
+<!-- Tier 3 -->
+<div class="bg-surface-white border-2 border-accent-yellow rounded-xl p-lg flex flex-col items-center hover:shadow-lg transition-all">
+<div class="bg-accent-yellow text-text-primary px-3 py-1 rounded-full font-label-sm text-label-sm mb-sm">الأكثر طلباً</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-xs font-bold">باقة مميزة</h3>
+<div class="text-display-lg font-display-lg text-text-primary mb-md">$99 <span class="text-body-sm font-body-sm text-text-muted">/شهرياً</span></div>
+<ul class="text-right w-full space-y-sm mb-lg">
+<li class="flex items-center gap-xs font-body-md text-body-md font-bold"><span class="material-symbols-outlined text-verification-blue">check</span> إعلانات غير محدودة</li>
+<li class="flex items-center gap-xs font-body-md text-body-md"><span class="material-symbols-outlined text-verification-blue">check</span> إدارة كاملة للمخزون</li>
+<li class="flex items-center gap-xs font-body-md text-body-md"><span class="material-symbols-outlined text-verification-blue">check</span> ترويج VIP دائم</li>
+</ul>
+<button class="mt-auto w-full bg-accent-yellow text-text-primary py-xs rounded-lg font-label-lg text-label-lg hover:brightness-95 transition-all">تواصل للمزيد</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 8: Footer -->
+<footer class="bg-on-background dark:bg-on-tertiary-fixed">
+<div class="flex flex-col items-center justify-center w-full py-xl px-margin-desktop text-center space-y-md">
+<img alt="شعار كارنا الأبفف" class="h-12 mb-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM1ae2foVs3TCixlD2_E1Ob0835neOmysHnKNh4e2KaPS7T1o-q_Xv_hbWUpvkSvcyJLqZ3opQ_mMno_yqiX6TalhwXJYWSaBTOt-rd4aUQ-pdiQGPx21hY_5u4FRC_x4NXFuimtIXYMkDwzo0kR4zmXV68-LIN7_MGguCNtnzqhVcPN9JcBrRoZAwVezOWInubAyQkipBYneVUxpvJV8P0XaSDvbEKxlyuUX1Y02AbDqGvmmJ0YdpXzzqmIHmGu24p-ol_-4DJS2r">
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="text-white opacity-80 font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">شروط الاستخدام</a>
+<a class="text-white opacity-80 font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">إخلاء المسؤولية</a>
+<a class="text-white opacity-80 font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">سياسة الخصوصية</a>
+<a class="text-white opacity-80 font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">باقات الورشات</a>
+</div>
+<div class="flex gap-md my-sm">
+<a class="text-white/60 hover:text-accent-yellow transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+<a class="text-white/60 hover:text-accent-yellow transition-colors" href="#"><span class="material-symbols-outlined">notifications</span></a>
+<a class="text-white/60 hover:text-accent-yellow transition-colors" href="#"><span class="material-symbols-outlined">help</span></a>
+</div>
+<p class="font-body-md text-body-md text-white/60">© 2024 كارنا. ؤمفع الأقوق مأفوظة.</p>
+</div>
+</footer>
+<script>
+        // Micro-interactions and subtle effects
+        document.querySelectorAll('.group').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Horizontal scroll animation triggers or logic can be added here
+    </script>
+</body></html>
