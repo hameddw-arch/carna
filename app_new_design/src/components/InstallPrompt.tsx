@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { X, Download } from 'lucide-react'
-import logoLight from '../assets/carna logo w.svg'
+import logoLight from '../assets/carna logo W.svg'
 
 export default function InstallPrompt() {
   const [prompt, setPrompt] = useState<any>(null)

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logoLight from '../assets/carna logo w.svg';
+import logoLight from '../assets/carna logo W.svg';
 
 export default function Footer() {
   return (
