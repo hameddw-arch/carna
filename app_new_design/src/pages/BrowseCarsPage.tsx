@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import CarCard, { type Car } from '../components/CarCard';
 import { fetchListings, fetchAvailableTags, fetchGovernorates, fetchTagStats } from '../lib/queries';
 import SEO from '../components/SEO';
+import Breadcrumb from '../components/Breadcrumb';
+import { localBusinessSchema } from '../lib/schemas';
 
 export default function BrowseCarsPage() {
   const [cars, setCars] = useState<Car[]>([]);
@@ -79,7 +81,12 @@ export default function BrowseCarsPage() {
         image="/carna-logo.svg"
         url="/browse"
         type="website"
+        jsonLd={localBusinessSchema()}
       />
+      <Breadcrumb items={[
+        { label: 'الرئيسية', href: '/' },
+        { label: 'تصفح السيارات' }
+      ]} />
       <section className="py-xl px-margin-desktop bg-surface-white border-b border-border-light">
         <div className="max-w-container-max mx-auto">
           <h2 className="font-headline-md text-headline-md text-text-primary mb-lg text-right">تصفح حسب نوع الهيكل</h2>

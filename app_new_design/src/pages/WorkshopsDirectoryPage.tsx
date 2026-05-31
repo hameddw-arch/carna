@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchServices, fetchGovernorates } from '../lib/queries';
 import SEO from '../components/SEO';
+import Breadcrumb from '../components/Breadcrumb';
+import { localBusinessSchema } from '../lib/schemas';
 
 export default function WorkshopsDirectoryPage() {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -35,7 +37,12 @@ export default function WorkshopsDirectoryPage() {
         image="/carna-logo.svg"
         url="/workshops"
         type="website"
+        jsonLd={localBusinessSchema()}
       />
+      <Breadcrumb items={[
+        { label: 'الرئيسية', href: '/' },
+        { label: 'الورشات والخدمات' }
+      ]} />
 
       {/* Subscription Plans Section */}
       <section className="mb-xl text-center">

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchListing, incrementListingViews, getOrCreateChat } from '../lib/queries';
 import { useAuth } from '../contexts/AuthContext';
 import SEO from '../components/SEO';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function CarDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -116,15 +117,11 @@ export default function CarDetailPage() {
         jsonLd={vehicleSchema}
       />
       <main className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg">
-        {/* SEO Meta Tags */}
-        {/* Breadcrumb - Added to match previous UX */}
-        <div className="flex items-center gap-xs text-text-muted font-body-sm text-body-sm mb-lg">
-          <Link to="/" className="hover:text-primary transition-colors">الرئيسية</Link>
-          <span className="material-symbols-outlined text-[16px]">chevron_left</span>
-          <Link to="/browse" className="hover:text-primary transition-colors">السيارات</Link>
-          <span className="material-symbols-outlined text-[16px]">chevron_left</span>
-          <span className="text-text-primary">{title}</span>
-        </div>
+        <Breadcrumb items={[
+          { label: 'الرئيسية', href: '/' },
+          { label: 'السيارات', href: '/browse' },
+          { label: title }
+        ]} />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
           {/* Left Column in LTR, Right Column in RTL: Image Gallery & Details */}
@@ -132,16 +129,27 @@ export default function CarDetailPage() {
             {/* Gallery */}
             <section className="space-y-sm">
               <div className="w-full aspect-video rounded-lg overflow-hidden border border-border-light bg-surface-container">
-                <img alt={title} className="w-full h-full object-cover" src={images[activeImg] || '/placeholder-car.svg'} />
+                <img
+                  alt={title}
+                  className="w-full h-full object-cover"
+                  src={images[activeImg] || '/placeholder-car.svg'}
+                  decoding="async"
+                />
               </div>
               <div className="grid grid-cols-4 gap-sm">
                 {images.slice(0, 4).map((img: string, idx: number) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className={`aspect-square rounded-lg overflow-hidden border ${activeImg === idx ? 'border-primary' : 'border-border-light'} bg-surface-container cursor-pointer hover:border-primary transition-colors relative`}
                     onClick={() => setActiveImg(idx)}
                   >
-                    <img alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" src={img} />
+                    <img
+                      alt={`${title} - صورة ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                      src={img}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     {idx === 3 && images.length > 4 && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-headline-sm text-headline-sm">
                         +{images.length - 4}

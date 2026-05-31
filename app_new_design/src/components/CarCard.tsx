@@ -48,7 +48,13 @@ export default function CarCard({ car, urgent }: { car: Car; urgent?: boolean })
         </span>
       </button>
       <Link to={`/car/${car.id}`} className="block h-48 overflow-hidden relative">
-        <img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={car.image} alt={car.title} />
+        <img
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          src={car.image}
+          alt={car.title}
+          loading="lazy"
+          decoding="async"
+        />
       </Link>
       <div className="p-sm">
         <Link to={`/car/${car.id}`} className="block mb-xs hover:opacity-80 transition-opacity">

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import CarCard from '../components/CarCard';
 import { fetchListings, fetchGovernorates } from '../lib/queries';
 import SEO from '../components/SEO';
+import { organizationSchema, searchActionSchema } from '../lib/schemas';
 
 export default function HomePage() {
   const [dbGovernorates, setDbGovernorates] = useState<string[]>([]);
@@ -120,6 +121,7 @@ export default function HomePage() {
         image="/carna-logo.svg"
         url="/"
         type="website"
+        jsonLd={[organizationSchema(), searchActionSchema()]}
       />
       <section 
         className="relative py-24 px-margin-mobile md:px-margin-desktop overflow-hidden bg-surface-container-low"

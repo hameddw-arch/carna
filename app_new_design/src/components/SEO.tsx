@@ -6,7 +6,7 @@ interface SEOProps {
   image?: string
   url?: string
   type?: 'website' | 'article'
-  jsonLd?: object
+  jsonLd?: object | object[]
 }
 
 const SITE = 'كارنا — CARNA'
@@ -42,9 +42,13 @@ export default function SEO({ title, description, image, url, type = 'website', 
       <meta name="twitter:image"       content={img}/>
 
       {/* Schema.org structured data */}
-      {jsonLd && (
+      {jsonLd && Array.isArray(jsonLd) ? (
+        jsonLd.map((schema, idx) => (
+          <script key={idx} type="application/ld+json">{JSON.stringify(schema)}</script>
+        ))
+      ) : jsonLd ? (
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-      )}
+      ) : null}
     </Helmet>
   )
 }
