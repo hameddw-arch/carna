@@ -1,4 +1,4 @@
-import { deleteListing, updateListingStatus } from '/../lib/queries/index';
+import { deleteListing, updateListingStatus } from '../../lib/queries/index';
 
 interface ListingsTabContentProps {
   listings: any[];
