@@ -81,6 +81,35 @@ export async function fetchAvailableTags() {
   return uniqueTags.filter(Boolean).sort()
 }
 
+export async function fetchTagStats() {
+  const { data, error } = await supabase
+    .from('listing_tags')
+    .select('tag, listing_id')
+
+  if (error) {
+    console.warn('Failed to fetch tag stats:', error)
+    return []
+  }
+
+  const listingsByTag = new Map<string, Set<string>>()
+
+  ;(data ?? []).forEach((item: { tag: string; listing_id: string }) => {
+    if (!listingsByTag.has(item.tag)) {
+      listingsByTag.set(item.tag, new Set())
+    }
+    listingsByTag.get(item.tag)!.add(item.listing_id)
+  })
+
+  const stats = Array.from(listingsByTag.entries())
+    .map(([tag, listings]) => ({
+      tag,
+      count: listings.size
+    }))
+    .sort((a, b) => b.count - a.count)
+
+  return stats
+}
+
 export async function incrementListingViews(listingId: string) {
   const { data: current } = await supabase
     .from('listings')

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import CarCard, { type Car } from '../components/CarCard';
-import { fetchListings, fetchAvailableTags, fetchGovernorates } from '../lib/queries';
+import { fetchListings, fetchAvailableTags, fetchGovernorates, fetchTagStats } from '../lib/queries';
 import SEO from '../components/SEO';
 
 export default function BrowseCarsPage() {
   const [cars, setCars] = useState<Car[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [tagStats, setTagStats] = useState<Array<{tag: string; count: number}>>([]);
   const [dbGovernorates, setDbGovernorates] = useState<string[]>([]);
   const [filters, setFilters] = useState<any>({
     condition: '',
@@ -19,6 +20,7 @@ export default function BrowseCarsPage() {
 
   useEffect(() => {
     fetchAvailableTags().then(tags => setAvailableTags(tags)).catch(console.error);
+    fetchTagStats().then(stats => setTagStats(stats)).catch(console.error);
     fetchGovernorates().then(data => {
       setDbGovernorates(data.filter(g => g.is_active).map(g => g.name));
     }).catch(console.error);
@@ -177,28 +179,50 @@ export default function BrowseCarsPage() {
                   </div>
                   {availableTags.length > 0 && (
                     <div className="flex flex-col gap-xs text-right">
-                      <label className="font-label-sm text-label-sm text-text-muted">الوسوم</label>
+                      <label className="font-label-sm text-label-sm text-text-muted">الوسوم الشهيرة</label>
                       <div className="flex flex-wrap gap-xs">
                         <button
                           onClick={() => handleFilterChange('tag', '')}
-                          className={`px-md py-xs border rounded-full font-label-sm transition-colors ${
+                          className={`px-md py-xs border rounded-full font-label-sm transition-colors flex items-center gap-1 ${
                             !filters.tag ? 'border-primary bg-primary-container/10 text-primary' : 'border-border-light text-text-muted hover:border-primary'
                           }`}
                         >
-                          الكل
+                          <span>الكل</span>
+                          <span className="text-xs opacity-60">({cars.length})</span>
                         </button>
-                        {availableTags.map(tag => (
+                        {tagStats.slice(0, 6).map(({tag, count}) => (
                           <button
                             key={tag}
                             onClick={() => handleFilterChange('tag', tag)}
-                            className={`px-md py-xs border rounded-full font-label-sm transition-colors ${
+                            className={`px-md py-xs border rounded-full font-label-sm transition-colors flex items-center gap-1 ${
                               filters.tag === tag ? 'border-primary bg-primary-container/10 text-primary' : 'border-border-light text-text-muted hover:border-primary'
                             }`}
                           >
-                            #{tag}
+                            <span className="material-symbols-outlined text-[14px]">local_offer</span>
+                            <span>{tag}</span>
+                            <span className="text-xs opacity-60">({count})</span>
                           </button>
                         ))}
                       </div>
+                      {tagStats.length > 6 && (
+                        <details className="text-right">
+                          <summary className="cursor-pointer text-primary font-label-sm hover:opacity-80">عرض جميع الوسوم ({tagStats.length})</summary>
+                          <div className="flex flex-wrap gap-xs mt-xs">
+                            {tagStats.slice(6).map(({tag, count}) => (
+                              <button
+                                key={tag}
+                                onClick={() => handleFilterChange('tag', tag)}
+                                className={`px-md py-xs border rounded-full font-label-sm transition-colors flex items-center gap-1 text-xs ${
+                                  filters.tag === tag ? 'border-primary bg-primary-container/10 text-primary' : 'border-border-light text-text-muted hover:border-primary'
+                                }`}
+                              >
+                                <span>{tag}</span>
+                                <span className="opacity-60">({count})</span>
+                              </button>
+                            ))}
+                          </div>
+                        </details>
+                      )}
                     </div>
                   )}
                   <button onClick={applyFilters} className="w-full bg-primary text-on-primary py-sm rounded-lg font-label-lg mt-md hover:brightness-110 transition-all">تطبيق الفلاتر</button>
