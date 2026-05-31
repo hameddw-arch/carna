@@ -65,13 +65,13 @@ export function ListingsTabContent({ listings, setListings, onAddLog }: Listings
                   <td className="p-2 flex gap-2 justify-center">
                     <button
                       onClick={() => handleToggleListing(listing.id, listing.status)}
-                      className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                      className="px-md py-sm bg-blue-500 text-white rounded hover:bg-blue-600 text-sm min-w-[44px] min-h-[44px] flex items-center justify-center"
                     >
                       تبديل
                     </button>
                     <button
                       onClick={() => handleDeleteListing(listing.id)}
-                      className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                      className="px-md py-sm bg-red-500 text-white rounded hover:bg-red-600 text-sm min-w-[44px] min-h-[44px] flex items-center justify-center"
                     >
                       حذف
                     </button>
