@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePageView } from '../hooks/useAnalytics'
-import { Eye, Users, TrendingUp, CheckCircle, Zap, Handshake } from 'lucide-react'
+import { Eye, Users, TrendingUp, CheckCircle, Zap, Handshake, ShoppingCart, Wrench, FileCheck } from 'lucide-react'
 
 function useInView(ref: React.RefObject<HTMLElement | null>, options = { threshold: 0.1 }) {
   const [isInView, setIsInView] = useState(false)
@@ -52,17 +52,17 @@ export default function AboutCARNAPage() {
     {
       title: 'سوق السيارات',
       desc: 'أكبر تجمع للسيارات المستعملة والجديدة في سوريا. تصفية ذكية، بحث متقدم، وإضافة إعلانات بسهولة تامة',
-      icon: '🚗'
+      icon: ShoppingCart
     },
     {
       title: 'دليل الورشات',
       desc: 'لا مزيد من الحيرة عند تعطل سيارتك. ابحث عن أفضل مراكز الصيانة والورشات المتخصصة بالقرب منك',
-      icon: '🔧'
+      icon: Wrench
     },
     {
       title: 'الشفافية والتوثيق',
       desc: 'نقدم أنظمة فحص معتمدة تساعدك على معرفة الحالة الحقيقية للسيارة قبل الشراء',
-      icon: '📋'
+      icon: FileCheck
     }
   ]
 
@@ -189,21 +189,26 @@ export default function AboutCARNAPage() {
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-primary dark:text-yellow-400 mb-12 text-center">خدماتنا الأساسية</h2>
           <div className="space-y-8">
-            {services.map((service, idx) => (
-              <div
-                key={idx}
-                className={`flex flex-col ${idx % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center bg-surface-white dark:bg-slate-800 border border-border-light dark:border-slate-700 p-8 rounded-xl ${
-                  servicesInView ? 'animate-in' : 'opacity-0'
-                }`}
-                style={{ animationDelay: `${idx * 150}ms` }}
-              >
-                <div className="w-full md:w-1/3 text-5xl text-center">{service.icon}</div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold dark:text-white mb-4">{service.title}</h3>
-                  <p className="text-on-surface-variant dark:text-slate-300 text-lg">{service.desc}</p>
+            {services.map((service, idx) => {
+              const IconComponent = service.icon
+              return (
+                <div
+                  key={idx}
+                  className={`flex flex-col ${idx % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center bg-surface-white dark:bg-slate-800 border border-border-light dark:border-slate-700 p-8 rounded-xl ${
+                    servicesInView ? 'animate-in' : 'opacity-0'
+                  }`}
+                  style={{ animationDelay: `${idx * 150}ms` }}
+                >
+                  <div className="flex-shrink-0 md:w-1/4 flex justify-center">
+                    <IconComponent className="w-16 h-16 text-primary dark:text-yellow-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold dark:text-white mb-4">{service.title}</h3>
+                    <p className="text-on-surface-variant dark:text-slate-300 text-lg">{service.desc}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
