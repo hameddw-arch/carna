@@ -10,7 +10,7 @@ import BrowseCarsPage from './pages/BrowseCarsPage';
 import CarDetailPage from './pages/CarDetailPage';
 import WorkshopsDirectoryPage from './pages/WorkshopsDirectoryPage';
 import SubscriptionPlansPage from './pages/SubscriptionPlansPage';
-import AboutPage from './pages/AboutPage';
+import AboutCARNAPage from './pages/AboutCARNAPage';
 import Login from './pages/Login';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
@@ -81,7 +81,7 @@ export default function App() {
               <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
               <Route path="/workshop-admin" element={<ProtectedRoute><WorkshopDashboardPage /></ProtectedRoute>} />
               <Route path="/plans" element={<SubscriptionPlansPage />} />
-              <Route path="/about" element={<AboutPage />} />
+              <Route path="/about" element={<AboutCARNAPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />
