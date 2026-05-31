@@ -35,6 +35,7 @@ import { WorkshopsTabContent } from './admin/WorkshopsTabContent';
 import { WorkshopApprovalsTabContent } from './admin/WorkshopApprovalsTabContent';
 import { UsersTabContent } from './admin/UsersTabContent';
 import { ServicesTabContent } from './admin/ServicesTabContent';
+import { AnalyticsTabContent } from './admin/AnalyticsTabContent';
 
 
 export default function AdminDashboardPage() {
@@ -304,6 +305,12 @@ export default function AdminDashboardPage() {
                 <span className="font-label-lg text-label-lg">سجلات النشاط</span>
               </div>
             </button>
+            <button onClick={() => setActiveTab('analytics')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'analytics' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
+              <div className="flex items-center gap-xs">
+                <span className="material-symbols-outlined">analytics</span>
+                <span className="font-label-lg text-label-lg">التحليلات</span>
+              </div>
+            </button>
             <button onClick={() => setActiveTab('reviews')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'reviews' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
               <div className="flex items-center gap-xs">
                 <span className="material-symbols-outlined">star_rate</span>
@@ -377,6 +384,10 @@ export default function AdminDashboardPage() {
             <LogsTabContent activityLogs={activityLogs} />
           )}
 
+          {activeTab === 'analytics' && (
+            <AnalyticsTabContent />
+          )}
+
           {activeTab === 'workshops' && (
             <WorkshopsTabContent
               workshops={services}
@@ -444,9 +455,9 @@ export default function AdminDashboardPage() {
           <span className="material-symbols-outlined">group</span>
           <span className="text-[10px]">المستخدمون</span>
         </button>
-        <button onClick={() => setActiveTab('settings')} className={`flex flex-col items-center active:scale-95 transition-transform ${activeTab === 'settings' ? 'text-primary' : 'text-tertiary'}`}>
-          <span className="material-symbols-outlined">settings</span>
-          <span className="text-[10px]">إعدادات</span>
+        <button onClick={() => setActiveTab('analytics')} className={`flex flex-col items-center active:scale-95 transition-transform ${activeTab === 'analytics' ? 'text-primary' : 'text-tertiary'}`}>
+          <span className="material-symbols-outlined">analytics</span>
+          <span className="text-[10px]">التحليلات</span>
         </button>
       </nav>
     </div>

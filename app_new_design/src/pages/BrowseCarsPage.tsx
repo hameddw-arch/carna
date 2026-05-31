@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import CarCard, { type Car } from '../components/CarCard';
 import { fetchListings, fetchAvailableTags, fetchGovernorates, fetchTagStats } from '../lib/queries/index';
+import { usePageView, trackFilter } from '../hooks/useAnalytics';
 import SEO from '../components/SEO';
 import Breadcrumb from '../components/Breadcrumb';
 import { localBusinessSchema } from '../lib/schemas';
 
 export default function BrowseCarsPage() {
+  usePageView('/browse');
+
   const [cars, setCars] = useState<Car[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [tagStats, setTagStats] = useState<Array<{tag: string; count: number}>>([]);
@@ -70,6 +73,12 @@ export default function BrowseCarsPage() {
   };
 
   const applyFilters = () => {
+    // Track filters being applied
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && value !== '' && value !== 'كل المحافظات' && value !== 'جميع الفئات' && value !== 'الكل') {
+        trackFilter(key, String(value)).catch(console.warn);
+      }
+    });
     loadCars(filters);
   };
 

@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CarCard from '../components/CarCard';
 import { fetchListings, fetchGovernorates } from '../lib/queries/index';
+import { usePageView } from '../hooks/useAnalytics';
 import SEO from '../components/SEO';
 import { organizationSchema, searchActionSchema } from '../lib/schemas';
 
 export default function HomePage() {
+  usePageView('/');
+
   const [dbGovernorates, setDbGovernorates] = useState<string[]>([]);
   const brands = [
     { name: 'تويوتا',   img: '/brands/toyota.svg',   color: '#EB0A1E' },
