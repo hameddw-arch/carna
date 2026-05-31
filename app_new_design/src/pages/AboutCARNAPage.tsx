@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import Header from '../components/Header'
 import { usePageView } from '../hooks/useAnalytics'
 import { Eye, Users, TrendingUp, CheckCircle, Zap, Handshake } from 'lucide-react'
 
@@ -79,7 +78,6 @@ export default function AboutCARNAPage() {
 
   return (
     <div dir="rtl" className="min-h-screen bg-surface dark:bg-slate-950 text-on-surface dark:text-slate-50 overflow-x-hidden transition-colors duration-300">
-      <Header />
 
       <style>{`
         @keyframes fadeInUp {
@@ -151,13 +149,12 @@ export default function AboutCARNAPage() {
                 كارنا ليست مجرد موقع إعلانات، بل هي نظام متكامل يربط بين البائع والمشتري وبين صاحب السيارة وخبراء الصيانة، مع التركيز التام على تلبية احتياجات السوق المحلي بمعايير عالمية.
               </p>
             </div>
-            <div className="rounded-xl overflow-hidden border border-border-light dark:border-slate-700 h-80 bg-surface-container dark:bg-slate-800">
-              <img
-                src="https://via.placeholder.com/600x400?text=CARNA+Story"
-                alt="قصة كارنا"
-                loading="lazy"
-                className="w-full h-full object-cover"
-              />
+            <div className="rounded-xl overflow-hidden border border-border-light dark:border-slate-700 h-80 bg-gradient-to-br from-primary/10 to-yellow-400/10 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center">
+              <div className="text-center px-6">
+                <div className="text-6xl mb-4">🚗</div>
+                <p className="text-on-surface-variant dark:text-slate-400 font-semibold">منصة سورية موثوقة</p>
+                <p className="text-on-surface-variant dark:text-slate-400 text-sm mt-2">لبيع وشراء السيارات</p>
+              </div>
             </div>
           </div>
         </div>

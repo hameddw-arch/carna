@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import logoDark from '../assets/carna logo.svg';
 import NotificationBell from './NotificationBell';
 
@@ -9,7 +9,20 @@ export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    setIsDark(isDarkMode);
+  }, []);
+
+  const toggleDarkMode = () => {
+    const html = document.documentElement;
+    html.classList.toggle('dark');
+    setIsDark(!isDark);
+    localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+  };
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -52,6 +65,17 @@ export default function Header() {
           <Link className={linkClass('/about')} to="/about">حول كارنا</Link>
         </nav>
         <div className="flex items-center gap-sm">
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleDarkMode}
+            className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-container active:scale-95 dark:hover:bg-slate-700"
+            title={isDark ? "الوضع الفاتح" : "الوضع الليلي"}
+          >
+            <span className="material-symbols-outlined text-[24px]">
+              {isDark ? 'light_mode' : 'dark_mode'}
+            </span>
+          </button>
+
           {user ? (
             <>
               <Link to="/post-ad" className="hidden md:flex bg-primary-container text-on-primary-container px-sm py-xs rounded-lg font-label-lg text-label-lg hover:bg-inverse-primary transition-all active:scale-95">
