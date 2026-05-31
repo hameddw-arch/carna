@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Phone, ArrowLeft, Loader2, MessageSquare } from 'lucide-react'
+import { Phone, ArrowLeft, Loader2, MessageSquare, ShieldCheck } from 'lucide-react'
 import { requestOTP, verifyOTP } from '../lib/auth'
 import { useAuth } from '../contexts/AuthContext'
 import logoDark from '../assets/carna logo.svg'
+import SEO from '../components/SEO'
 
 export default function Login() {
   const navigate  = useNavigate()
@@ -14,29 +15,28 @@ export default function Login() {
   const [step,    setStep]    = useState<'phone' | 'otp'>('phone')
   const [phone,   setPhone]   = useState('')
   const [otp,     setOtp]     = useState('')
-  const [devCode, setDevCode] = useState('')   // عرض الكود في بيئة التطوير
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState('')
   const [agreed,  setAgreed]  = useState(false)
 
   async function handleSendOTP() {
-    if (!phone.trim()) return setError('اكتب رقم الموبايل')
-    if (!agreed) return setError('لازم توافق على الشروط أولاً')
+    const phoneRegex = /^09\d{8}$/
+    if (!phoneRegex.test(phone.trim())) return setError('الرقم يجب أن يبدأ بـ 09 ويتكون من 10 أرقام')
+    if (!agreed) return setError('يجب الموافقة على الشروط أولاً')
     setError('')
     setLoading(true)
     try {
-      const code = await requestOTP(phone.trim())
-      setDevCode(code)   // سيُحذف عند ربط SMS
+      await requestOTP(phone.trim())
       setStep('otp')
     } catch (e: any) {
-      setError(e?.message ?? JSON.stringify(e) ?? 'unknown error')
+      setError(e?.message ?? JSON.stringify(e) ?? 'حدث خطأ غير معروف')
     } finally {
       setLoading(false)
     }
   }
 
   async function handleVerifyOTP() {
-    if (otp.length !== 6) return setError('الرمز 6 أرقام')
+    if (otp.length !== 6) return setError('الرمز يجب أن يتكون من 6 أرقام')
     setError('')
     setLoading(true)
     try {
@@ -44,45 +44,52 @@ export default function Login() {
       setUser(user)
       navigate(from, { replace: true })
     } catch (e: any) {
-      setError(e.message ?? 'الرمز ما بدو هيك — تأكد منه')
+      setError(e.message ?? 'الرمز غير صحيح')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
-      <div style={{ width: '100%', maxWidth: 400 }}>
-
-        {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <img src={logoDark} alt="CARNA" style={{ height: 48, marginBottom: 12 }} />
-          <h1 style={{ fontSize: 22, fontWeight: 800 }}>
-            {step === 'phone' ? 'أهلاً من جديد' : 'أدخل الرمز'}
+    <main className="min-h-[80vh] flex items-center justify-center p-md bg-surface-white">
+      <SEO
+        title="تسجيل الدخول"
+        description="سجّل دخولك إلى كارنا برقم موبايلك بخطوة واحدة. إنشئ حسابك أو سجّل دخولك لتصفح آلاف إعلان سيارات في سوريا."
+        url="/login"
+      />
+      <div className="w-full max-w-[450px]">
+        
+        {/* Header Section */}
+        <div className="text-center mb-lg">
+          <img src={logoDark} alt="CARNA" className="h-[48px] mx-auto mb-md" />
+          <h1 className="font-headline-lg text-[32px] font-bold text-on-surface mb-xs">
+            {step === 'phone' ? 'أهلاً بك في كارنا' : 'تأكيد الرمز'}
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 4 }}>
+          <p className="font-body-md text-[16px] text-text-muted">
             {step === 'phone'
-              ? 'سجّل دخولك بالرقم اللي عندك'
-              : `بعثنالك رمز على الرقم المنتهي بـ **${phone.slice(-3)}`
+              ? 'سجّل دخولك أو أنشئ حساباً جديداً بخطوة واحدة'
+              : `أرسلنا رمز التحقق إلى الرقم المنتهي بـ ${phone.slice(-3)}`
             }
           </p>
         </div>
 
-        <div className="card" style={{ padding: 28 }}>
-
+        {/* Card Section */}
+        <div className="bg-surface-white border border-border-light shadow-sm rounded-[16px] p-md md:p-lg">
           {step === 'phone' ? (
-            <>
-              <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontSize: 14, fontWeight: 600, marginBottom: 6 }}>
-                  رقم موبايلك
+            <div className="flex flex-col gap-md">
+              <div>
+                <label className="block font-label-lg text-[14px] font-bold text-on-surface mb-xs">
+                  رقم الموبايل
                 </label>
-                <div style={{ position: 'relative' }}>
-                  <Phone size={15} style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-[16px] flex items-center pointer-events-none text-text-muted">
+                    <Phone size={20} />
+                  </div>
                   <input
-                    className="input"
-                    style={{ paddingRight: 42, direction: 'ltr', textAlign: 'right' }}
-                    placeholder="09xxxxxxxx"
                     type="tel"
+                    dir="ltr"
+                    className="w-full h-[56px] pl-[16px] pr-[48px] bg-surface-container-lowest border border-border-light rounded-[12px] text-[18px] text-right text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="09xxxxxxxx"
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendOTP()}
@@ -91,45 +98,46 @@ export default function Login() {
                 </div>
               </div>
 
-              <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', marginBottom: 20, padding: '12px 14px', background: 'var(--bg-subtle)', borderRadius: 10 }}>
-                <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)}
-                  style={{ accentColor: 'var(--color-yellow)', width: 17, height: 17, flexShrink: 0, marginTop: 1 }} />
-                <span style={{ fontSize: 13, lineHeight: 1.6 }}>
-                  قرأت ووافقت على{' '}
-                  <a href="#" style={{ color: 'var(--color-blue)' }}>شروط الاستخدام</a>
-                  {' '}و<a href="#" style={{ color: 'var(--color-blue)' }}>إخلاء المسؤولية</a>
+              <label className="flex items-start gap-sm cursor-pointer p-sm bg-surface-container-low rounded-[12px] border border-transparent hover:border-border-light transition-all">
+                <input 
+                  type="checkbox" 
+                  className="mt-[4px] w-[20px] h-[20px] rounded border-border-light text-primary focus:ring-primary"
+                  checked={agreed} 
+                  onChange={e => setAgreed(e.target.checked)} 
+                />
+                <span className="font-body-sm text-[14px] text-on-surface-variant leading-relaxed">
+                  قرأت وأوافق على <a href="#" className="text-verification-blue hover:underline">شروط الاستخدام</a> و <a href="#" className="text-verification-blue hover:underline">سياسة الخصوصية</a>
                 </span>
               </label>
 
-              {error && <p style={{ color: 'var(--color-error)', fontSize: 13, marginBottom: 12 }}>{error}</p>}
-
-              <button className="btn-primary" onClick={handleSendOTP} disabled={loading}
-                style={{ width: '100%', justifyContent: 'center', opacity: loading ? .7 : 1 }}>
-                {loading ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <MessageSquare size={16} />}
-                ابعث لي رمز
-              </button>
-            </>
-          ) : (
-            <>
-              {/* Dev mode — كود التطوير */}
-              {devCode && (
-                <div style={{ background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 10, padding: '10px 14px', marginBottom: 16, fontSize: 13, textAlign: 'center' }}>
-                  <div style={{ color: '#92400e', fontWeight: 600, marginBottom: 4 }}>كود التطوير (مؤقت)</div>
-                  <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: 6, color: '#1a1a1a', direction: 'ltr' }}>{devCode}</div>
-                  <div style={{ color: '#92400e', fontSize: 11, marginTop: 4 }}>سيُرسل بـ SMS عند ربط البوابة</div>
+              {error && (
+                <div className="p-sm bg-error-container text-on-error-container rounded-[8px] font-body-sm text-[14px] flex items-center gap-xs">
+                  <ShieldCheck size={18} />
+                  <span>{error}</span>
                 </div>
               )}
 
-              <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontSize: 14, fontWeight: 600, marginBottom: 6 }}>
-                  الرمز المؤلف من 6 أرقام
+              <button 
+                onClick={handleSendOTP} 
+                disabled={loading}
+                className="w-full h-[56px] bg-primary-container text-on-primary-container font-bold text-[18px] rounded-[12px] flex items-center justify-center gap-xs hover:brightness-95 transition-all disabled:opacity-70 active:scale-[0.98]"
+              >
+                {loading ? <Loader2 size={20} className="animate-spin" /> : <MessageSquare size={20} />}
+                {loading ? 'جاري الإرسال...' : 'إرسال رمز التحقق'}
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-md">
+              <div>
+                <label className="block font-label-lg text-[14px] font-bold text-on-surface mb-xs text-center">
+                  أدخل الرمز المكون من 6 أرقام
                 </label>
                 <input
-                  className="input"
-                  style={{ direction: 'ltr', textAlign: 'center', fontSize: 22, fontWeight: 700, letterSpacing: 8 }}
-                  placeholder="000000"
                   type="tel"
+                  dir="ltr"
                   maxLength={6}
+                  className="w-full h-[64px] bg-surface-container-lowest border border-border-light rounded-[12px] text-[32px] font-bold tracking-[0.5em] text-center text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="000000"
                   value={otp}
                   onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
                   onKeyDown={e => e.key === 'Enter' && handleVerifyOTP()}
@@ -137,24 +145,37 @@ export default function Login() {
                 />
               </div>
 
-              {error && <p style={{ color: 'var(--color-error)', fontSize: 13, marginBottom: 12 }}>{error}</p>}
+              {error && (
+                <div className="p-sm bg-error-container text-on-error-container rounded-[8px] font-body-sm text-[14px] flex items-center gap-xs">
+                  <ShieldCheck size={18} />
+                  <span>{error}</span>
+                </div>
+              )}
 
-              <button className="btn-primary" onClick={handleVerifyOTP} disabled={loading || otp.length !== 6}
-                style={{ width: '100%', justifyContent: 'center', opacity: (loading || otp.length !== 6) ? .7 : 1, marginBottom: 10 }}>
-                {loading ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : null}
-                دخول
+              <button 
+                onClick={handleVerifyOTP} 
+                disabled={loading || otp.length !== 6}
+                className="w-full h-[56px] bg-primary-container text-on-primary-container font-bold text-[18px] rounded-[12px] flex items-center justify-center gap-xs hover:brightness-95 transition-all disabled:opacity-70 active:scale-[0.98]"
+              >
+                {loading && <Loader2 size={20} className="animate-spin" />}
+                {loading ? 'جاري التحقق...' : 'دخول إلى حسابي'}
               </button>
 
-              <button onClick={() => { setStep('phone'); setOtp(''); setDevCode(''); setError('') }}
-                style={{ width: '100%', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                <ArrowLeft size={13} /> تغيير الرقم
+              <button 
+                onClick={() => { setStep('phone'); setOtp(''); setError('') }}
+                className="w-full h-[48px] flex items-center justify-center gap-xs text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-[12px] transition-all"
+              >
+                <ArrowLeft size={18} />
+                تعديل رقم الموبايل
               </button>
-            </>
+            </div>
           )}
         </div>
 
-        <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--text-muted)', marginTop: 16 }}>
-          رقمك ما بيظهر للزوار — التواصل من خلال كارنا فقط
+        {/* Footer Text */}
+        <p className="text-center font-label-sm text-[12px] text-text-muted mt-lg flex items-center justify-center gap-[4px]">
+          <ShieldCheck size={14} />
+          رقمك محمي ولن يظهر للزوار — التواصل يتم عبر كارنا فقط
         </p>
       </div>
     </main>

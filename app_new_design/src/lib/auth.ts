@@ -15,102 +15,94 @@ export interface AuthUser {
   user_metadata?: Record<string, unknown>
 }
 
-const SESSION_KEY = 'carna_user'
-
-export function getSession(): AuthUser | null {
+export async function getSession(): Promise<AuthUser | null> {
   try {
-    const raw = localStorage.getItem(SESSION_KEY)
-    return raw ? JSON.parse(raw) : null
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return null
+
+    const { data: profile } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', session.user.id)
+      .single()
+
+    if (profile) {
+      return { ...profile, phone: profile.phone || session.user.phone } as AuthUser
+    }
+    
+    // Fallback if profile is not created by trigger yet
+    return {
+      id: session.user.id,
+      phone: session.user.phone || '',
+      name: null,
+      avatar_url: null,
+      verified: true,
+      wallet_balance: 0,
+      is_admin: false
+    }
   } catch {
     return null
   }
 }
 
-function saveSession(user: AuthUser) {
-  localStorage.setItem(SESSION_KEY, JSON.stringify(user))
+export async function clearSession() {
+  await supabase.auth.signOut()
 }
 
-export function clearSession() {
-  localStorage.removeItem(SESSION_KEY)
-}
-
-// Generate 6-digit OTP and store in DB
-export async function requestOTP(phone: string): Promise<string> {
-  const code = String(Math.floor(100000 + Math.random() * 900000))
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 min
-
-  // Invalidate old codes
-  await supabase
-    .from('otp_codes')
-    .update({ used: true })
-    .eq('phone', phone)
-    .eq('used', false)
-
-  const { error } = await supabase.from('otp_codes').insert({
-    phone,
-    code,
-    expires_at: expiresAt,
+// Generate OTP via Supabase Auth
+export async function requestOTP(phone: string): Promise<void> {
+  const formattedPhone = phone.startsWith('0') ? '+963' + phone.slice(1) : phone;
+  
+  const { error } = await supabase.auth.signInWithOtp({
+    phone: formattedPhone,
   })
 
-  if (error) throw error
-
-  // Send SMS — falls back to dev mode if env vars not set
-  try {
-    await supabase.functions.invoke('send-sms', {
-      body: {
-        phone,
-        message: `كارنا: رمز التحقق الخاص بك هو ${code} — صالح لمدة 10 دقائق`,
-      },
-    })
-    return '' // SMS sent — no need to expose code
-  } catch {
-    // dev fallback: return code to display on screen
-    return code
+  if (error) {
+    throw new Error(error.message || 'حدث خطأ أثناء إرسال الرمز')
   }
 }
 
-// Verify OTP and login/register user
+// Verify OTP via Supabase Auth
 export async function verifyOTP(phone: string, code: string): Promise<AuthUser> {
-  const { data: otpRow, error: otpErr } = await supabase
-    .from('otp_codes')
-    .select('*')
-    .eq('phone', phone)
-    .eq('code', code)
-    .eq('used', false)
-    .gte('expires_at', new Date().toISOString())
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single()
+  const formattedPhone = phone.startsWith('0') ? '+963' + phone.slice(1) : phone;
+  
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone: formattedPhone,
+    token: code,
+    type: 'sms',
+  })
 
-  if (otpErr || !otpRow) throw new Error('الرمز غير صحيح أو انتهى وقته')
-
-  // Mark OTP as used
-  await supabase.from('otp_codes').update({ used: true }).eq('id', otpRow.id)
-
-  // Find or create user
-  const { data: existing } = await supabase
-    .from('users')
-    .select('*')
-    .eq('phone', phone)
-    .single()
-
-  let user: AuthUser
-
-  if (existing) {
-    user = existing as AuthUser
-  } else {
-    const { data: created, error: createErr } = await supabase
-      .from('users')
-      .insert({ phone, verified: true })
-      .select()
-      .single()
-
-    if (createErr || !created) throw new Error('صار في مشكلة بسيطة — جرب مرة ثانية')
-    user = created as AuthUser
+  if (error) {
+    console.error('OTP Verification Error:', error)
+    throw new Error(error.message || 'الرمز غير صحيح أو انتهت صلاحيته')
+  }
+  if (!data.user || !data.session) {
+    throw new Error('لم يتم إنشاء جلسة صالحة')
   }
 
-  saveSession(user)
-  return user
+  // Wait a small bit to allow the database trigger to create the profile row
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  const { data: profile, error: profileErr } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', data.user.id)
+    .single()
+    
+  if (profile) {
+    return { ...profile, phone: formattedPhone } as AuthUser
+  }
+  
+  // Fallback
+  return {
+    id: data.user.id,
+    phone: formattedPhone,
+    name: null,
+    avatar_url: null,
+    verified: true,
+    wallet_balance: 0,
+    is_admin: false
+  }
 }
 
 export async function updateProfile(userId: string, name: string): Promise<void> {
@@ -120,7 +112,4 @@ export async function updateProfile(userId: string, name: string): Promise<void>
     .eq('id', userId)
 
   if (error) throw error
-
-  const session = getSession()
-  if (session) saveSession({ ...session, name })
 }

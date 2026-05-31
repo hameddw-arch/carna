@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
@@ -61,7 +62,8 @@ export default function WalletPage() {
   }
 
   return (
-    <div className="bg-background min-h-screen text-on-surface rtl">
+    <DashboardLayout>
+      <div className="bg-background min-h-screen text-on-surface w-full">
       {/* Page Header */}
       <div className="bg-surface-container-lowest dark:bg-surface-container py-xl border-b border-border-light">
         <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
@@ -82,7 +84,21 @@ export default function WalletPage() {
         
         {/* Transactions List */}
         <div className="lg:col-span-8 flex flex-col gap-md">
-          <h2 className="font-headline-sm text-headline-sm font-bold text-on-surface mb-sm">سجل المعاملات</h2>
+          
+          {/* Information Banner */}
+          <div className="bg-primary-container/10 border border-primary-container/30 rounded-xl p-md flex gap-md items-start">
+            <div className="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined">lightbulb</span>
+            </div>
+            <div>
+              <h3 className="font-label-lg font-bold text-on-surface mb-xs">ما هي فائدة رصيد المحفظة؟</h3>
+              <p className="text-body-sm text-tertiary leading-relaxed">
+                لا يُستخدم هذا الرصيد في عمليات بيع وشراء السيارات (حيث تتم خارج الموقع)، بل يُستخدم لشراء <strong>الخدمات المدفوعة</strong> داخل منصة كارنا مثل: تمييز إعلانك ليظهر في القمة، إعادة تحديث الإعلان، شراء باقات للمعارض والورشات، وزيادة الحد المسموح للإعلانات.
+              </p>
+            </div>
+          </div>
+
+          <h2 className="font-headline-sm text-headline-sm font-bold text-on-surface mb-sm mt-2">سجل المعاملات</h2>
           {txs.length === 0 ? (
             <div className="bg-surface-white border border-border-light rounded-xl p-xl text-center text-tertiary font-body-md">
               لا توجد معاملات بعد في محفظتك.
@@ -190,5 +206,6 @@ export default function WalletPage() {
         </aside>
       </main>
     </div>
+    </DashboardLayout>
   );
 }

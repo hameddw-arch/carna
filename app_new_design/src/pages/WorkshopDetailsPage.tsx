@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { fetchService, fetchServiceReviews, insertReview } from '../lib/queries';
+import { fetchService, fetchServiceReviews, insertReview, incrementServiceAnalytics } from '../lib/queries';
 import { useAuth } from '../contexts/AuthContext';
 import SEO from '../components/SEO';
 
@@ -19,7 +19,10 @@ export default function WorkshopDetailsPage() {
     if (!id) return;
     setLoading(true);
     fetchService(id)
-      .then(data => setService(data))
+      .then(data => {
+        setService(data);
+        incrementServiceAnalytics(id, 'views_count');
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
 
@@ -125,40 +128,44 @@ export default function WorkshopDetailsPage() {
       {/* Hero Gallery Section */}
       <section className="grid grid-cols-1 md:grid-cols-12 gap-xs h-[300px] md:h-[500px] mb-md overflow-hidden rounded-xl">
         {/* Main Large Image */}
-        <div className="md:col-span-8 h-full relative group cursor-pointer">
+        <div className={`h-full relative group cursor-pointer ${service.images?.length > 1 ? 'md:col-span-8' : 'md:col-span-12'}`}>
           <img 
             alt={service.name} 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-            src={service.image || '/placeholder-car.svg'} 
+            src={service.images?.[0]?.url || service.image || '/placeholder-car.svg'} 
           />
           <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all"></div>
         </div>
         
         {/* Stacked Sidebar Images */}
-        <div className="hidden md:flex md:col-span-4 flex-col gap-xs h-full">
-          <div className="h-1/2 relative group cursor-pointer overflow-hidden">
-            <img 
-              alt="تفاصيل الورشة 1" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-              data-alt="A detailed shot of a specialized automotive technician using a digital scanner on a luxury vehicle's engine. The setting is a sterile, well-lit workshop with professional tools neatly arranged. The lighting focuses on the engine components, highlighting precision and technological mastery in a high-tech car maintenance environment." 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMF-bUMLKqEWgWHTNZD6tXg7opc9dJQxYR6MYO8ex0iVlQEFpjrcUmi3QVc2bZ9nY4fx0udAOj0pOSwt8gpZPwu2krb4Q8yx5GoVy9xavjub8gSTdbmJkEfYvwbxju-pZsKGDkZVaMeZh0iQuNxpqKlmrnER5zIJh2fNFTsyO4yGYYJARSEqAF8pWNJ-3PJzlmMFUm7cv0tZhCtPS-0tlo3SSsga4vCCu-wqgVt0EwCqQ7C8WGNljCJe_j3QGU1hE0mw-lSpdsz1-7" 
-            />
-            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all"></div>
-          </div>
-          <div className="h-1/2 relative group cursor-pointer overflow-hidden">
-            <img 
-              alt="تفاصيل الورشة 2" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-              data-alt="An expansive view of multiple service bays in a high-capacity car workshop. Sleek cars are positioned on hydraulic lifts, and the flooring is polished concrete with yellow safety lines. The environment is orderly and professional, using bright overhead lighting to showcase a state-of-the-art facility for comprehensive automotive care." 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxctGR4ZRaVRfwKiNElvfFC9Ur0776vZaRXh5rkKbEO3aqcwMKJjcoEPSBlEEUoceIVKWzVF1bE0D8XXjVYoJKBMmAZKEgpUV-djyURhu3fvhqlhct70XZTC341EFaiZLLdU30pK4N2oQ4-nF9C4RH30TtreE7QZb_wUD8bq9XHAyZMgtN_ffVcOTJQErnhxSoBa8Cq-la4Jb4QEG0SMJDT5J8FjaScFGDil4r8IU0Nlf6M6PaDxh3jHT4WCUouJseKsHZQ1AkqknH" 
-            />
-            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all"></div>
-            <div className="absolute bottom-4 left-4 bg-black/60 text-white px-4 py-2 rounded-full text-label-sm flex items-center gap-xs">
-              <span className="material-symbols-outlined text-[18px]">grid_view</span>
-              عرض الكل
+        {service.images?.length > 1 && (
+          <div className="hidden md:flex md:col-span-4 flex-col gap-xs h-full">
+            <div className={`relative group cursor-pointer overflow-hidden ${service.images.length > 2 ? 'h-1/2' : 'h-full'}`}>
+              <img 
+                alt="تفاصيل الورشة 1" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                src={service.images[1].url} 
+              />
+              <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all"></div>
             </div>
+            {service.images.length > 2 && (
+              <div className="h-1/2 relative group cursor-pointer overflow-hidden">
+                <img 
+                  alt="تفاصيل الورشة 2" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                  src={service.images[2].url} 
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all"></div>
+                {service.images.length > 3 && (
+                  <div className="absolute bottom-4 left-4 bg-black/60 text-white px-4 py-2 rounded-full text-label-sm flex items-center gap-xs">
+                    <span className="material-symbols-outlined text-[18px]">grid_view</span>
+                    عرض الكل ({service.images.length})
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </section>
 
       {/* Workshop Identity Header */}
@@ -186,8 +193,15 @@ export default function WorkshopDetailsPage() {
           </div>
         </div>
         <div className="flex items-center gap-xs w-full md:w-auto">
-          <button className="flex-1 md:flex-none bg-surface-container-low hover:bg-surface-container border border-border-light text-text-primary font-label-lg text-label-lg px-xl py-3 rounded-lg transition-all active:scale-95 hover:opacity-70">مشاركة</button>
-          <button className="flex-1 md:flex-none bg-accent-yellow hover:bg-primary-container text-black font-bold font-label-lg text-label-lg px-xl py-3 rounded-lg transition-all active:scale-95 hover:opacity-70">حجز موعد</button>
+          <button onClick={() => {
+            incrementServiceAnalytics(id!, 'shares_count');
+            if (navigator.share) {
+              navigator.share({ title: service.name, url: window.location.href });
+            } else {
+              alert('تم نسخ الرابط!');
+            }
+          }} className="flex-1 md:flex-none bg-surface-container-low hover:bg-surface-container border border-border-light text-text-primary font-label-lg text-label-lg px-xl py-3 rounded-lg transition-all active:scale-95 hover:opacity-70">مشاركة</button>
+          <a onClick={() => incrementServiceAnalytics(id!, 'whatsapp_clicks')} href={`https://wa.me/963${(service.phone || '912345678').replace(/^0/, '')}`} target="_blank" rel="noreferrer" className="flex-1 md:flex-none bg-accent-yellow hover:bg-primary-container text-black font-bold font-label-lg text-label-lg px-xl py-3 rounded-lg transition-all active:scale-95 hover:opacity-70 text-center">حجز موعد عبر واتساب</a>
         </div>
       </div>
 
@@ -317,7 +331,7 @@ export default function WorkshopDetailsPage() {
                 </div>
                 <span className="text-label-sm text-on-surface-variant">اتصل الآن</span>
               </a>
-              <a className="flex items-center justify-center gap-xs p-3 bg-[#25D366] hover:bg-[#20bd5c] text-white rounded-lg transition-all font-bold active:scale-[0.98] hover:opacity-70" href={`https://wa.me/963${(service.phone || '912345678').replace(/^0/, '')}`}>
+              <a onClick={() => incrementServiceAnalytics(id!, 'whatsapp_clicks')} className="flex items-center justify-center gap-xs p-3 bg-[#25D366] hover:bg-[#20bd5c] text-white rounded-lg transition-all font-bold active:scale-[0.98] hover:opacity-70" href={`https://wa.me/963${(service.phone || '912345678').replace(/^0/, '')}`} target="_blank" rel="noreferrer">
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.747-2.874-2.512-2.96-2.626-.088-.113-.716-.953-.716-1.819 0-.866.454-1.292.614-1.457.16-.165.352-.206.468-.206s.232.004.334.009c.106.005.25-.04.391.302.144.35.496 1.208.54 1.298.043.09.073.197.015.312-.059.116-.088.188-.175.288-.088.1-.183.224-.263.302-.089.085-.182.179-.079.356.103.178.458.755.981 1.22.673.598 1.239.784 1.417.873.178.089.283.076.388-.045.105-.121.454-.528.575-.708.121-.18.243-.151.409-.09.167.061 1.06.501 1.241.591.182.091.303.136.347.21.045.075.045.432-.099.837z"></path></svg>
                 واتساب
               </a>

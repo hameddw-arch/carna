@@ -9,7 +9,23 @@ import {
   approveTransaction,
   fetchAllServicesForAdmin,
   updateServiceStatus,
-  deleteService
+  deleteService,
+  fetchAdminLogs,
+  insertAdminLog,
+  fetchAllReviewsForAdmin,
+  deleteReview,
+  fetchGovernorates,
+  addGovernorate,
+  toggleGovernorate,
+  deleteGovernorate,
+  fetchSystemSettings,
+  updateSystemSetting,
+  fetchAllUsers,
+  toggleUserAdmin,
+  toggleUserBan,
+  fetchPendingWorkshops,
+  approveWorkshop,
+  rejectWorkshop
 } from '../lib/queries';
 import logoDark from '../assets/carna logo.svg';
 
@@ -22,33 +38,34 @@ export default function AdminDashboardPage() {
   const [pendingTxs, setPendingTxs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
+  
+  const [governorates, setGovernorates] = useState<any[]>([]);
+  const [systemSettings, setSystemSettings] = useState<any[]>([]);
+  const [newGovName, setNewGovName] = useState('');
 
-  // States for governorates and logs
-  const [governorates, setGovernorates] = useState([
-    { name: 'دمشق', count: 1500, active: true },
-    { name: 'حلب', count: 850, active: false },
-    { name: 'حمص', count: 420, active: true },
-    { name: 'اللاذقية', count: 300, active: true }
-  ]);
+  const [activityLogs, setActivityLogs] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [pendingWorkshops, setPendingWorkshops] = useState<any[]>([]);
+  const [userSearch, setUserSearch] = useState('');
 
-  const [activityLogs, setActivityLogs] = useState([
-    { id: 1, action: 'تعديل إعدادات المستخدم', user: 'Admin Ahmad', time: '14:30', type: 'edit', color: 'blue', icon: 'tune' },
-    { id: 2, action: 'إضافة محافظة جديدة', user: 'Admin Sarah', time: '10:15', type: 'add', color: 'green', icon: 'add_location' },
-    { id: 3, action: 'حظر مستخدم', user: 'Admin Khalid', time: '09:00', type: 'delete', color: 'red', icon: 'delete' },
-  ]);
-
-  const addLog = (action: string, type: string, color: string, icon: string) => {
+  const addLog = async (action: string, type: string, color: string, icon: string) => {
     const newLog = {
-      // eslint-disable-next-line react-hooks/purity
-      id: Date.now(),
       action,
-      user: user?.name || 'Admin',
-      time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
       type,
       color,
       icon
     };
-    setActivityLogs(prev => [newLog, ...prev]);
+    
+    // Optistic UI Update
+    setActivityLogs(prev => [{
+      id: Date.now(),
+      ...newLog,
+      users: { name: user?.name || 'Admin' },
+      created_at: new Date().toISOString()
+    }, ...prev]);
+
+    await insertAdminLog(newLog);
   };
 
   const handleToggleListing = async (id: string, currentStatus: string) => {
@@ -112,14 +129,51 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleToggleGovernorate = (name: string) => {
-    setGovernorates(prev => prev.map(g => {
-      if (g.name === name) {
-        addLog(`تغيير حالة محافظة ${name} إلى ${!g.active ? 'مفعلة' : 'معطلة'}`, 'edit', 'blue', 'map');
-        return { ...g, active: !g.active };
-      }
-      return g;
-    }));
+  const handleAddGovernorate = async () => {
+    if (!newGovName.trim()) return;
+    try {
+      const added = await addGovernorate(newGovName.trim());
+      setGovernorates(prev => [...prev, added]);
+      setNewGovName('');
+      addLog(`إضافة محافظة جديدة: ${newGovName}`, 'add', 'green', 'map');
+    } catch (error) {
+      console.error('Error adding governorate:', error);
+      alert('خطأ في إضافة المحافظة. قد تكون موجودة مسبقاً.');
+    }
+  };
+
+  const handleToggleGovStatus = async (id: string, currentState: boolean, name: string) => {
+    try {
+      const updated = await toggleGovernorate(id, !currentState);
+      setGovernorates(prev => prev.map(g => g.id === id ? updated : g));
+      addLog(`تغيير حالة محافظة ${name} إلى ${!currentState ? 'مفعلة' : 'معطلة'}`, 'edit', 'blue', 'map');
+    } catch (error) {
+      console.error('Error toggling governorate:', error);
+      alert('حدث خطأ أثناء تحديث المحافظة');
+    }
+  };
+
+  const handleDeleteGov = async (id: string, name: string) => {
+    if (!window.confirm(`هل أنت متأكد من حذف محافظة ${name}؟`)) return;
+    try {
+      await deleteGovernorate(id);
+      setGovernorates(prev => prev.filter(g => g.id !== id));
+      addLog(`حذف محافظة ${name}`, 'delete', 'red', 'delete');
+    } catch (error) {
+      console.error('Error deleting governorate:', error);
+      alert('حدث خطأ أثناء الحذف');
+    }
+  };
+
+  const handleUpdateSetting = async (key: string, value: any, desc: string) => {
+    try {
+      const updated = await updateSystemSetting(key, value);
+      setSystemSettings(prev => prev.map(s => s.key === key ? updated : s));
+      addLog(`تحديث إعدادات: ${desc}`, 'edit', 'blue', 'settings');
+    } catch (error) {
+      console.error('Error updating setting:', error);
+      alert('حدث خطأ أثناء تحديث الإعدادات');
+    }
   };
 
   const getColorClasses = (color: string, type: 'icon' | 'badge') => {
@@ -140,22 +194,77 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleToggleUserAdmin = async (userId: string, currentIsAdmin: boolean) => {
+    try {
+      const updated = await toggleUserAdmin(userId, !currentIsAdmin);
+      setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, is_admin: updated.is_admin } : u));
+      addLog(`${!currentIsAdmin ? 'منح' : 'سحب'} صلاحية الإدارة`, 'edit', 'blue', 'admin_panel_settings');
+    } catch (error) {
+      alert('حدث خطأ أثناء تحديث الصلاحيات');
+    }
+  };
+
+  const handleToggleUserBan = async (userId: string, currentIsBanned: boolean) => {
+    const msg = currentIsBanned ? 'هل تريد رفع الحظر عن هذا المستخدم؟' : 'هل تريد حظر هذا المستخدم؟';
+    if (!window.confirm(msg)) return;
+    try {
+      const updated = await toggleUserBan(userId, !currentIsBanned);
+      setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, is_banned: updated.is_banned } : u));
+      addLog(`${!currentIsBanned ? 'حظر' : 'رفع حظر'} مستخدم`, 'edit', !currentIsBanned ? 'red' : 'green', 'block');
+    } catch (error) {
+      alert('حدث خطأ أثناء تحديث حالة المستخدم');
+    }
+  };
+
+  const handleApproveWorkshop = async (id: string) => {
+    try {
+      await approveWorkshop(id);
+      setPendingWorkshops(prev => prev.filter(w => w.id !== id));
+      addLog('قبول طلب تسجيل ورشة', 'add', 'green', 'handyman');
+    } catch (error) {
+      alert('حدث خطأ أثناء قبول الورشة');
+    }
+  };
+
+  const handleRejectWorkshop = async (id: string) => {
+    if (!window.confirm('هل أنت متأكد من رفض طلب الورشة؟')) return;
+    try {
+      await rejectWorkshop(id);
+      setPendingWorkshops(prev => prev.filter(w => w.id !== id));
+      addLog('رفض طلب تسجيل ورشة', 'delete', 'red', 'cancel');
+    } catch (error) {
+      alert('حدث خطأ أثناء رفض الورشة');
+    }
+  };
+
   useEffect(() => {
     Promise.all([
       fetchAdminStats(),
-      fetchAllListingsForAdmin(5),
+      fetchAllListingsForAdmin(50),
       fetchPendingTransactions(),
-      fetchAllServicesForAdmin()
-    ]).then(([s, l, txs, servs]) => {
+      fetchAllServicesForAdmin(),
+      fetchAdminLogs(20),
+      fetchAllReviewsForAdmin(50),
+      fetchGovernorates(),
+      fetchSystemSettings(),
+      fetchAllUsers(100),
+      fetchPendingWorkshops(50)
+    ]).then(([s, l, txs, servs, logs, revs, govs, sets, users, pendWs]) => {
       setStats(s);
       setListings(l);
       setPendingTxs(txs);
       setServices(servs);
+      setActivityLogs(logs);
+      setReviews(revs);
+      setGovernorates(govs);
+      setSystemSettings(sets);
+      setAllUsers(users);
+      setPendingWorkshops(pendWs);
     }).finally(() => setLoading(false));
   }, []);
 
   if (authLoading || loading) return <div className="p-xl text-center">جاري التحميل...</div>;
-  if (!user || user.role !== 'admin') return <div className="p-xl text-center">غير مصرح لك بالدخول</div>;
+  if (!user || !user.is_admin) return <div className="p-xl text-center">غير مصرح لك بالدخول</div>;
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex flex-col">
@@ -224,10 +333,31 @@ export default function AdminDashboardPage() {
                 <span className="font-label-lg text-label-lg">سجلات النشاط</span>
               </div>
             </button>
+            <button onClick={() => setActiveTab('reviews')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'reviews' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
+              <div className="flex items-center gap-xs">
+                <span className="material-symbols-outlined">star_rate</span>
+                <span className="font-label-lg text-label-lg">مراجعة التقييمات</span>
+              </div>
+            </button>
             <button onClick={() => setActiveTab('workshops')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'workshops' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
               <div className="flex items-center gap-xs">
                 <span className="material-symbols-outlined">handyman</span>
                 <span className="font-label-lg text-label-lg">الورشات</span>
+              </div>
+            </button>
+            <button onClick={() => setActiveTab('workshop-approvals')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'workshop-approvals' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
+              <div className="flex items-center gap-xs">
+                <span className="material-symbols-outlined">pending_actions</span>
+                <span className="font-label-lg text-label-lg">طلبات الورشات</span>
+              </div>
+              {pendingWorkshops.length > 0 && (
+                <span className="bg-error text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{pendingWorkshops.length}</span>
+              )}
+            </button>
+            <button onClick={() => setActiveTab('users')} className={`flex items-center justify-between gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 ${activeTab === 'users' ? 'text-on-primary-container bg-primary-container font-bold shadow-md' : 'text-white/70 hover:bg-white/10'}`}>
+              <div className="flex items-center gap-xs">
+                <span className="material-symbols-outlined">group</span>
+                <span className="font-label-lg text-label-lg">إدارة المستخدمين</span>
               </div>
             </button>
           </div>
@@ -279,10 +409,10 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Recent Ads Table */}
+              {/* Pending / Active Ads Table */}
               <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm mb-lg">
                 <div className="p-md flex justify-between items-center border-b border-border-light">
-                  <h2 className="font-headline-sm text-headline-sm">أحدث الإعلانات</h2>
+                  <h2 className="font-headline-sm text-headline-sm">إدارة الإعلانات (الأحدث)</h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-right">
@@ -303,15 +433,23 @@ export default function AdminDashboardPage() {
                           <td className="p-md text-center">
                             {l.status === 'active' ? (
                               <span className="bg-green-500 text-white px-3 py-0.5 rounded text-[11px] font-bold">فعال</span>
+                            ) : l.status === 'pending' ? (
+                              <span className="bg-orange-500 text-white px-3 py-0.5 rounded text-[11px] font-bold">بانتظار الموافقة</span>
                             ) : (
                               <span className="bg-gray-400 text-white px-3 py-0.5 rounded text-[11px] font-bold">غير فعال</span>
                             )}
                           </td>
                           <td className="p-md text-center">
                             <div className="flex items-center justify-center gap-2">
-                              <button onClick={() => handleToggleListing(l.id, l.status)} className="p-1 text-tertiary hover:text-primary transition-colors" title="تغيير الحالة">
-                                <span className="material-symbols-outlined text-sm">{l.status === 'active' ? 'block' : 'check_circle'}</span>
-                              </button>
+                              {l.status === 'pending' ? (
+                                <button onClick={() => handleToggleListing(l.id, l.status)} className="bg-green-500 text-white px-2 py-1 rounded text-[10px] hover:bg-green-600 transition-colors" title="قبول الإعلان">
+                                  قبول
+                                </button>
+                              ) : (
+                                <button onClick={() => handleToggleListing(l.id, l.status)} className="p-1 text-tertiary hover:text-primary transition-colors" title="تغيير الحالة">
+                                  <span className="material-symbols-outlined text-sm">{l.status === 'active' ? 'block' : 'check_circle'}</span>
+                                </button>
+                              )}
                               <button onClick={() => handleDeleteListing(l.id)} className="p-1 text-tertiary hover:text-error transition-colors" title="حذف">
                                 <span className="material-symbols-outlined text-sm">delete</span>
                               </button>
@@ -369,46 +507,109 @@ export default function AdminDashboardPage() {
           )}
 
           {activeTab === 'settings' && (
-            <div className="bg-surface-white border border-border-light rounded-xl p-lg shadow-sm">
-              <h2 className="font-headline-sm text-headline-sm mb-md">إعدادات المنصة</h2>
-              <p className="text-tertiary">الإعدادات العامة للوحة التحكم ستضاف هنا قريبًا.</p>
+            <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm">
+              <div className="p-md flex justify-between items-center border-b border-border-light">
+                <h2 className="font-headline-sm text-headline-sm">إعدادات المنصة</h2>
+              </div>
+              <div className="p-md space-y-md">
+                {systemSettings.map(setting => (
+                  <div key={setting.id} className="flex flex-col gap-2 p-sm bg-surface-container-low rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <label className="font-label-lg font-bold">{setting.description}</label>
+                      {setting.value === 'true' || setting.value === 'false' ? (
+                        <div 
+                          onClick={() => handleUpdateSetting(setting.key, setting.value === 'true' ? 'false' : 'true', setting.description)}
+                          className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${setting.value === 'true' ? 'bg-primary' : 'bg-gray-300'}`}
+                        >
+                          <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${setting.value === 'true' ? 'right-0.5' : 'left-0.5'}`}></div>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2 w-1/2">
+                          <input 
+                            type="text" 
+                            defaultValue={setting.value}
+                            onBlur={(e) => {
+                              if (e.target.value !== setting.value) {
+                                handleUpdateSetting(setting.key, e.target.value, setting.description);
+                              }
+                            }}
+                            className="w-full bg-surface-white border border-border-light rounded-lg px-2 py-1 outline-none focus:border-primary text-left dir-ltr"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-body-sm text-tertiary">المفتاح: {setting.key}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
           {activeTab === 'governorates' && (
             <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm">
-              <div className="p-md flex justify-between items-center border-b border-border-light">
+              <div className="p-md flex justify-between items-center border-b border-border-light bg-surface-container-low">
                 <h2 className="font-headline-sm text-headline-sm">إدارة المحافظات</h2>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="اسم المحافظة" 
+                    value={newGovName}
+                    onChange={(e) => setNewGovName(e.target.value)}
+                    className="bg-surface-white border border-border-light rounded-lg px-sm py-1 font-body-sm outline-none focus:ring-1 focus:ring-primary w-32 md:w-auto"
+                  />
+                  <button 
+                    onClick={handleAddGovernorate}
+                    disabled={!newGovName.trim()}
+                    className="bg-primary text-white px-md py-1 rounded-lg font-bold font-label-sm active:scale-95 transition-transform disabled:opacity-50"
+                  >
+                    إضافة
+                  </button>
+                </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-right">
                   <thead className="bg-surface-container-low text-tertiary text-label-sm border-b border-border-light">
                     <tr>
                       <th className="p-md font-medium">المحافظة</th>
-                      <th className="p-md font-medium text-center">عدد الإعلانات</th>
+                      <th className="p-md font-medium text-center">تاريخ الإضافة</th>
                       <th className="p-md font-medium text-center">الحالة</th>
+                      <th className="p-md font-medium text-center">إجراءات</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-light text-body-sm">
-                    {governorates.map((gov) => (
-                      <tr key={gov.name} className="hover:bg-surface-container-lowest transition-colors">
-                        <td className="p-md font-bold">{gov.name}</td>
-                        <td className="p-md text-center">{gov.count}</td>
-                        <td className="p-md text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <span className={`text-xs font-bold ${gov.active ? 'text-on-surface' : 'text-tertiary'}`}>
-                              {gov.active ? 'فعال' : 'غير فعال'}
-                            </span>
-                            <div 
-                              onClick={() => handleToggleGovernorate(gov.name)}
-                              className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors ${gov.active ? 'bg-on-surface' : 'bg-gray-300'}`}
-                            >
-                              <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${gov.active ? 'right-0.5' : 'left-0.5'}`}></div>
-                            </div>
-                          </div>
-                        </td>
+                    {governorates.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="p-md text-center text-tertiary">لا توجد محافظات</td>
                       </tr>
-                    ))}
+                    ) : (
+                      governorates.map((gov) => (
+                        <tr key={gov.id} className="hover:bg-surface-container-lowest transition-colors">
+                          <td className="p-md font-bold">{gov.name}</td>
+                          <td className="p-md text-center text-tertiary">{new Date(gov.created_at).toLocaleDateString('ar-EG')}</td>
+                          <td className="p-md text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <span className={`text-xs font-bold ${gov.is_active ? 'text-green-600' : 'text-gray-400'}`}>
+                                {gov.is_active ? 'فعالة' : 'معطلة'}
+                              </span>
+                              <div 
+                                onClick={() => handleToggleGovStatus(gov.id, gov.is_active, gov.name)}
+                                className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${gov.is_active ? 'bg-primary' : 'bg-gray-300'}`}
+                              >
+                                <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${gov.is_active ? 'right-0.5' : 'left-0.5'}`}></div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-md text-center">
+                            <button 
+                              onClick={() => handleDeleteGov(gov.id, gov.name)}
+                              className="p-1 text-tertiary hover:text-error transition-colors" title="حذف المحافظة"
+                            >
+                              <span className="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -426,9 +627,9 @@ export default function AdminDashboardPage() {
                         <span className="material-symbols-outlined">{log.icon}</span>
                       </div>
                       <div className="flex-grow text-center">
-                        <p className="text-body-sm font-bold">{log.action} - {log.user}</p>
+                        <p className="text-body-sm font-bold">{log.action} - {log.users?.name || 'Admin'}</p>
                       </div>
-                      <div className="text-tertiary text-xs">{log.time}</div>
+                      <div className="text-tertiary text-xs">{new Date(log.created_at).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</div>
                     </div>
                   ))}
                 </div>
@@ -439,10 +640,10 @@ export default function AdminDashboardPage() {
                   {activityLogs.map((log) => (
                     <div key={`log-${log.id}`} className="flex items-center justify-between pb-3 border-b border-border-light last:border-0">
                       <div className="flex-grow">
-                        <p className="text-body-sm text-on-surface">{log.action} - {log.user}</p>
+                        <p className="text-body-sm text-on-surface">{log.action} - {log.users?.name || 'Admin'}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-tertiary text-xs">{log.time}</span>
+                        <span className="text-tertiary text-xs">{new Date(log.created_at).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${getColorClasses(log.color, 'badge')}`}>
                           {log.type === 'edit' ? 'تعديل' : log.type === 'add' ? 'إضافة' : 'حذف/تعطيل'}
                         </span>
@@ -514,27 +715,261 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
+          {activeTab === 'reviews' && (
+            <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm">
+              <div className="p-md flex justify-between items-center border-b border-border-light">
+                <h2 className="font-headline-sm text-headline-sm">التقييمات والمراجعات</h2>
+                <p className="text-body-sm text-tertiary font-bold">العدد: <span className="text-primary">{reviews.length}</span></p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-right">
+                  <thead className="bg-surface-container-low text-tertiary text-label-sm border-b border-border-light">
+                    <tr>
+                      <th className="p-md font-medium">المستخدم</th>
+                      <th className="p-md font-medium">الورشة المقيمة</th>
+                      <th className="p-md font-medium">التقييم</th>
+                      <th className="p-md font-medium">التعليق</th>
+                      <th className="p-md font-medium text-center">إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border-light text-body-sm">
+                    {reviews.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="p-md text-center text-tertiary font-bold">لا توجد تقييمات حالياً</td>
+                      </tr>
+                    ) : (
+                      reviews.map(r => (
+                        <tr key={r.id} className="hover:bg-surface-container-lowest transition-colors">
+                          <td className="p-md font-bold">{r.users?.name || 'مجهول'}</td>
+                          <td className="p-md">{r.services?.name || 'غير معروف'}</td>
+                          <td className="p-md text-orange-500 font-bold">
+                            <div className="flex items-center">
+                              {r.rating} <span className="material-symbols-outlined text-[14px]">star</span>
+                            </div>
+                          </td>
+                          <td className="p-md max-w-xs truncate">{r.comment || 'بدون تعليق'}</td>
+                          <td className="p-md text-center">
+                            <button 
+                              onClick={async () => {
+                                if(window.confirm('هل أنت متأكد من حذف هذا التقييم المخالف؟')) {
+                                  try {
+                                    await deleteReview(r.id);
+                                    setReviews(prev => prev.filter(rev => rev.id !== r.id));
+                                    addLog('حذف تقييم مخالف', 'delete', 'red', 'delete');
+                                  } catch (error) {
+                                    alert('فشل الحذف');
+                                  }
+                                }
+                              }} 
+                              className="p-1 text-tertiary hover:text-error transition-colors" title="حذف التقييم">
+                              <span className="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'workshop-approvals' && (
+            <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm">
+              <div className="p-md flex justify-between items-center border-b border-border-light">
+                <h2 className="font-headline-sm text-headline-sm">طلبات تسجيل ورشات جديدة</h2>
+                <span className="bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">
+                  {pendingWorkshops.length} طلب معلق
+                </span>
+              </div>
+              {pendingWorkshops.length === 0 ? (
+                <div className="p-xl text-center">
+                  <span className="material-symbols-outlined text-4xl text-tertiary">check_circle</span>
+                  <p className="mt-2 text-tertiary font-label-lg">لا توجد طلبات معلقة حالياً</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-border-light">
+                  {pendingWorkshops.map(w => (
+                    <div key={w.id} className="p-md flex flex-col md:flex-row md:items-center justify-between gap-md hover:bg-surface-container-lowest transition-colors">
+                      <div className="flex-grow">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="material-symbols-outlined text-primary">handyman</span>
+                          <p className="font-bold text-on-surface">{w.name}</p>
+                          {w.is_inspection_center && (
+                            <span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded">مركز فحص</span>
+                          )}
+                        </div>
+                        <p className="text-body-sm text-tertiary">{w.city} · {w.phone}</p>
+                        <p className="text-body-sm text-tertiary">المالك: {w.users?.name} ({w.users?.phone})</p>
+                        {w.description && (
+                          <p className="text-body-sm text-on-surface/80 mt-1 line-clamp-2">{w.description}</p>
+                        )}
+                        <p className="text-[11px] text-tertiary mt-1">تاريخ الطلب: {new Date(w.created_at).toLocaleDateString('ar-EG')}</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => handleApproveWorkshop(w.id)}
+                          className="flex items-center gap-1 bg-green-500 text-white px-md py-xs rounded-lg hover:bg-green-600 transition-colors font-bold text-sm shadow-sm"
+                        >
+                          <span className="material-symbols-outlined text-sm">check</span>
+                          قبول
+                        </button>
+                        <button
+                          onClick={() => handleRejectWorkshop(w.id)}
+                          className="flex items-center gap-1 bg-error text-white px-md py-xs rounded-lg hover:opacity-90 transition-colors font-bold text-sm shadow-sm"
+                        >
+                          <span className="material-symbols-outlined text-sm">close</span>
+                          رفض
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'users' && (
+            <div className="bg-surface-white border border-border-light rounded-xl overflow-hidden shadow-sm">
+              <div className="p-md flex flex-col md:flex-row justify-between items-start md:items-center gap-sm border-b border-border-light">
+                <div>
+                  <h2 className="font-headline-sm text-headline-sm">إدارة المستخدمين</h2>
+                  <p className="text-body-sm text-tertiary">إجمالي: <span className="text-primary font-bold">{allUsers.length}</span> مستخدم</p>
+                </div>
+                <div className="flex items-center bg-surface-container-low border border-border-light rounded-lg px-sm py-1.5 w-full md:w-64">
+                  <span className="material-symbols-outlined text-tertiary text-sm">search</span>
+                  <input
+                    type="text"
+                    placeholder="ابحث بالاسم أو الهاتف..."
+                    value={userSearch}
+                    onChange={e => setUserSearch(e.target.value)}
+                    className="bg-transparent border-none outline-none text-body-sm w-full px-xs"
+                  />
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-right">
+                  <thead className="bg-surface-container-low text-tertiary text-label-sm border-b border-border-light">
+                    <tr>
+                      <th className="p-md font-medium">المستخدم</th>
+                      <th className="p-md font-medium">الهاتف / الإيميل</th>
+                      <th className="p-md font-medium text-center">رصيد المحفظة</th>
+                      <th className="p-md font-medium text-center">التقييم</th>
+                      <th className="p-md font-medium text-center">الحالة</th>
+                      <th className="p-md font-medium text-center">الإدارة</th>
+                      <th className="p-md font-medium text-center">إجراءات</th>
+                      <th className="p-md font-medium">تاريخ التسجيل</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border-light text-body-sm">
+                    {allUsers
+                      .filter(u => {
+                        if (!userSearch) return true;
+                        const q = userSearch.toLowerCase();
+                        return (
+                          (u.name || '').toLowerCase().includes(q) ||
+                          (u.phone || '').includes(q) ||
+                          (u.email || '').toLowerCase().includes(q)
+                        );
+                      })
+                      .map(u => (
+                        <tr key={u.id} className={`hover:bg-surface-container-lowest transition-colors ${u.is_banned ? 'opacity-60' : ''}`}>
+                          <td className="p-md">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-primary font-bold text-sm">
+                                {(u.name || '?')[0]}
+                              </div>
+                              <span className="font-bold">{u.name || 'بدون اسم'}</span>
+                            </div>
+                          </td>
+                          <td className="p-md text-tertiary">
+                            <p>{u.phone}</p>
+                            {u.email && <p className="text-[11px]">{u.email}</p>}
+                          </td>
+                          <td className="p-md text-center font-bold text-primary">
+                            {(u.wallet_balance || 0).toLocaleString()} ل.س
+                          </td>
+                          <td className="p-md text-center">
+                            {u.rating > 0 ? (
+                              <span className="flex items-center justify-center gap-0.5 text-orange-500 font-bold">
+                                {u.rating?.toFixed(1)} <span className="material-symbols-outlined text-[14px]">star</span>
+                              </span>
+                            ) : (
+                              <span className="text-tertiary text-xs">—</span>
+                            )}
+                          </td>
+                          <td className="p-md text-center">
+                            {u.is_banned ? (
+                              <span className="bg-error/10 text-error text-[11px] font-bold px-2 py-0.5 rounded">محظور</span>
+                            ) : (
+                              <span className="bg-green-100 text-green-700 text-[11px] font-bold px-2 py-0.5 rounded">نشط</span>
+                            )}
+                          </td>
+                          <td className="p-md text-center">
+                            {u.is_admin ? (
+                              <span className="bg-primary/10 text-primary text-[11px] font-bold px-2 py-0.5 rounded">مدير</span>
+                            ) : (
+                              <span className="text-tertiary text-xs">—</span>
+                            )}
+                          </td>
+                          <td className="p-md text-center">
+                            <div className="flex items-center justify-center gap-1">
+                              <button
+                                onClick={() => handleToggleUserAdmin(u.id, u.is_admin)}
+                                title={u.is_admin ? 'سحب صلاحية الإدارة' : 'منح صلاحية الإدارة'}
+                                className="p-1 text-tertiary hover:text-primary transition-colors"
+                              >
+                                <span className="material-symbols-outlined text-sm">
+                                  {u.is_admin ? 'person_remove' : 'admin_panel_settings'}
+                                </span>
+                              </button>
+                              <button
+                                onClick={() => handleToggleUserBan(u.id, u.is_banned)}
+                                title={u.is_banned ? 'رفع الحظر' : 'حظر المستخدم'}
+                                className={`p-1 transition-colors ${u.is_banned ? 'text-green-600 hover:text-green-700' : 'text-tertiary hover:text-error'}`}
+                              >
+                                <span className="material-symbols-outlined text-sm">
+                                  {u.is_banned ? 'lock_open' : 'block'}
+                                </span>
+                              </button>
+                            </div>
+                          </td>
+                          <td className="p-md text-tertiary text-[12px]">{new Date(u.created_at).toLocaleDateString('ar-EG')}</td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
         </main>
       </div>
 
       {/* Mobile Bottom NavBar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface-white border-t border-border-light flex justify-around items-center h-16 px-4 z-50">
-        <a className="flex flex-col items-center text-primary active:scale-95 transition-transform" href="#">
+        <button onClick={() => setActiveTab('dashboard')} className={`flex flex-col items-center active:scale-95 transition-transform ${activeTab === 'dashboard' ? 'text-primary' : 'text-tertiary'}`}>
           <span className="material-symbols-outlined">dashboard</span>
           <span className="text-[10px]">الرئيسية</span>
-        </a>
-        <a className="flex flex-col items-center text-tertiary active:scale-95 transition-transform" href="#">
-          <span className="material-symbols-outlined">settings</span>
-          <span className="text-[10px]">إعدادات</span>
-        </a>
-        <a className="flex flex-col items-center text-tertiary active:scale-95 transition-transform" href="#">
-          <span className="material-symbols-outlined">map</span>
-          <span className="text-[10px]">المحافظات</span>
-        </a>
-        <a className="flex flex-col items-center text-tertiary active:scale-95 transition-transform" href="#">
+        </button>
+        <button onClick={() => setActiveTab('workshops')} className={`flex flex-col items-center active:scale-95 transition-transform ${activeTab === 'workshops' ? 'text-primary' : 'text-tertiary'}`}>
           <span className="material-symbols-outlined">handyman</span>
           <span className="text-[10px]">الورشات</span>
-        </a>
+        </button>
+        <button onClick={() => setActiveTab('workshop-approvals')} className={`relative flex flex-col items-center active:scale-95 transition-transform ${activeTab === 'workshop-approvals' ? 'text-primary' : 'text-tertiary'}`}>
+          <span className="material-symbols-outlined">pending_actions</span>
+          {pendingWorkshops.length > 0 && <span className="absolute -top-1 -right-1 bg-error text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{pendingWorkshops.length}</span>}
+          <span className="text-[10px]">الطلبات</span>
+        </button>
+        <button onClick={() => setActiveTab('users')} className={`flex flex-col items-center active:scale-95 transition-transform ${activeTab === 'users' ? 'text-primary' : 'text-tertiary'}`}>
+          <span className="material-symbols-outlined">group</span>
+          <span className="text-[10px]">المستخدمون</span>
+        </button>
+        <button onClick={() => setActiveTab('settings')} className={`flex flex-col items-center active:scale-95 transition-transform ${activeTab === 'settings' ? 'text-primary' : 'text-tertiary'}`}>
+          <span className="material-symbols-outlined">settings</span>
+          <span className="text-[10px]">إعدادات</span>
+        </button>
       </nav>
     </div>
   );

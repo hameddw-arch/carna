@@ -105,16 +105,24 @@ export async function incrementListingViews(listingId: string) {
   return data?.view_count ?? 0
 }
 
-export async function fetchUserListings(userId: string) {
-  const { data, error } = await supabase
+export async function fetchUserListings(userId: string, offset = 0, limit = 10, statusFilter = 'all') {
+  let query = supabase
     .from('listings')
-    .select(`*, listing_images(url, "order"), listing_tags(tag), users(name, phone, rating, rating_count)`)
+    .select(`*, listing_images(url, "order"), listing_tags(tag), users(name, phone, rating, rating_count)`, { count: 'exact' })
     .eq('user_id', userId)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false });
 
-  if (error) throw error
+  if (statusFilter !== 'all') {
+    query = query.eq('status', statusFilter === 'active' ? 'active' : 'sold');
+  }
 
-  return (data ?? []).map(l => ({
+  query = query.range(offset, offset + limit - 1);
+
+  const { data, count, error } = await query;
+
+  if (error) throw error;
+
+  const listings = (data ?? []).map(l => ({
     ...l,
     image:      l.listing_images?.[0]?.url ?? PLACEHOLDER,
     imageCount: l.listing_images?.length ?? 0,
@@ -122,7 +130,9 @@ export async function fetchUserListings(userId: string) {
     hours:      Math.floor((Date.now() - new Date(l.created_at).getTime()) / 3600000),
     sellerRating:      l.users?.rating ?? null,
     sellerRatingCount: l.users?.rating_count ?? 0,
-  }))
+  }));
+
+  return { listings, count: count ?? 0 };
 }
 
 export async function fetchDistinctMakes() {
@@ -170,22 +180,30 @@ export async function fetchServices(filters?: {
 export async function fetchService(id: string) {
   const { data, error } = await supabase
     .from('services')
-    .select(`*, service_categories(name)`)
+    .select(`*, service_categories(name), service_images(id, url, "order")`)
     .eq('id', id)
     .single()
   if (error) throw error
-  return { ...data, category: data.service_categories?.name ?? '' }
+  return { 
+    ...data, 
+    category: data.service_categories?.name ?? '',
+    images: data.service_images?.sort((a: any, b: any) => a.order - b.order) ?? []
+  }
 }
 
 export async function fetchUserService(ownerId: string) {
   const { data, error } = await supabase
     .from('services')
-    .select(`*, service_categories(name)`)
-    .eq('owner_id', ownerId)
+    .select(`*, service_categories(name), service_images(id, url, "order")`)
+    .eq('user_id', ownerId)
     .maybeSingle()
   if (error) throw error
   if (!data) return null
-  return { ...data, category: data.service_categories?.name ?? '' }
+  return { 
+    ...data, 
+    category: data.service_categories?.name ?? '',
+    images: data.service_images?.sort((a: any, b: any) => a.order - b.order) ?? []
+  }
 }
 
 export async function fetchAdminStats() {
@@ -248,7 +266,7 @@ export async function updateUserProfile(userId: string, updates: any) {
   return data
 }
 
-export async function updateListingStatus(id: string, status: 'active' | 'inactive') {
+export async function updateListingStatus(id: string, status: 'active' | 'inactive' | 'sold') {
   const { data, error } = await supabase
     .from('listings')
     .update({ status })
@@ -281,6 +299,28 @@ export async function fetchAllServicesForAdmin(limit?: number) {
   const { data, error } = await query;
   if (error) throw error;
   return data || [];
+}
+
+export async function checkWorkshopStatus() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('services')
+    .select('id, name')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (error) return null;
+  return data;
+}
+
+export async function incrementServiceAnalytics(serviceId: string, colName: 'views_count' | 'whatsapp_clicks' | 'shares_count') {
+  const { error } = await supabase.rpc('increment_service_stat', {
+    row_id: serviceId,
+    col_name: colName
+  });
+  if (error) console.error('Error incrementing analytics:', error);
 }
 
 export async function updateServiceStatus(id: string, status: 'active' | 'inactive') {
@@ -365,7 +405,7 @@ export async function updateService(id: string, updates: any) {
   return data
 }
 
-export async function uploadServiceImage(serviceId: string, file: File) {
+export async function uploadServiceImage(serviceId: string, file: File, order: number = 0) {
   if (!file) return null;
   const fileExt = file.name.split('.').pop();
   const fileName = `services/${serviceId}/${Math.random()}.${fileExt}`;
@@ -380,8 +420,33 @@ export async function uploadServiceImage(serviceId: string, file: File) {
     .from('workshop-images')
     .getPublicUrl(fileName);
 
-  return publicUrl;
+  // Insert into service_images
+  const { error: dbError, data } = await supabase
+    .from('service_images')
+    .insert({
+      service_id: serviceId,
+      url: publicUrl,
+      order: order
+    })
+    .select()
+    .single();
+
+  if (dbError) throw dbError;
+
+  return data; // Return the whole image object including id and url
 }
+
+export async function deleteServiceImage(imageId: string) {
+  const { error } = await supabase
+    .from('service_images')
+    .delete()
+    .eq('id', imageId);
+
+  if (error) throw error;
+  return true;
+}
+
+
 
 export async function fetchServiceReviews(serviceId: string) {
   const { data, error } = await supabase
@@ -529,4 +594,310 @@ export async function purchaseSubscription(userId: string, serviceId: string, ti
   if (serviceError) throw serviceError;
 
   return newBalance;
+}
+
+export async function fetchUserChats(userId: string) {
+  const { data, error } = await supabase
+    .from('chats')
+    .select(`
+      *,
+      listing:listings!inner (id, title, listing_images(url)),
+      buyer:users!chats_buyer_id_fkey (id, name, phone),
+      seller:users!chats_seller_id_fkey (id, name, phone),
+      messages (content, is_read, created_at, sender_id)
+    `)
+    .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
+    .order('updated_at', { ascending: false });
+
+  if (error) throw error;
+  
+  // Clean up data
+  return (data || []).map((chat: any) => {
+    // get the latest message
+    const sortedMessages = chat.messages ? chat.messages.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) : [];
+    const latestMessage = sortedMessages[0] || null;
+    
+    // figure out other user
+    const isBuyer = chat.buyer_id === userId;
+    const otherUser = isBuyer ? chat.seller : chat.buyer;
+    
+    // figure out image
+    const listingImage = chat.listing?.listing_images?.[0]?.url || PLACEHOLDER;
+    
+    return {
+      id: chat.id,
+      listing_id: chat.listing_id,
+      listing_title: chat.listing?.title || 'إعلان غير متاح',
+      listing_image: listingImage,
+      other_user: otherUser,
+      latest_message: latestMessage,
+      unread_count: sortedMessages.filter((m: any) => !m.is_read && m.sender_id !== userId).length,
+      updated_at: chat.updated_at
+    };
+  });
+}
+
+export async function fetchChatMessages(chatId: string) {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('chat_id', chatId)
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function sendMessage(chatId: string, senderId: string, content: string) {
+  const { data, error } = await supabase
+    .from('messages')
+    .insert({ chat_id: chatId, sender_id: senderId, content })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function markChatAsRead(chatId: string, userId: string) {
+  const { error } = await supabase
+    .from('messages')
+    .update({ is_read: true })
+    .eq('chat_id', chatId)
+    .neq('sender_id', userId)
+    .eq('is_read', false);
+
+  if (error) throw error;
+  return true;
+}
+
+export async function getOrCreateChat(buyerId: string, sellerId: string, listingId: string) {
+  // Check if exists
+  const { data: existing, error: searchError } = await supabase
+    .from('chats')
+    .select('id')
+    .eq('buyer_id', buyerId)
+    .eq('listing_id', listingId)
+    .maybeSingle();
+    
+  if (searchError) throw searchError;
+  if (existing) return existing.id;
+  
+  // Create new
+  const { data: newChat, error: insertError } = await supabase
+    .from('chats')
+    .insert({ buyer_id: buyerId, seller_id: sellerId, listing_id: listingId })
+    .select('id')
+    .single();
+    
+  if (insertError) throw insertError;
+  return newChat.id;
+}
+
+export async function uploadAvatar(userId: string, file: File) {
+  if (!file) return null;
+  const fileExt = file.name.split('.').pop();
+  const fileName = `avatars/${userId}-${Math.random()}.${fileExt}`;
+
+  // Upload to Supabase Storage bucket 'avatars'
+  const { error: uploadError } = await supabase.storage
+    .from('avatars')
+    .upload(fileName, file, { upsert: true });
+
+  if (uploadError) throw uploadError;
+
+  // Get public URL
+  const { data: { publicUrl } } = supabase.storage
+    .from('avatars')
+    .getPublicUrl(fileName);
+
+  // Update user profile with new avatar URL
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ avatar_url: publicUrl })
+    .eq('id', userId);
+
+  if (updateError) throw updateError;
+
+  return publicUrl;
+}
+
+// --- Admin Queries ---
+
+export async function fetchAdminLogs(limit = 50) {
+  const { data, error } = await supabase
+    .from('admin_logs')
+    .select(`*, users(name)`)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.warn('Failed to fetch admin logs:', error);
+    return [];
+  }
+  return data;
+}
+
+export async function insertAdminLog(logData: { action: string, type: string, color: string, icon: string }) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('admin_logs')
+    .insert({
+      ...logData,
+      user_id: user.id
+    });
+
+  if (error) console.error('Failed to insert admin log:', error);
+}
+
+export async function fetchAllReviewsForAdmin(limit = 50) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select(`*, users(name), services(name)`)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function deleteReview(id: string) {
+  const { error } = await supabase
+    .from('reviews')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+  return true;
+}
+
+// --- Governorates ---
+export async function fetchGovernorates(activeOnly = false) {
+  let query = supabase.from('governorates').select('*').order('name');
+  if (activeOnly) {
+    query = query.eq('is_active', true);
+  }
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+}
+
+export async function addGovernorate(name: string) {
+  const { data, error } = await supabase
+    .from('governorates')
+    .insert({ name, is_active: true })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function toggleGovernorate(id: string, is_active: boolean) {
+  const { data, error } = await supabase
+    .from('governorates')
+    .update({ is_active })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteGovernorate(id: string) {
+  const { error } = await supabase
+    .from('governorates')
+    .delete()
+    .eq('id', id);
+  if (error) throw error;
+  return true;
+}
+
+// --- System Settings ---
+export async function fetchSystemSettings() {
+  const { data, error } = await supabase
+    .from('system_settings')
+    .select('*')
+    .order('key');
+  if (error) throw error;
+  return data || [];
+}
+
+export async function updateSystemSetting(key: string, value: any) {
+  const { data, error } = await supabase
+    .from('system_settings')
+    .update({ value, updated_at: new Date().toISOString() })
+    .eq('key', key)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+// --- User Management ---
+export async function fetchAllUsers(limit = 100) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, name, phone, email, is_admin, is_banned, created_at, wallet_balance, rating, rating_count')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
+export async function toggleUserAdmin(userId: string, isAdmin: boolean) {
+  const { data, error } = await supabase
+    .from('users')
+    .update({ is_admin: isAdmin })
+    .eq('id', userId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function toggleUserBan(userId: string, isBanned: boolean) {
+  const { data, error } = await supabase
+    .from('users')
+    .update({ is_banned: isBanned })
+    .eq('id', userId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+// --- Workshop Approvals (Pending) ---
+export async function fetchPendingWorkshops(limit = 50) {
+  const { data, error } = await supabase
+    .from('services')
+    .select('*, users(name, phone)')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data || [];
+}
+
+export async function approveWorkshop(id: string) {
+  const { data, error } = await supabase
+    .from('services')
+    .update({ status: 'active' })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function rejectWorkshop(id: string) {
+  const { data, error } = await supabase
+    .from('services')
+    .update({ status: 'rejected' })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
 }

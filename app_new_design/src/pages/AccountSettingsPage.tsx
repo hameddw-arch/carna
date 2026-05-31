@@ -1,10 +1,26 @@
 import { useState, useEffect } from "react";
+import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../contexts/AuthContext';
-import { updateUserProfile } from '../lib/queries';
+import { updateUserProfile, uploadAvatar } from '../lib/queries';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from "react-router-dom";
 
 export default function AccountSettingsPage() {
-  const { user, setUser, loading } = useAuth();
+  const { user, setUser, loading, logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
   
@@ -84,56 +100,52 @@ export default function AccountSettingsPage() {
     }
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    
+    setIsUploadingAvatar(true);
+    try {
+      const newAvatarUrl = await uploadAvatar(user.id, file);
+      if (newAvatarUrl) {
+        setUser({ ...user, avatar_url: newAvatarUrl });
+        setMessage('تم تحديث الصورة الشخصية بنجاح');
+      }
+    } catch (err: any) {
+      setMessage('حدث خطأ أثناء رفع الصورة: ' + err.message);
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
+  const handleSocialLink = async (provider: 'google' | 'facebook') => {
+    try {
+      await supabase.auth.signInWithOAuth({ provider });
+    } catch (error: any) {
+      alert('تعذر الاتصال بـ ' + provider);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    try {
+      // For Supabase, complete deletion usually requires an edge function.
+      // We will sign out and soft-delete or disable the user.
+      await supabase.from('users').update({ verified: false, role: 'disabled' }).eq('id', user.id);
+      await logout();
+      navigate('/');
+    } catch (error) {
+      alert('حدث خطأ أثناء إغلاق الحساب');
+    }
+  };
+
   if (loading) return <div className="p-xl text-center">جاري التحميل...</div>;
   if (!user) return <div className="p-xl text-center">الرجاء تسجيل الدخول</div>;
 
   return (
-    <div className="bg-background text-text-primary antialiased min-h-screen flex flex-col rtl">
-      
-
-
-      <div className="flex min-h-screen">
-        {/* SideNavBar (Right Side for RTL) */}
-        <aside className="hidden md:flex flex-col h-[calc(100vh-64px)] p-sm fixed right-0 top-16 z-40 w-64 bg-surface-bright dark:bg-surface-container border-l border-border-light">
-          <div className="flex flex-col items-center py-md border-b border-border-light mb-sm">
-            <div className="w-16 h-16 rounded-full overflow-hidden mb-xs border-2 border-primary-container">
-              <img alt="مستخدم كارنا" className="w-full h-full object-cover" data-alt="A close-up headshot of a smiling professional individual, reflecting warmth and reliability. The environment is a brightly lit, modern office setting with a minimalist vibe. The color temperature is slightly warm, aligning with the primary brand colors of a high-end automotive service platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAU8bdBmnbV0VqJBwnhzXuKsygdRODejV_wnep-XfF0pV7bUaF5Ui7R7jz-SMSKlRGJDm8MCRno3H_1KKDtyf_TWwDP2yWex_UH4tG3DyLfjJUN1420n4pKggr5UQAL94XVwt99vP8Z1AwtMr3v3p2RLvfQVP6QIxYazP2hgIjcd2juOoYlOBU21HDHgaFu2opUThpRxLjiw89r81m8tX4GSjs8xTavOEVOQU7eLEuzW66PV-_EWim8qdZPfkB5HoPMBRN_FD52aPMi" />
-            </div>
-            <h3 className="font-headline-sm text-headline-sm text-primary">أهلاً بك</h3>
-            <p className="font-label-sm text-label-sm text-text-muted">إدارة حسابك</p>
-          </div>
-          <nav className="flex-grow space-y-xs">
-            <a className="flex items-center gap-sm px-sm py-md text-text-primary dark:text-on-surface hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150" href="#">
-              <span className="material-symbols-outlined">dashboard</span>
-              <span className="font-label-lg text-label-lg">لوحة القيادة</span>
-            </a>
-            <a className="flex items-center gap-sm px-sm py-md text-text-primary dark:text-on-surface hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150" href="#">
-              <span className="material-symbols-outlined">directions_car</span>
-              <span className="font-label-lg text-label-lg">إعلاناتي</span>
-            </a>
-            <a className="flex items-center gap-sm px-sm py-md text-text-primary dark:text-on-surface hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150" href="#">
-              <span className="material-symbols-outlined">mail</span>
-              <span className="font-label-lg text-label-lg">الرسائل</span>
-            </a>
-            <a className="flex items-center gap-sm px-sm py-md text-text-primary dark:text-on-surface hover:bg-surface-container-high rounded-lg transition-all active:scale-95 duration-150" href="#">
-              <span className="material-symbols-outlined">favorite</span>
-              <span className="font-label-lg text-label-lg">المفضلة</span>
-            </a>
-            <a className="flex items-center gap-sm px-sm py-md text-on-primary-container bg-primary-container rounded-lg font-bold transition-all active:scale-95 duration-150" href="#">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>settings</span>
-              <span className="font-label-lg text-label-lg">الإعدادات</span>
-            </a>
-          </nav>
-          <div className="mt-auto pt-sm border-t border-border-light">
-            <button className="w-full flex items-center gap-sm px-sm py-md text-error hover:bg-error-container rounded-lg transition-all active:scale-95 duration-150">
-              <span className="material-symbols-outlined">logout</span>
-              <span className="font-label-lg text-label-lg">تسجيل الخروج</span>
-            </button>
-          </div>
-        </aside>
-
-        {/* Main Content Canvas */}
-        <main className="flex-grow mr-0 md:mr-64 px-margin-mobile md:px-margin-desktop py-lg max-w-4xl">
+    <DashboardLayout>
+      {/* Main Content Canvas */}
+      <main className="flex-grow px-margin-mobile md:px-margin-desktop py-lg max-w-4xl w-full">
           <header className="mb-lg">
             <h1 className="font-headline-lg text-headline-lg mb-xs">إعدادات الحساب</h1>
             <p className="font-body-md text-body-md text-text-muted">قم بإدارة معلوماتك الشخصية والأمان وتفضيلات التنبيهات.</p>
@@ -147,11 +159,30 @@ export default function AccountSettingsPage() {
                 <h2 className="font-headline-sm text-headline-sm">الملف الشخصي</h2>
               </div>
               <div className="flex flex-col md:flex-row gap-lg">
-                <div className="relative group w-32 h-32 flex-shrink-0">
-                  <img alt="صورة الملف الشخصي" className="w-full h-full object-cover rounded-full border-2 border-border-light group-hover:opacity-75 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxpojTVLaOkwdQdkWLYeJHM1XHkDew9vSm-HZshLyt-JvXw5nVkObC97IYPOueDiW8GSsFSKYR93p3gMLAKAWEqcaMFJ6hVXdU0feR-eQpttU-IY56wTjWQ0blaYI3Q9AwGEEPEdyPWwKs5T1TDdJHMH16dmj6bbwdYgT3mABT08JQHLxroDIlt5L8JuEbH0z1NCNNtyY9oyjeR_VcQ5aC8M7Ah2LSzbceYpnzv2xoflQDGgRu6zW9lGdQUDzmJaNmt-IbJgSCypbs" />
-                  <button className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 rounded-full">
-                    <span className="material-symbols-outlined text-white">edit</span>
-                  </button>
+                <div className="relative group w-32 h-32 flex-shrink-0 cursor-pointer">
+                  {user?.avatar_url ? (
+                    <img alt="صورة الملف الشخصي" className={`w-full h-full object-cover rounded-full border-2 border-border-light transition-opacity ${isUploadingAvatar ? 'opacity-50' : 'group-hover:opacity-75'}`} src={user.avatar_url} />
+                  ) : (
+                    <div className={`w-full h-full bg-surface-container rounded-full border-2 border-border-light flex items-center justify-center text-primary transition-opacity ${isUploadingAvatar ? 'opacity-50' : 'group-hover:opacity-75'}`}>
+                      <span className="material-symbols-outlined text-[64px]">person</span>
+                    </div>
+                  )}
+                  {isUploadingAvatar ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full">
+                      <span className="material-symbols-outlined text-white animate-spin">progress_activity</span>
+                    </div>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 rounded-full">
+                      <span className="material-symbols-outlined text-white">edit</span>
+                    </div>
+                  )}
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    disabled={isUploadingAvatar}
+                  />
                 </div>
                 <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-md">
                   <div className="flex flex-col gap-xs group">
@@ -291,7 +322,7 @@ export default function AccountSettingsPage() {
                       <p className="font-label-sm text-label-sm text-verification-blue">متصل</p>
                     </div>
                   </div>
-                  <button className="text-error font-label-sm hover:underline">إلغاء الربط</button>
+                  <button onClick={() => handleSocialLink('facebook')} className="text-secondary font-label-sm hover:underline">ربط الحساب</button>
                 </div>
                 <div className="flex items-center justify-between p-sm border border-border-light rounded-lg">
                   <div className="flex items-center gap-sm">
@@ -303,7 +334,7 @@ export default function AccountSettingsPage() {
                       <p className="font-label-sm text-label-sm text-text-muted">غير متصل</p>
                     </div>
                   </div>
-                  <button className="text-secondary font-label-sm hover:underline">ربط الحساب</button>
+                  <button onClick={() => handleSocialLink('google')} className="text-secondary font-label-sm hover:underline">ربط الحساب</button>
                 </div>
               </div>
             </section>
@@ -320,8 +351,8 @@ export default function AccountSettingsPage() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-md">
-                <button className="border border-error text-error px-md py-xs rounded-lg font-label-lg hover:bg-error hover:text-white transition-all">تعطيل الحساب مؤقتاً</button>
-                <button className="bg-error text-white px-md py-xs rounded-lg font-label-lg hover:brightness-90 transition-all">حذف الحساب نهائياً</button>
+                <button onClick={() => setShowDeleteConfirm(true)} className="border border-error text-error px-md py-xs rounded-lg font-label-lg hover:bg-error hover:text-white transition-all">تعطيل الحساب مؤقتاً</button>
+                <button onClick={() => setShowDeleteConfirm(true)} className="bg-error text-white px-md py-xs rounded-lg font-label-lg hover:brightness-90 transition-all">حذف الحساب نهائياً</button>
               </div>
             </section>
 
@@ -337,9 +368,34 @@ export default function AccountSettingsPage() {
             </div>
           </div>
         </main>
-      </div>
 
-
-    </div>
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-md">
+            <div className="bg-surface-white rounded-2xl p-xl max-w-sm w-full">
+              <div className="w-16 h-16 bg-error-container/20 text-error rounded-full flex items-center justify-center mx-auto mb-md">
+                <span className="material-symbols-outlined text-[32px]">warning</span>
+              </div>
+              <h3 className="font-headline-sm text-headline-sm font-bold text-center mb-sm">تأكيد إغلاق الحساب</h3>
+              <p className="text-body-md text-tertiary text-center mb-lg">
+                هل أنت متأكد من رغبتك في إغلاق حسابك؟ لن تتمكن من الوصول إلى إعلاناتك أو رصيدك بعد هذا الإجراء.
+              </p>
+              <div className="flex gap-md">
+                <button 
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 px-md py-3 border border-border-light rounded-lg font-bold text-tertiary hover:bg-surface-container transition-all"
+                >
+                  تراجع
+                </button>
+                <button 
+                  onClick={handleDeleteAccount}
+                  className="flex-1 px-md py-3 bg-error text-white rounded-lg font-bold hover:brightness-90 transition-all"
+                >
+                  نعم، أغلق الحساب
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+    </DashboardLayout>
   );
 }

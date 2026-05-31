@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { insertListing, uploadListingImages } from '../lib/queries';
+import { insertListing, uploadListingImages, fetchGovernorates } from '../lib/queries';
+import SEO from '../components/SEO';
 
 export default function PostAdPage() {
   const navigate = useNavigate();
@@ -11,6 +12,13 @@ export default function PostAdPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [dbGovernorates, setDbGovernorates] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchGovernorates().then(data => {
+      setDbGovernorates(data.filter(g => g.is_active).map(g => g.name));
+    }).catch(console.error);
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -102,6 +110,11 @@ export default function PostAdPage() {
 
   return (
     <div className="bg-background min-h-screen text-on-surface">
+      <SEO
+        title="أضف إعلان سيارة"
+        description="أضف إعلان سيارتك على كارنا وابدأ البيع في دقائق. إعلانات سيارات مجانية لكل سوريا."
+        url="/post-ad"
+      />
       <main className="py-lg px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full flex flex-col gap-lg">
         {/* Page Header */}
         <section className="flex flex-col gap-base">
@@ -232,20 +245,7 @@ export default function PostAdPage() {
                   <label className="font-label-lg text-label-lg text-on-surface-variant">المحافظة</label>
                   <select name="city" required className="bg-surface border border-border-light rounded-lg p-sm font-body-md text-body-md focus:border-accent-yellow outline-none transition-all">
                     <option value="">اختر المحافظة</option>
-                    <option>دمشق</option>
-                    <option>ريف دمشق</option>
-                    <option>حلب</option>
-                    <option>حمص</option>
-                    <option>حماة</option>
-                    <option>اللاذقية</option>
-                    <option>طرطوس</option>
-                    <option>السويداء</option>
-                    <option>درعا</option>
-                    <option>القنيطرة</option>
-                    <option>دير الزور</option>
-                    <option>الحسكة</option>
-                    <option>الرقة</option>
-                    <option>إدلب</option>
+                    {dbGovernorates.map(gov => <option key={gov} value={gov}>{gov}</option>)}
                   </select>
                 </div>
                 <div className="flex flex-col gap-xs">

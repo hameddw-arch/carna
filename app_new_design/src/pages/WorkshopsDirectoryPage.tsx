@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchServices } from '../lib/queries';
+import { fetchServices, fetchGovernorates } from '../lib/queries';
 import SEO from '../components/SEO';
 
 export default function WorkshopsDirectoryPage() {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dbGovernorates, setDbGovernorates] = useState<string[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -14,6 +15,10 @@ export default function WorkshopsDirectoryPage() {
       .then(data => setServices(data))
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    fetchGovernorates().then(data => {
+      setDbGovernorates(data.filter(g => g.is_active).map(g => g.name));
+    }).catch(console.error);
   }, []);
 
   const scrollSlider = (distance: number) => {
@@ -154,20 +159,7 @@ export default function WorkshopsDirectoryPage() {
               <label className="font-label-lg text-label-lg block mb-sm">المدينة (مدن سوريا)</label>
               <select className="w-full bg-surface-container-low border-border-light rounded-lg p-sm font-body-sm text-body-sm outline-none focus:border-primary">
                 <option>كل المحافظات</option>
-                <option>دمشق</option>
-                <option>ريف دمشق</option>
-                <option>حلب</option>
-                <option>حمص</option>
-                <option>حماة</option>
-                <option>اللاذقية</option>
-                <option>طرطوس</option>
-                <option>درعا</option>
-                <option>السويداء</option>
-                <option>القنيطرة</option>
-                <option>إدلب</option>
-                <option>الرقة</option>
-                <option>دير الزور</option>
-                <option>الحسكة</option>
+                {dbGovernorates.map(gov => <option key={gov} value={gov}>{gov}</option>)}
               </select>
             </div>
             <div className="mb-md">

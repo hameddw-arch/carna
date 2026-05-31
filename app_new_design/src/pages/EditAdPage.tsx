@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchListing, updateListing, uploadListingImages } from '../lib/queries';
+import { fetchListing, updateListing, uploadListingImages, fetchGovernorates } from '../lib/queries';
 
 export default function EditAdPage() {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +14,7 @@ export default function EditAdPage() {
   const [loading, setLoading] = useState(true);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [dbGovernorates, setDbGovernorates] = useState<string[]>([]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -34,6 +35,10 @@ export default function EditAdPage() {
   };
 
   useEffect(() => {
+    fetchGovernorates().then(data => {
+      setDbGovernorates(data.filter(g => g.is_active).map(g => g.name));
+    }).catch(console.error);
+
     if (!id) return;
     fetchListing(id)
       .then(data => {
@@ -246,20 +251,7 @@ export default function EditAdPage() {
                     <label className="font-label-lg text-label-lg text-on-surface-variant">المحافظة</label>
                     <select name="city" defaultValue={mainCity} required className="bg-surface border border-border-light rounded-lg p-sm font-body-md text-body-md focus:border-accent-yellow outline-none transition-all">
                       <option value="">اختر المحافظة</option>
-                      <option>دمشق</option>
-                      <option>ريف دمشق</option>
-                      <option>حلب</option>
-                      <option>حمص</option>
-                      <option>حماة</option>
-                      <option>اللاذقية</option>
-                      <option>طرطوس</option>
-                      <option>السويداء</option>
-                      <option>درعا</option>
-                      <option>القنيطرة</option>
-                      <option>دير الزور</option>
-                      <option>الحسكة</option>
-                      <option>الرقة</option>
-                      <option>إدلب</option>
+                      {dbGovernorates.map(gov => <option key={gov} value={gov}>{gov}</option>)}
                     </select>
                   </div>
                   <div className="flex flex-col gap-xs">

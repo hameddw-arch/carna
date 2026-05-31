@@ -1,14 +1,24 @@
-
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useState } from 'react';
 import logoDark from '../assets/carna logo.svg';
+import NotificationBell from './NotificationBell';
 
 export default function Header() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const isActive = (path: string) => {
     if (path === '/') {
       return location.pathname === '/';
@@ -47,7 +57,25 @@ export default function Header() {
               <Link to="/post-ad" className="hidden md:flex bg-primary-container text-on-primary-container px-sm py-xs rounded-lg font-label-lg text-label-lg hover:bg-inverse-primary transition-all active:scale-95">
                 + أضف إعلانك
               </Link>
-              <Link to="/user/dashboard" className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-container active:scale-95">
+              {/* Messages icon */}
+              <Link
+                to="/messages"
+                className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-container active:scale-95"
+                title="الرسائل"
+              >
+                <span className="material-symbols-outlined text-[24px]">chat</span>
+              </Link>
+              {/* Notification Bell */}
+              <NotificationBell />
+              <button 
+                onClick={handleLogout} 
+                className="hidden md:flex items-center gap-1 text-error hover:bg-error-container/30 px-3 py-1.5 rounded-lg transition-colors font-bold text-label-md"
+                title="تسجيل الخروج"
+              >
+                <span className="material-symbols-outlined text-[18px]">logout</span>
+                خروج
+              </button>
+              <Link to="/dashboard" className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-container active:scale-95" title="لوحة التحكم">
                 <span className="material-symbols-outlined text-[28px]">account_circle</span>
               </Link>
             </>
@@ -67,9 +95,22 @@ export default function Header() {
             <Link onClick={() => setIsMobileMenuOpen(false)} className={linkClass('/workshops')} to="/workshops">الورشات</Link>
             <Link onClick={() => setIsMobileMenuOpen(false)} className={linkClass('/about')} to="/about">حول كارنا</Link>
             {user && (
-              <Link onClick={() => setIsMobileMenuOpen(false)} to="/post-ad" className="text-center bg-primary-container text-on-primary-container px-sm py-xs rounded-lg font-label-lg hover:bg-inverse-primary transition-all">
-                + أضف إعلانك
-              </Link>
+              <>
+                <Link onClick={() => setIsMobileMenuOpen(false)} to="/messages" className="text-center bg-surface-container-low text-on-surface px-sm py-xs rounded-lg font-label-lg hover:bg-surface-container transition-all flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined text-[18px]">chat</span>
+                  الرسائل
+                </Link>
+                <Link onClick={() => setIsMobileMenuOpen(false)} to="/post-ad" className="text-center bg-primary-container text-on-primary-container px-sm py-xs rounded-lg font-label-lg hover:bg-inverse-primary transition-all">
+                  + أضف إعلانك
+                </Link>
+                <button 
+                  onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} 
+                  className="flex items-center justify-center gap-2 bg-error-container/20 text-error px-sm py-xs rounded-lg font-label-lg hover:bg-error-container/40 transition-all mt-2"
+                >
+                  <span className="material-symbols-outlined">logout</span>
+                  تسجيل الخروج
+                </button>
+              </>
             )}
           </nav>
         </div>

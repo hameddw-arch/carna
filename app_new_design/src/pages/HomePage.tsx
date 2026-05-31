@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CarCard from '../components/CarCard';
-import { fetchListings } from '../lib/queries';
+import { fetchListings, fetchGovernorates } from '../lib/queries';
 import SEO from '../components/SEO';
 
 export default function HomePage() {
+  const [dbGovernorates, setDbGovernorates] = useState<string[]>([]);
   const brands = [
     { name: 'تويوتا',   img: '/brands/toyota.svg',   color: '#EB0A1E' },
     { name: 'كيا',      img: '/brands/kia.svg',       color: '#BB162B' },
@@ -22,6 +23,10 @@ export default function HomePage() {
   // removed allCarsData state
 
   useEffect(() => {
+    fetchGovernorates().then(data => {
+      setDbGovernorates(data.filter(g => g.is_active).map(g => g.name));
+    }).catch(console.error);
+
     fetchListings().then(data => {
       const mapped = data.map(car => ({
         id: car.id,
@@ -155,20 +160,7 @@ export default function HomePage() {
               <label className="font-label-sm text-label-sm text-text-muted">المدينة</label>
               <select value={heroCity} onChange={e => setHeroCity(e.target.value)} className="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow focus:border-accent-yellow">
                 <option>كل المدن</option>
-                <option>دمشق</option>
-                <option>ريف دمشق</option>
-                <option>حلب</option>
-                <option>حمص</option>
-                <option>اللاذقية</option>
-                <option>طرطوس</option>
-                <option>حماة</option>
-                <option>السويداء</option>
-                <option>درعا</option>
-                <option>القنيطرة</option>
-                <option>دير الزور</option>
-                <option>الحسكة</option>
-                <option>الرقة</option>
-                <option>إدلب</option>
+                {dbGovernorates.map(gov => <option key={gov} value={gov}>{gov}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-xs text-right">
@@ -297,20 +289,7 @@ export default function HomePage() {
                     <label className="font-label-sm text-label-sm text-text-muted">المحافظة</label>
                     <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow">
                       <option>كل المحافظات</option>
-                      <option>دمشق</option>
-                      <option>ريف دمشق</option>
-                      <option>حلب</option>
-                      <option>حمص</option>
-                      <option>اللاذقية</option>
-                      <option>طرطوس</option>
-                      <option>حماة</option>
-                      <option>السويداء</option>
-                      <option>درعا</option>
-                      <option>القنيطرة</option>
-                      <option>دير الزور</option>
-                      <option>الحسكة</option>
-                      <option>الرقة</option>
-                      <option>إدلب</option>
+                      {dbGovernorates.map(gov => <option key={gov} value={gov}>{gov}</option>)}
                     </select>
                   </div>
                   <div className="flex flex-col gap-xs text-right">
@@ -379,7 +358,7 @@ export default function HomePage() {
                 <div className="flex flex-col items-center justify-center bg-surface-white border border-border-light rounded-lg py-xl px-md h-full">
                   <span className="material-symbols-outlined text-[64px] text-text-muted opacity-50 mb-sm">search_off</span>
                   <h3 className="font-headline-md text-headline-md text-text-primary mb-xs">لا توجد سيارات مطابقة</h3>
-                  <p className="font-body-md text-body-md text-text-muted text-center max-w-sm mb-md">
+                  <p className="font-body-md text-body-md text-text-muted text-center max-w-[384px] mb-md">
                     حاول تغيير خيارات الفلترة أو التوسّع في نطاق البحث لرؤية المزيد من النتائج.
                   </p>
                   <button 

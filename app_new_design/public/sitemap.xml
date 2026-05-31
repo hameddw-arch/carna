@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- الصفحة الرئيسية -->
+  <url>
+    <loc>https://carna.online/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- تصفح السيارات -->
+  <url>
+    <loc>https://carna.online/browse</loc>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- الورشات -->
+  <url>
+    <loc>https://carna.online/workshops</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- مقارنة السيارات -->
+  <url>
+    <loc>https://carna.online/compare</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- إضافة إعلان -->
+  <url>
+    <loc>https://carna.online/post-ad</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- باقات الاشتراك -->
+  <url>
+    <loc>https://carna.online/plans</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- عن كارنا -->
+  <url>
+    <loc>https://carna.online/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- تواصل معنا -->
+  <url>
+    <loc>https://carna.online/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- الشروط والأحكام -->
+  <url>
+    <loc>https://carna.online/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- سياسة الخصوصية -->
+  <url>
+    <loc>https://carna.online/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>

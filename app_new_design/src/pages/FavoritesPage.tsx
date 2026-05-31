@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import DashboardLayout from '../components/DashboardLayout';
 import { useFavorites } from '../hooks/useFavorites';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -21,48 +22,9 @@ export default function FavoritesPage() {
   const compareCount = compareIds.size;
 
   return (
-    <div className="flex max-w-container-max mx-auto px-margin-desktop min-h-screen rtl relative overflow-hidden">
-      
-      {/* SideNavBar (Sticky & Hidden on Mobile) */}
-      <aside className="hidden md:flex w-64 h-screen sticky top-20 flex-col py-md border-l border-border-light bg-surface-container-lowest">
-        <div className="px-md mb-lg">
-          <div className="flex items-center gap-sm mb-xs">
-            <div className="w-12 h-12 rounded-full overflow-hidden border border-border-light">
-              <img alt={user?.name || "مستخدم"} className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMjduI964QFprrARUowYS1oWS20G390afphBNvbH8wtdGtvRlQnbjgrOH0MTyvAH-rEC2zEykYUpmvf3_HAzKSxJfvUTHYDu54SR9zZ1PjAvSoPdWNMJjXpMEcVlLlxmcl-8wT3ZaOfM_BskJFXJ_CxxCopnXGowsp4Mr2KjLPate5F7Iv9Nwx_klLFpSv013uCK6CjZA1VnGhaRvBr-kvcaCvkmb0Qj0IzJB563RAING4__i9FR1yjVMYDr7HIHj3P3zN7cq8qq22" />
-            </div>
-            <div>
-              <h3 className="font-label-lg text-label-lg font-bold text-on-surface">{user?.name || 'أحمد محمد'}</h3>
-              <p className="font-body-sm text-[12px] text-tertiary">عضو منذ ٢٠٢٣</p>
-            </div>
-          </div>
-          <button className="w-full mt-sm py-xs bg-secondary-container/10 text-secondary border border-secondary/20 rounded font-label-sm text-label-sm hover:bg-secondary-container/20 transition-all">ترقية الحساب</button>
-        </div>
-        <nav className="flex flex-col">
-          <Link to="/dashboard" className="flex items-center gap-3 text-tertiary px-4 py-3 font-label-lg text-label-lg hover:bg-surface-container-high transition-all duration-200">
-            <span className="material-symbols-outlined">dashboard</span>
-            لوحة التحكم
-          </Link>
-          <Link to="/dashboard" className="flex items-center gap-3 text-tertiary px-4 py-3 font-label-lg text-label-lg hover:bg-surface-container-high transition-all duration-200">
-            <span className="material-symbols-outlined">directions_car</span>
-            إعلاناتي
-          </Link>
-          <Link to="/messages" className="flex items-center gap-3 text-tertiary px-4 py-3 font-label-lg text-label-lg hover:bg-surface-container-high transition-all duration-200">
-            <span className="material-symbols-outlined">chat</span>
-            الرسائل
-          </Link>
-          <Link to="/favorites" className="flex items-center gap-3 text-primary bg-primary-container/10 border-r-4 border-primary px-4 py-3 font-label-lg text-label-lg transition-all duration-200">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
-            المفضلة
-          </Link>
-          <Link to="/account-settings" className="flex items-center gap-3 p-3 text-tertiary hover:bg-surface-container-high rounded-lg transition-all active:scale-95">
-            <span className="material-symbols-outlined">settings</span>
-            <span className="font-label-lg">الإعدادات</span>
-          </Link>
-        </nav>
-      </aside>
-
+    <DashboardLayout>
       {/* Main Content Area */}
-      <main className="flex-1 py-lg px-md lg:px-xl">
+      <main className="flex-1 py-lg px-md lg:px-xl w-full">
         <header className="mb-lg flex justify-between items-center">
           <div>
             <h1 className="font-headline-md text-headline-md font-bold text-on-surface">سياراتي المفضلة</h1>
@@ -136,8 +98,8 @@ export default function FavoritesPage() {
               <span className="material-symbols-outlined text-[48px] text-tertiary">favorite_border</span>
             </div>
             <h3 className="font-headline-sm text-headline-sm font-bold text-on-surface">لا يوجد سيارات مفضلة</h3>
-            <p className="text-body-md text-tertiary mt-2 max-w-sm">ابدأ بتصفح المعرض وأضف السيارات التي تعجبك إلى قائمة المفضلة للرجوع إليها لاحقاً.</p>
-            <button className="mt-lg bg-primary text-on-primary px-xl py-3 rounded-lg font-label-lg hover:brightness-110 transition-all">تصفح المعرض الآن</button>
+            <p className="text-body-md text-tertiary mt-2 max-w-[384px]">ابدأ بتصفح المعرض وأضف السيارات التي تعجبك إلى قائمة المفضلة للرجوع إليها لاحقاً.</p>
+            <Link to="/" className="mt-lg bg-primary text-on-primary px-xl py-3 rounded-lg font-label-lg hover:brightness-110 transition-all inline-block">تصفح المعرض الآن</Link>
           </div>
         )}
       </main>
@@ -164,6 +126,6 @@ export default function FavoritesPage() {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

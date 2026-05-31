@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 // Removed unused Link import
 import { useAuth } from '../contexts/AuthContext';
-import { fetchUserService, updateService, uploadServiceImage, fetchServiceReviews, replyToReview } from '../lib/queries';
+import { fetchUserService, updateService, uploadServiceImage, deleteServiceImage, fetchServiceReviews, replyToReview } from '../lib/queries';
 import logoDark from '../assets/carna logo.svg';
 
 export default function WorkshopDashboardPage() {
@@ -19,6 +19,7 @@ export default function WorkshopDashboardPage() {
   const [newSpecialty, setNewSpecialty] = useState('');
   const [reviews, setReviews] = useState<any[]>([]);
   const [replyText, setReplyText] = useState<{ [key: string]: string }>({});
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'reviews'>('dashboard');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -99,17 +100,44 @@ export default function WorkshopDashboardPage() {
     const file = e.target.files?.[0];
     if (!file || !service) return;
     
+    // Check if we already have 5 images
+    if (service.images && service.images.length >= 5) {
+      alert('لا يمكنك رفع أكثر من 5 صور. يرجى حذف إحدى الصور أولاً.');
+      return;
+    }
+    
+    setIsSaving(true);
     try {
-      const url = await uploadServiceImage(service.id, file);
-      if (url) {
-        // Assuming your services table has an 'image' column. If not, it can be updated in DB schema later.
-        await updateService(service.id, { image: url });
-        setService({ ...service, image: url });
-        alert('تم تحديث الصورة بنجاح');
+      const order = service.images ? service.images.length : 0;
+      const newImage = await uploadServiceImage(service.id, file, order);
+      if (newImage) {
+        setService({ 
+          ...service, 
+          images: [...(service.images || []), newImage] 
+        });
       }
     } catch (err) {
       console.error(err);
       alert('حدث خطأ أثناء رفع الصورة');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleImageDelete = async (imageId: string) => {
+    if (!confirm('هل أنت متأكد من حذف هذه الصورة؟')) return;
+    setIsSaving(true);
+    try {
+      await deleteServiceImage(imageId);
+      setService({
+        ...service,
+        images: service.images.filter((img: any) => img.id !== imageId)
+      });
+    } catch (err) {
+      console.error(err);
+      alert('حدث خطأ أثناء حذف الصورة');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -158,30 +186,23 @@ export default function WorkshopDashboardPage() {
         {/* SideNavBar */}
         <aside className="w-64 h-[calc(100vh-80px)] sticky top-20 border-l border-border-light flex flex-col py-md hidden md:flex bg-inverse-surface">
           <div className="flex flex-col gap-2 flex-grow">
-            <a className="flex items-center justify-between gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95" href="#">
-              <div className="flex items-center gap-xs">
-                <span className="material-symbols-outlined">dashboard</span>
-                <span className="font-label-lg text-label-lg">لوحة القيادة</span>
-              </div>
-              <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container text-[11px] font-bold">
-                <span className="material-symbols-outlined text-[18px]">grid_view</span>
+            <a onClick={(e) => { e.preventDefault(); setActiveTab('dashboard'); }} className={`flex items-center gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 cursor-pointer ${activeTab === 'dashboard' ? 'bg-white/10 text-white font-bold border-r-2 border-accent-yellow' : 'text-white/70 hover:bg-white/10'}`}>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined">storefront</span>
+                <span className="font-label-lg text-label-lg">لوحة الورشة</span>
               </div>
             </a>
-            <a className="flex items-center gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95" href="#">
-              <span className="material-symbols-outlined">campaign</span>
-              <span className="font-label-lg text-label-lg">إعلاناتي</span>
+            <a onClick={(e) => { e.preventDefault(); setActiveTab('reviews'); }} className={`flex items-center gap-xs px-sm py-3 rounded-lg transition-all active:scale-95 cursor-pointer ${activeTab === 'reviews' ? 'bg-white/10 text-white font-bold border-r-2 border-accent-yellow' : 'text-white/70 hover:bg-white/10'}`}>
+              <span className="material-symbols-outlined">star_rate</span>
+              <span className="font-label-lg text-label-lg">التقييمات</span>
             </a>
-            <a className="flex items-center gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95" href="#">
-              <span className="material-symbols-outlined">mail</span>
-              <span className="font-label-lg text-label-lg">الرسائل</span>
+            <a href="/subscription-plans" className="flex items-center gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95">
+              <span className="material-symbols-outlined">workspace_premium</span>
+              <span className="font-label-lg text-label-lg">الباقات والاشتراكات</span>
             </a>
-            <a className="flex items-center gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95" href="#">
-              <span className="material-symbols-outlined">favorite</span>
-              <span className="font-label-lg text-label-lg">المفضلة</span>
-            </a>
-            <a className="flex items-center gap-xs px-sm py-3 text-on-primary-container bg-primary-container rounded-lg font-bold transition-all shadow-md active:scale-95" href="#">
+            <a href="/account-settings" className="flex items-center gap-xs px-sm py-3 text-white/70 hover:bg-white/10 rounded-lg transition-all active:scale-95">
               <span className="material-symbols-outlined">settings</span>
-              <span className="font-label-lg text-label-lg">الإعدادات</span>
+              <span className="font-label-lg text-label-lg">إعدادات الحساب</span>
             </a>
           </div>
           <div className="border-t border-white/10 pt-4">
@@ -192,10 +213,11 @@ export default function WorkshopDashboardPage() {
           </div>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-grow p-gutter md:p-lg">
-          {/* Header Section */}
-          <div className="mb-lg">
+          {activeTab === 'dashboard' ? (
+            <>
+              {/* Header Section */}
+              <div className="mb-lg">
             <h1 className="font-headline-lg text-headline-lg text-on-surface mb-xs">لوحة تحكم الورشة</h1>
             <p className="font-body-md text-body-md text-tertiary">إدارة بيانات ورشة "{service?.name || 'النجم الذهبي'}" وتحليلات الأداء</p>
           </div>
@@ -205,33 +227,31 @@ export default function WorkshopDashboardPage() {
             <div className="bg-surface-white border border-border-light p-md rounded-xl col-span-1 hover:shadow-sm hover:-translate-y-0.5 transition-all">
               <div className="flex justify-between items-start mb-base">
                 <span className="material-symbols-outlined text-secondary">visibility</span>
-                <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold font-label-sm text-label-sm">+١٢٪</span>
               </div>
               <p className="font-body-sm text-body-sm text-tertiary">إجمالي المشاهدات</p>
-              <h2 className="font-headline-sm text-headline-sm font-bold">٢,٤٥٠</h2>
+              <h2 className="font-headline-sm text-headline-sm font-bold">{service?.views_count || 0}</h2>
             </div>
             <div className="bg-surface-white border border-border-light p-md rounded-xl col-span-1 hover:shadow-sm hover:-translate-y-0.5 transition-all">
               <div className="flex justify-between items-start mb-base">
                 <span className="material-symbols-outlined text-verification-blue">chat</span>
-                <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold font-label-sm text-label-sm">+٨٪</span>
               </div>
               <p className="font-body-sm text-body-sm text-tertiary">نقرات واتساب</p>
-              <h2 className="font-headline-sm text-headline-sm font-bold">١٨٤</h2>
+              <h2 className="font-headline-sm text-headline-sm font-bold">{service?.whatsapp_clicks || 0}</h2>
             </div>
             <div className="bg-surface-white border border-border-light p-md rounded-xl col-span-1 hover:shadow-sm hover:-translate-y-0.5 transition-all">
               <div className="flex justify-between items-start mb-base">
                 <span className="material-symbols-outlined text-accent-yellow fill">star</span>
-                <span className="text-tertiary text-xs font-bold font-label-sm text-label-sm">من {service?.reviews_count || 45} تقييم</span>
+                <span className="text-tertiary text-xs font-bold font-label-sm text-label-sm">من {service?.reviews_count || 0} تقييم</span>
               </div>
               <p className="font-body-sm text-body-sm text-tertiary">متوسط التقييم</p>
-              <h2 className="font-headline-sm text-headline-sm font-bold">{service?.rating || 4.8}</h2>
+              <h2 className="font-headline-sm text-headline-sm font-bold">{service?.rating || 0}</h2>
             </div>
             <div className="bg-surface-white border border-border-light p-md rounded-xl col-span-1 hover:shadow-sm hover:-translate-y-0.5 transition-all">
               <div className="flex justify-between items-start mb-base">
                 <span className="material-symbols-outlined text-error">share</span>
               </div>
               <p className="font-body-sm text-body-sm text-tertiary">عدد المشاركات</p>
-              <h2 className="font-headline-sm text-headline-sm font-bold">٦٢</h2>
+              <h2 className="font-headline-sm text-headline-sm font-bold">{service?.shares_count || 0}</h2>
             </div>
           </div>
 
@@ -276,27 +296,33 @@ export default function WorkshopDashboardPage() {
 
                   {/* Photos Section */}
                   <div>
-                    <label className="block font-label-lg text-label-lg mb-xs">صور الورشة (٣/٥)</label>
+                    <div className="flex justify-between items-end mb-xs">
+                      <label className="block font-label-lg text-label-lg">صور الورشة ({service?.images?.length || 0}/5)</label>
+                      {service?.images?.length > 0 && <span className="text-tertiary text-xs">الصورة الأولى هي الغلاف</span>}
+                    </div>
                     <div className="grid grid-cols-3 gap-sm">
-                      <div className="aspect-square rounded-lg overflow-hidden relative group border border-border-light">
-                        <img alt="Workshop 1" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMjF-yqbKUTzPil1ls_idy5-fIiaAQneeCH-wAIKXncRX6tAVRDsEpGUQuaGvD1mAf1zuk6gyS1K2W12rEzlwSVrLeyiyj9hpz7qY_5fHHhKofB9uw3iODZ76ubQeFZhFc05yEoXfQB-AGRS6wPjGXiqNwZwwuBwa1KCAFvKScpr54weJUKt0JKX9JIs_-NxPP4GfVLd2Ni8YOCIV5Oo-k65q8ReAtZfNeg-XaFatL0l7vccRnrV9wL8z0guEm7OU61WfQeUg7JbV0" />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-sm">
-                          <span className="material-symbols-outlined text-white cursor-pointer hover:scale-110 transition-transform">delete</span>
-                          <span className="material-symbols-outlined text-white cursor-pointer hover:scale-110 transition-transform">edit</span>
+                      {service?.images?.map((img: any, index: number) => (
+                        <div key={img.id} className="aspect-square rounded-lg overflow-hidden relative group border border-border-light">
+                          <img alt={`Workshop ${index + 1}`} className="w-full h-full object-cover" src={img.url} />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-sm">
+                            <button onClick={() => handleImageDelete(img.id)} className="w-8 h-8 rounded-full bg-error text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md">
+                              <span className="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                          </div>
+                          {index === 0 && (
+                            <div className="absolute top-1 right-1 bg-primary text-white text-[10px] px-2 py-0.5 rounded shadow">
+                              الرئيسية
+                            </div>
+                          )}
                         </div>
-                      </div>
-                      <div className="aspect-square rounded-lg overflow-hidden relative group border border-border-light">
-                        <img alt="Workshop 2" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApL9uE4Jfr7e5myhOBi5kPZdYn1lorkhO4LGa709HTRr_A3zmdZJ1uPqDL5F5IY_D9qvDb223zIaEak2HrtANmaBu5PTrDU23hGamLN9sGQ4E6lgS7eIxkut1uc_VHGPoZ7EwjJzFJxIMMIk5Bw7__VxOlWyb5GKz526TYGDfrEXqR4651Tmh0dUtwcUmc5ktStXihSZVnbshHyvnTCHARTxc-6Rtm2dbblXZtukHTa04sjUZbC-LRiKNQjz7U4rPKwuFtcHaI6vmm" />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-sm">
-                          <span className="material-symbols-outlined text-white cursor-pointer hover:scale-110 transition-transform">delete</span>
-                          <span className="material-symbols-outlined text-white cursor-pointer hover:scale-110 transition-transform">edit</span>
+                      ))}
+                      {(!service?.images || service.images.length < 5) && (
+                        <div onClick={() => !isSaving && fileInputRef.current?.click()} className={`aspect-square border-2 border-dashed border-border-light rounded-lg flex flex-col items-center justify-center text-tertiary cursor-pointer hover:bg-surface-container-low transition-colors ${isSaving ? 'opacity-50 pointer-events-none' : 'active:scale-95'}`}>
+                          <span className="material-symbols-outlined text-[32px] mb-xs">add_a_photo</span>
+                          <span className="font-label-sm text-label-sm">رفع صورة</span>
+                          <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} disabled={isSaving} />
                         </div>
-                      </div>
-                      <div onClick={() => fileInputRef.current?.click()} className="aspect-square border-2 border-dashed border-border-light rounded-lg flex flex-col items-center justify-center text-tertiary cursor-pointer hover:bg-surface-container-low transition-colors active:scale-95">
-                        <span className="material-symbols-outlined text-[32px] mb-xs">add_a_photo</span>
-                        <span className="font-label-sm text-label-sm">رفع صورة</span>
-                        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -360,25 +386,25 @@ export default function WorkshopDashboardPage() {
               <div className="bg-surface-white border border-border-light p-lg rounded-xl">
                 <h2 className="font-headline-sm text-headline-sm mb-md">إجراءات سريعة</h2>
                 <div className="grid grid-cols-1 gap-sm">
-                  <button className="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-low border border-border-light transition-colors group active:scale-95">
+                  <button onClick={() => alert('هذه الميزة قيد التطوير وقريباً سيتم إطلاقها')} className="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-low border border-border-light transition-colors group active:scale-95 text-right w-full">
                     <span className="material-symbols-outlined p-2 rounded bg-surface-container text-primary group-hover:bg-primary group-hover:text-white transition-colors">campaign</span>
-                    <div className="text-right">
+                    <div>
                       <p className="font-label-lg text-label-lg font-bold">إنشاء إعلان ترويجي</p>
-                      <p className="font-body-sm text-body-sm text-tertiary">زيادة ظهور ورشتك</p>
+                      <p className="font-body-sm text-body-sm text-tertiary">زيادة ظهور ورشتك (قريباً)</p>
                     </div>
                   </button>
-                  <button className="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-low border border-border-light transition-colors group active:scale-95">
+                  <button onClick={() => alert('هذه الميزة قيد التطوير وقريباً سيتم إطلاقها')} className="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-low border border-border-light transition-colors group active:scale-95 text-right w-full">
                     <span className="material-symbols-outlined p-2 rounded bg-surface-container text-verification-blue group-hover:bg-verification-blue group-hover:text-white transition-colors">verified</span>
-                    <div className="text-right">
+                    <div>
                       <p className="font-label-lg text-label-lg font-bold">توثيق الحساب</p>
-                      <p className="font-body-sm text-body-sm text-tertiary">احصل على شارة التوثيق</p>
+                      <p className="font-body-sm text-body-sm text-tertiary">احصل على شارة التوثيق (قريباً)</p>
                     </div>
                   </button>
-                  <button className="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-low border border-border-light transition-colors group active:scale-95">
+                  <button onClick={() => alert('هذه الميزة قيد التطوير وقريباً سيتم إطلاقها')} className="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-low border border-border-light transition-colors group active:scale-95 text-right w-full">
                     <span className="material-symbols-outlined p-2 rounded bg-surface-container text-error group-hover:bg-error group-hover:text-white transition-colors">analytics</span>
-                    <div className="text-right">
+                    <div>
                       <p className="font-label-lg text-label-lg font-bold">تقرير شهري</p>
-                      <p className="font-body-sm text-body-sm text-tertiary">تحميل إحصائيات مفصلة</p>
+                      <p className="font-body-sm text-body-sm text-tertiary">تحميل إحصائيات مفصلة (قريباً)</p>
                     </div>
                   </button>
                 </div>
@@ -437,6 +463,64 @@ export default function WorkshopDashboardPage() {
               </div>
             </div>
           </div>
+        </>
+      ) : (
+            <div className="mb-lg">
+              <h1 className="font-headline-lg text-headline-lg text-on-surface mb-xs">التقييمات والمراجعات</h1>
+              <p className="font-body-md text-body-md text-tertiary">شاهد آراء عملائك ورد عليها لزيادة ثقتهم</p>
+              
+              <div className="mt-md space-y-md">
+                {reviews.length === 0 ? (
+                  <div className="bg-surface-white border border-border-light p-xl rounded-xl text-center">
+                    <span className="material-symbols-outlined text-[48px] text-tertiary mb-sm">star_rate</span>
+                    <h3 className="font-headline-sm text-headline-sm text-text-primary">لا توجد تقييمات حتى الآن</h3>
+                    <p className="text-body-md text-tertiary mt-2">ستظهر هنا تقييمات العملاء فور إضافتها.</p>
+                  </div>
+                ) : (
+                  reviews.map(review => (
+                    <div key={review.id} className="bg-surface-white border border-border-light p-md rounded-xl">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <span className="font-bold font-label-lg text-text-primary block">{review.users?.name || 'مستخدم'}</span>
+                          <span className="text-label-sm text-tertiary block mt-1">{new Date(review.created_at).toLocaleDateString('ar-SA')}</span>
+                        </div>
+                        <div className="flex text-accent-yellow">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i} className={`material-symbols-outlined text-[16px] ${i < review.rating ? 'fill' : ''}`}>star</span>
+                          ))}
+                        </div>
+                      </div>
+                      <p className="font-body-md text-on-surface mb-md bg-surface-container-low p-sm rounded-lg">{review.content}</p>
+                      
+                      {review.reply ? (
+                        <div className="bg-primary-container/20 p-sm rounded-lg border-r-2 border-primary mr-4">
+                          <p className="font-body-sm font-bold text-primary mb-1">ردك:</p>
+                          <p className="font-body-sm text-on-surface">{review.reply}</p>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <input 
+                            type="text" 
+                            value={replyText[review.id] || ''}
+                            onChange={(e) => setReplyText({...replyText, [review.id]: e.target.value})}
+                            placeholder="اكتب ردك هنا..." 
+                            className="flex-grow bg-surface-container-low border border-border-light rounded-lg px-sm py-2 font-body-sm outline-none focus:ring-1 focus:ring-primary"
+                          />
+                          <button 
+                            onClick={() => handleSendReply(review.id)}
+                            disabled={!replyText[review.id]?.trim()}
+                            className="bg-primary text-white px-md py-2 rounded-lg font-bold font-label-sm active:scale-95 transition-all disabled:opacity-50"
+                          >
+                            إضافة رد
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
         </main>
       </div>
 
@@ -451,21 +535,21 @@ export default function WorkshopDashboardPage() {
         <p className="text-on-surface font-body-sm text-body-sm">© ٢٠٢٤ كارنا. جميع الحقوق محفوظة.</p>
       </footer>
 
-      {/* Mobile Bottom NavBar (Simplified for Task Focus) */}
+      {/* Mobile Bottom NavBar (Workshop Specific) */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-surface-white border-t border-border-light flex justify-around items-center py-xs z-50">
-        <button className="flex flex-col items-center text-primary active:scale-95 transition-transform">
-          <span className="material-symbols-outlined">dashboard</span>
-          <span className="text-[10px] font-label-sm">الرئيسية</span>
+        <button onClick={() => setActiveTab('dashboard')} className={`flex flex-col items-center active:scale-95 transition-transform ${activeTab === 'dashboard' ? 'text-primary' : 'text-tertiary'}`}>
+          <span className="material-symbols-outlined">storefront</span>
+          <span className="text-[10px] font-label-sm">الورشة</span>
         </button>
-        <button className="flex flex-col items-center text-tertiary active:scale-95 transition-transform">
-          <span className="material-symbols-outlined">directions_car</span>
-          <span className="text-[10px] font-label-sm">إعلاناتي</span>
+        <button onClick={() => setActiveTab('reviews')} className={`flex flex-col items-center active:scale-95 transition-transform ${activeTab === 'reviews' ? 'text-primary' : 'text-tertiary'}`}>
+          <span className="material-symbols-outlined">star_rate</span>
+          <span className="text-[10px] font-label-sm">التقييمات</span>
         </button>
-        <button className="flex flex-col items-center text-tertiary active:scale-95 transition-transform">
-          <span className="material-symbols-outlined">chat</span>
-          <span className="text-[10px] font-label-sm">الرسائل</span>
+        <button onClick={() => window.location.href = '/subscription-plans'} className="flex flex-col items-center text-tertiary active:scale-95 transition-transform">
+          <span className="material-symbols-outlined">workspace_premium</span>
+          <span className="text-[10px] font-label-sm">الباقات</span>
         </button>
-        <button className="flex flex-col items-center text-tertiary active:scale-95 transition-transform">
+        <button onClick={() => window.location.href = '/account-settings'} className="flex flex-col items-center text-tertiary active:scale-95 transition-transform">
           <span className="material-symbols-outlined">settings</span>
           <span className="text-[10px] font-label-sm">الإعدادات</span>
         </button>

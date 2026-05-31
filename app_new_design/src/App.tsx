@@ -27,6 +27,7 @@ import Login from './pages/Login';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import InstallPrompt from './components/InstallPrompt';
 import './App.css';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -83,6 +84,7 @@ export default function App() {
       </main>
 
       {!hideHeaderFooter && <Footer />}
+      <InstallPrompt />
     </div>
   );
 }

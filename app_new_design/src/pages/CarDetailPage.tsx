@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { fetchListing, incrementListingViews } from '../lib/queries';
+import { fetchListing, incrementListingViews, getOrCreateChat } from '../lib/queries';
+import { useAuth } from '../contexts/AuthContext';
 import SEO from '../components/SEO';
 
 export default function CarDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [listing, setListing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImg, setActiveImg] = useState(0);
+  const [chatLoading, setChatLoading] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -22,6 +25,23 @@ export default function CarDetailPage() {
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleStartChat = async () => {
+    if (!user) {
+      navigate('/login', { state: { from: `/car/${id}` } });
+      return;
+    }
+    if (!listing || user.id === listing.user_id) return;
+    setChatLoading(true);
+    try {
+      await getOrCreateChat(user.id, listing.user_id, listing.id);
+      navigate('/messages');
+    } catch (err) {
+      console.error('Failed to start chat:', err);
+    } finally {
+      setChatLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -228,6 +248,21 @@ export default function CarDetailPage() {
                   </svg>
                   تواصل عبر واتساب
                 </button>
+                {/* CARNA In-App Chat */}
+                {listing.user_id !== user?.id && (
+                  <button
+                    onClick={handleStartChat}
+                    disabled={chatLoading}
+                    className="w-full bg-primary text-on-primary py-md rounded-lg font-headline-sm text-headline-sm font-bold flex justify-center items-center gap-xs hover:opacity-90 transition-opacity shadow-md disabled:opacity-60"
+                  >
+                    {chatLoading ? (
+                      <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                    ) : (
+                      <span className="material-symbols-outlined">chat</span>
+                    )}
+                    {user ? 'أرسل رسالة عبر كارنا' : 'سجّل دخولك للمراسلة'}
+                  </button>
+                )}
                 {/* Inspection Call to Action */}
                 <button className="w-full bg-secondary text-on-secondary py-md rounded-lg font-headline-sm text-headline-sm font-bold flex justify-center items-center gap-xs hover:opacity-90 transition-opacity mt-2 shadow-sm">
                   <span className="material-symbols-outlined">car_repair</span>

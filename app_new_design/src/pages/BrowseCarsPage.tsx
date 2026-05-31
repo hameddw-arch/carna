@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import CarCard, { type Car } from '../components/CarCard';
-import { fetchListings, fetchAvailableTags } from '../lib/queries';
+import { fetchListings, fetchAvailableTags, fetchGovernorates } from '../lib/queries';
 import SEO from '../components/SEO';
 
 export default function BrowseCarsPage() {
   const [cars, setCars] = useState<Car[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [dbGovernorates, setDbGovernorates] = useState<string[]>([]);
   const [filters, setFilters] = useState<any>({
     condition: '',
     city: '',
@@ -18,6 +19,9 @@ export default function BrowseCarsPage() {
 
   useEffect(() => {
     fetchAvailableTags().then(tags => setAvailableTags(tags)).catch(console.error);
+    fetchGovernorates().then(data => {
+      setDbGovernorates(data.filter(g => g.is_active).map(g => g.name));
+    }).catch(console.error);
   }, []);
 
   const loadCars = (currentFilters: any) => {
@@ -141,20 +145,7 @@ export default function BrowseCarsPage() {
                     <label className="font-label-sm text-label-sm text-text-muted">المحافظة</label>
                     <select value={filters.city} onChange={(e) => handleFilterChange('city', e.target.value)} className="border-border-light rounded-lg font-body-md text-body-md w-full focus:ring-accent-yellow">
                       <option>كل المحافظات</option>
-                      <option>دمشق</option>
-                      <option>ريف دمشق</option>
-                      <option>حلب</option>
-                      <option>حمص</option>
-                      <option>حماة</option>
-                      <option>اللاذقية</option>
-                      <option>طرطوس</option>
-                      <option>درعا</option>
-                      <option>السويداء</option>
-                      <option>القنيطرة</option>
-                      <option>إدلب</option>
-                      <option>الرقة</option>
-                      <option>دير الزور</option>
-                      <option>الحسكة</option>
+                      {dbGovernorates.map(gov => <option key={gov} value={gov}>{gov}</option>)}
                     </select>
                   </div>
                   <div className="flex flex-col gap-xs text-right">
