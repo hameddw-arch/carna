@@ -50,7 +50,8 @@ export default function BrowseCarsPage() {
         condition: car.condition || 'مستعمل',
         fuelType: car.fuel_type || 'بنزين',
         transmission: car.transmission || 'أوتوماتيك',
-        urgent: car.tags?.includes('عاجل')
+        urgent: car.tags?.includes('عاجل'),
+        viewCount: car.view_count ?? 0
       }));
       setCars(mapped);
     }).catch(console.error);

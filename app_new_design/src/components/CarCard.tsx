@@ -10,6 +10,7 @@ export interface Car {
   mileage: string;
   image: string;
   urgent?: boolean;
+  viewCount?: number;
 }
 
 export default function CarCard({ car, urgent }: { car: Car; urgent?: boolean }) {
@@ -54,7 +55,7 @@ export default function CarCard({ car, urgent }: { car: Car; urgent?: boolean })
           <h3 className="font-headline-sm text-headline-sm text-text-primary">{car.title}</h3>
         </Link>
         <p className="font-headline-sm text-headline-sm text-primary mb-sm font-bold">{car.price}</p>
-        <div className="flex items-center gap-sm text-secondary">
+        <div className="flex flex-wrap items-center gap-sm text-secondary">
           <div className="flex items-center gap-1">
             <span className="material-symbols-outlined text-[18px]">location_on</span>
             <span className="font-body-sm text-body-sm text-text-muted">{car.location}</span>
@@ -69,6 +70,12 @@ export default function CarCard({ car, urgent }: { car: Car; urgent?: boolean })
             <span className="material-symbols-outlined text-[18px]">speed</span>
             <span className="font-body-sm text-body-sm text-text-muted">{car.mileage}</span>
           </div>
+          {car.viewCount !== undefined && (
+            <div className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-[18px]">visibility</span>
+              <span className="font-body-sm text-body-sm text-text-muted">{car.viewCount.toLocaleString('ar-SA')} عرض</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
