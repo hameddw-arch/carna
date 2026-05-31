@@ -1,17 +1,27 @@
 import SEO from '../components/SEO';
+import Breadcrumb from '../components/Breadcrumb';
+import { organizationSchema } from '../lib/schemas';
 
 export default function AboutPage() {
   return (
     <div className="bg-background text-on-surface min-h-screen flex flex-col">
       <SEO
-        title="عن كارنا - منصة السيارات والورشات في سوريا"
+        title="عن كارنا — منصة السيارات والورشات في سوريا"
         description="تعرف على كارنا - المركز العصبي لقطاع السيارات في سوريا. نربط البائع بالمشتري والمالك بورشة الصيانة عبر بيئة رقمية شفافة وموثوقة."
         image="/carna-logo.svg"
         url="/about"
-        type="website"
+        type="article"
+        jsonLd={organizationSchema()}
       />
 
       <main className="py-8 flex-grow rtl">
+        {/* Breadcrumb */}
+        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pb-lg">
+          <Breadcrumb items={[
+            { label: 'الرئيسية', href: '/' },
+            { label: 'عن كارنا' }
+          ]} />
+        </div>
         {/* Hero Section: Platform Vision */}
         <section className="max-w-container-max mx-auto px-margin-desktop mb-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -120,6 +130,44 @@ export default function AboutPage() {
                 <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="absolute bottom-4 right-4 bg-white px-3 py-1 rounded-full text-label-sm border border-border-light shadow-sm">تفاعل مع الخريطة</div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Core Values Section */}
+        <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mb-20">
+          <div className="text-center mb-12">
+            <h2 className="font-headline-lg text-headline-lg mb-4">قيمنا الأساسية</h2>
+            <p className="font-body-md text-body-md text-on-surface-variant">المبادئ التي تحكم عملنا يومياً</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
+            <div className="flat-card p-lg">
+              <div className="flex items-center gap-md mb-md">
+                <span className="material-symbols-outlined text-[32px] text-primary">shield_verified</span>
+                <h3 className="font-headline-sm text-headline-sm">الثقة</h3>
+              </div>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">نبني علاقات قائمة على الشفافية والصدق مع جميع مستخدمينا</p>
+            </div>
+            <div className="flat-card p-lg">
+              <div className="flex items-center gap-md mb-md">
+                <span className="material-symbols-outlined text-[32px] text-accent-yellow">check_circle</span>
+                <h3 className="font-headline-sm text-headline-sm">الجودة</h3>
+              </div>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">نلتزم بأعلى معايير الجودة في كل جانب من جوانب الخدمة</p>
+            </div>
+            <div className="flat-card p-lg">
+              <div className="flex items-center gap-md mb-md">
+                <span className="material-symbols-outlined text-[32px] text-verification-blue">lightbulb</span>
+                <h3 className="font-headline-sm text-headline-sm">الابتكار</h3>
+              </div>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">نستمر في تحسين وتطوير الخدمات لتلبية احتياجاتك</p>
+            </div>
+            <div className="flat-card p-lg">
+              <div className="flex items-center gap-md mb-md">
+                <span className="material-symbols-outlined text-[32px] text-secondary">lock</span>
+                <h3 className="font-headline-sm text-headline-sm">الأمان</h3>
+              </div>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">نحمي بيانات مستخدمينا بأعلى معايير الحماية</p>
             </div>
           </div>
         </section>
