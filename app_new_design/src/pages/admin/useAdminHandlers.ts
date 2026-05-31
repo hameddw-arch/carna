@@ -14,7 +14,7 @@ import {
   deleteGovernorate,
   updateSystemSetting,
   insertAdminLog,
-} from '../../lib/queries';
+} from '/../lib/queries/index';
 
 export function useAdminHandlers(userName: string) {
   const [activityLogs, setActivityLogs] = useState<any[]>([]);

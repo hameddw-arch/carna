@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { insertListing, uploadListingImages, fetchGovernorates } from '../lib/queries';
+import { insertListing, uploadListingImages, fetchGovernorates } from '../lib/queries/index';
 import SEO from '../components/SEO';
 
 export default function PostAdPage() {

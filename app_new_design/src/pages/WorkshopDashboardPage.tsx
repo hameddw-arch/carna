@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 // Removed unused Link import
 import { useAuth } from '../contexts/AuthContext';
-import { fetchUserService, updateService, uploadServiceImage, deleteServiceImage, fetchServiceReviews, replyToReview } from '../lib/queries';
+import { fetchUserService, updateService, uploadServiceImage, deleteServiceImage, fetchServiceReviews, replyToReview } from '../lib/queries/index';
 import logoDark from '../assets/carna logo.svg';
 
 export default function WorkshopDashboardPage() {

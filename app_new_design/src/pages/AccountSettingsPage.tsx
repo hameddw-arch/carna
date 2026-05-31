@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../contexts/AuthContext';
-import { updateUserProfile, uploadAvatar } from '../lib/queries';
+import { updateUserProfile, uploadAvatar } from '../lib/queries/index';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from "react-router-dom";
 

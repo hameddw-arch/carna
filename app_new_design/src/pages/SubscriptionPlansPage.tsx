@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchUserService, purchaseSubscription } from '../lib/queries';
+import { fetchUserService, purchaseSubscription } from '../lib/queries/index';
 import { supabase } from '../lib/supabase';
 import SEO from '../components/SEO';
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchFavoritesDb, addFavoriteDb, removeFavoriteDb } from '../lib/queries';
+import { fetchFavoritesDb, addFavoriteDb, removeFavoriteDb } from '../lib/queries/index';
 
 export interface FavoriteItem {
   id: string; // listing id

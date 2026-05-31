@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { insertService, fetchGovernorates } from '../lib/queries';
+import { insertService, fetchGovernorates } from '../lib/queries/index';
 import { useEffect } from 'react';
 import SEO from '../components/SEO';
 

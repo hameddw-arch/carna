@@ -26,7 +26,7 @@ import {
   fetchPendingWorkshops,
   approveWorkshop,
   rejectWorkshop
-} from '../lib/queries';
+} from '../lib/queries/index';
 import logoDark from '../assets/carna logo.svg';
 
 

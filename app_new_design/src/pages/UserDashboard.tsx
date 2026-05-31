@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchUserListings, deleteListing, updateListingStatus } from '../lib/queries';
+import { fetchUserListings, deleteListing, updateListingStatus } from '../lib/queries/index';
 
 export default function UserDashboard() {
   const { user, loading: authLoading } = useAuth();

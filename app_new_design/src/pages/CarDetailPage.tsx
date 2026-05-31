@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchListing, incrementListingViews, getOrCreateChat } from '../lib/queries';
+import { fetchListing, incrementListingViews, getOrCreateChat } from '../lib/queries/index';
 import { useAuth } from '../contexts/AuthContext';
 import SEO from '../components/SEO';
 import Breadcrumb from '../components/Breadcrumb';

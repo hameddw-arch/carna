@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import CarCard, { type Car } from '../components/CarCard';
-import { fetchListings, fetchAvailableTags, fetchGovernorates, fetchTagStats } from '../lib/queries';
+import { fetchListings, fetchAvailableTags, fetchGovernorates, fetchTagStats } from '../lib/queries/index';
 import SEO from '../components/SEO';
 import Breadcrumb from '../components/Breadcrumb';
 import { localBusinessSchema } from '../lib/schemas';

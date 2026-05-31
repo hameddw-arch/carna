@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { fetchUserChats, fetchChatMessages, sendMessage, markChatAsRead } from '../lib/queries';
+import { fetchUserChats, fetchChatMessages, sendMessage, markChatAsRead } from '../lib/queries/index';
 
 export default function MessagesPage() {
   const { user } = useAuth();

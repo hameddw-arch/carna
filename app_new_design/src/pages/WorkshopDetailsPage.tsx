@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { fetchService, fetchServiceReviews, insertReview, incrementServiceAnalytics } from '../lib/queries';
+import { fetchService, fetchServiceReviews, insertReview, incrementServiceAnalytics } from '../lib/queries/index';
 import { useAuth } from '../contexts/AuthContext';
 import SEO from '../components/SEO';
 

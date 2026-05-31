@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchListing, updateListing, uploadListingImages, fetchGovernorates } from '../lib/queries';
+import { fetchListing, updateListing, uploadListingImages, fetchGovernorates } from '../lib/queries/index';
 
 export default function EditAdPage() {
   const { id } = useParams<{ id: string }>();
