@@ -140,6 +140,17 @@
     direction: rtl;
     scroll-behavior: smooth;
   }
+  html.dark {
+    color-scheme: dark;
+    --color-background: #0f0f0f;
+    --color-surface: #1a1a1a;
+    --color-surface-white: #2a2a2a;
+    --color-on-surface: #f5f5f5;
+    --color-on-surface-variant: #b0b0b0;
+    --color-text-primary: #ffffff;
+    --color-text-muted: #999999;
+    --color-border-light: #404040;
+  }
   body {
     font-family: var(--font-sans);
     background-color: var(--color-background);
