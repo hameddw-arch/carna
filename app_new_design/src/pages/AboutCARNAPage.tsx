@@ -1,7 +1,27 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Header from '../components/Header'
 import { usePageView } from '../hooks/useAnalytics'
 import { Eye, Users, TrendingUp, CheckCircle, Zap, Handshake } from 'lucide-react'
+
+function useInView(ref: React.RefObject<HTMLElement | null>, options = { threshold: 0.1 }) {
+  const [isInView, setIsInView] = useState(false)
+
+  useEffect(() => {
+    if (!ref.current) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsInView(true)
+        observer.unobserve(entry.target)
+      }
+    }, options)
+
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [ref, options])
+
+  return isInView
+}
 
 export default function AboutCARNAPage() {
   usePageView('/about')
@@ -47,13 +67,46 @@ export default function AboutCARNAPage() {
     }
   ]
 
+  const storyRef = useRef<HTMLElement>(null)
+  const missionRef = useRef<HTMLElement>(null)
+  const servicesRef = useRef<HTMLElement>(null)
+  const statsRef = useRef<HTMLElement>(null)
+
+  const storyInView = useInView(storyRef)
+  const missionInView = useInView(missionRef)
+  const servicesInView = useInView(servicesRef)
+  const statsInView = useInView(statsRef)
+
   return (
-    <div dir="rtl" className="min-h-screen bg-surface text-on-surface overflow-x-hidden">
+    <div dir="rtl" className="min-h-screen bg-surface dark:bg-slate-950 text-on-surface dark:text-slate-50 overflow-x-hidden transition-colors duration-300">
       <Header />
+
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-in {
+          animation: fadeInUp 0.6s ease-out forwards;
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.8s ease-out forwards;
+        }
+      `}</style>
 
       {/* Hero Section */}
       <section
-        className="relative h-96 md:h-[614px] flex items-center justify-center text-center px-4 md:px-8 pt-16 md:pt-20"
+        className="relative h-96 md:h-[614px] flex items-center justify-center text-center px-4 md:px-8 pt-16 md:pt-20 dark:bg-slate-900"
         style={{
           backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6))',
           backgroundSize: 'cover',
@@ -61,7 +114,7 @@ export default function AboutCARNAPage() {
           backgroundColor: '#1a1c1c'
         }}
       >
-        <div className="z-10 max-w-3xl">
+        <div className="z-10 max-w-3xl animate-fade-in">
           <h1 className="text-white font-bold text-4xl md:text-5xl leading-tight mb-4">
             كارنا... سوق السيارات والورش الأول في سوريا
           </h1>
@@ -71,7 +124,7 @@ export default function AboutCARNAPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/browse"
-              className="bg-yellow-400 text-black px-8 py-3 rounded-lg font-bold hover:opacity-90 transition-opacity"
+              className="bg-yellow-400 dark:bg-yellow-500 text-black px-8 py-3 rounded-lg font-bold hover:opacity-90 transition-opacity"
             >
               تصفح السوق
             </a>
@@ -86,39 +139,46 @@ export default function AboutCARNAPage() {
       </section>
 
       {/* Our Story Section */}
-      <section className="py-16 md:py-24 px-4 md:px-8">
+      <section ref={storyRef} className="py-16 md:py-24 px-4 md:px-8 dark:bg-slate-900">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className={`grid md:grid-cols-2 gap-12 items-center ${storyInView ? 'animate-in' : 'opacity-0'}`}>
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">قصتنا</h2>
-              <p className="text-on-surface-variant text-lg leading-relaxed mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary dark:text-yellow-400 mb-6">قصتنا</h2>
+              <p className="text-on-surface-variant dark:text-slate-300 text-lg leading-relaxed mb-4">
                 انطلقت منصة كارنا من قلب السوق السوري لتكون المرجع الأول والشامل لكل ما يخص عالم السيارات. نحن نؤمن بأن عملية بيع وشراء السيارات والبحث عن خدمات الصيانة يجب أن تكون تجربة سهلة، سريعة، وموثوقة.
               </p>
-              <p className="text-on-surface-variant text-lg leading-relaxed">
+              <p className="text-on-surface-variant dark:text-slate-300 text-lg leading-relaxed">
                 كارنا ليست مجرد موقع إعلانات، بل هي نظام متكامل يربط بين البائع والمشتري وبين صاحب السيارة وخبراء الصيانة، مع التركيز التام على تلبية احتياجات السوق المحلي بمعايير عالمية.
               </p>
             </div>
-            <div className="rounded-xl overflow-hidden border border-border-light h-80 bg-surface-container">
-              <div className="w-full h-full flex items-center justify-center text-on-surface-variant">
-                <span>صورة القصة</span>
-              </div>
+            <div className="rounded-xl overflow-hidden border border-border-light dark:border-slate-700 h-80 bg-surface-container dark:bg-slate-800">
+              <img
+                src="https://via.placeholder.com/600x400?text=CARNA+Story"
+                alt="قصة كارنا"
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
       </section>
 
       {/* Mission Section */}
-      <section className="bg-surface-container py-16 md:py-24 px-4 md:px-8">
+      <section ref={missionRef} className="bg-surface-container dark:bg-slate-800 py-16 md:py-24 px-4 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-12">مهمتنا</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary dark:text-yellow-400 mb-12">مهمتنا</h2>
+          <div className={`grid md:grid-cols-3 gap-8 ${missionInView ? 'animate-in' : 'opacity-0'}`}>
             {values.map((value, idx) => {
               const IconComponent = value.icon
               return (
-                <div key={idx} className="bg-surface-white p-8 rounded-xl border border-border-light hover:shadow-lg transition-shadow">
-                  <IconComponent className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-                  <h3 className="font-bold text-lg mb-3">{value.title}</h3>
-                  <p className="text-on-surface-variant">{value.desc}</p>
+                <div
+                  key={idx}
+                  className="bg-surface-white dark:bg-slate-700 p-8 rounded-xl border border-border-light dark:border-slate-600 hover:shadow-lg dark:hover:shadow-xl transition-all duration-300"
+                  style={{ animationDelay: `${idx * 100}ms` }}
+                >
+                  <IconComponent className="w-12 h-12 text-blue-500 dark:text-blue-400 mx-auto mb-4" />
+                  <h3 className="font-bold text-lg dark:text-white mb-3">{value.title}</h3>
+                  <p className="text-on-surface-variant dark:text-slate-300">{value.desc}</p>
                 </div>
               )
             })}
@@ -127,16 +187,22 @@ export default function AboutCARNAPage() {
       </section>
 
       {/* Services Section */}
-      <section className="py-16 md:py-24 px-4 md:px-8">
+      <section ref={servicesRef} className="py-16 md:py-24 px-4 md:px-8 dark:bg-slate-900">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-12 text-center">خدماتنا الأساسية</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-primary dark:text-yellow-400 mb-12 text-center">خدماتنا الأساسية</h2>
           <div className="space-y-8">
             {services.map((service, idx) => (
-              <div key={idx} className={`flex flex-col ${idx % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center bg-surface-white border border-border-light p-8 rounded-xl`}>
+              <div
+                key={idx}
+                className={`flex flex-col ${idx % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center bg-surface-white dark:bg-slate-800 border border-border-light dark:border-slate-700 p-8 rounded-xl ${
+                  servicesInView ? 'animate-in' : 'opacity-0'
+                }`}
+                style={{ animationDelay: `${idx * 150}ms` }}
+              >
                 <div className="w-full md:w-1/3 text-5xl text-center">{service.icon}</div>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
-                  <p className="text-on-surface-variant text-lg">{service.desc}</p>
+                  <h3 className="text-2xl font-bold dark:text-white mb-4">{service.title}</h3>
+                  <p className="text-on-surface-variant dark:text-slate-300 text-lg">{service.desc}</p>
                 </div>
               </div>
             ))}
@@ -145,16 +211,16 @@ export default function AboutCARNAPage() {
       </section>
 
       {/* Statistics Section */}
-      <section className="bg-inverse-surface text-white py-16 md:py-24 px-4 md:px-8">
+      <section ref={statsRef} className="bg-inverse-surface dark:bg-slate-950 text-white py-16 md:py-24 px-4 md:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 text-center ${statsInView ? 'animate-in' : 'opacity-0'}`}>
             {stats.map((stat, idx) => {
               const IconComponent = stat.icon
               return (
-                <div key={idx}>
+                <div key={idx} style={{ animationDelay: `${idx * 100}ms` }}>
                   <IconComponent className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
                   <div className="text-5xl font-bold text-yellow-400 mb-2">{stat.value}</div>
-                  <div className="text-lg">{stat.label}</div>
+                  <div className="text-lg dark:text-slate-300">{stat.label}</div>
                 </div>
               )
             })}
@@ -163,17 +229,17 @@ export default function AboutCARNAPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 px-4 md:px-8">
-        <div className="max-w-4xl mx-auto bg-primary-container p-8 md:p-12 rounded-2xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-on-primary-container mb-4">كن جزءاً من عالم كارنا اليوم</h2>
-          <p className="text-on-primary-container text-lg mb-8">
+      <section className="py-16 md:py-24 px-4 md:px-8 dark:bg-slate-900">
+        <div className="max-w-4xl mx-auto bg-primary-container dark:bg-yellow-600 p-8 md:p-12 rounded-2xl text-center animate-in">
+          <h2 className="text-3xl md:text-4xl font-bold text-on-primary-container dark:text-white mb-4">كن جزءاً من عالم كارنا اليوم</h2>
+          <p className="text-on-primary-container dark:text-slate-100 text-lg mb-8">
             سواء كنت بائعاً، مشترياً، أو صاحب ورشة صيانة، كارنا هي وجهتك الأفضل للنمو والنجاح.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/post-ad" className="bg-on-background text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition-opacity">
+            <a href="/post-ad" className="bg-on-background dark:bg-slate-800 text-white dark:text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition-opacity">
               أضف إعلانك الآن
             </a>
-            <a href="/workshops" className="bg-surface-white text-on-background border border-on-background px-8 py-3 rounded-lg font-bold hover:bg-surface transition-colors">
+            <a href="/workshops" className="bg-surface-white dark:bg-slate-100 text-on-background dark:text-black border border-on-background dark:border-slate-300 px-8 py-3 rounded-lg font-bold hover:bg-surface dark:hover:bg-slate-200 transition-colors">
               انضم كصاحب ورشة
             </a>
           </div>
@@ -181,17 +247,17 @@ export default function AboutCARNAPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-surface-container border-t border-border-light mt-auto py-12 px-4 md:px-8">
+      <footer className="bg-surface-container dark:bg-slate-900 border-t border-border-light dark:border-slate-700 mt-auto py-12 px-4 md:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="hidden md:flex gap-8 justify-center mb-8 pb-8 border-b border-border-light">
-            <a href="/" className="text-on-surface-variant hover:text-primary transition-colors">عن كارنا</a>
-            <a href="/contact" className="text-on-surface-variant hover:text-primary transition-colors">اتصل بنا</a>
-            <a href="/privacy" className="text-on-surface-variant hover:text-primary transition-colors">سياسة الخصوصية</a>
-            <a href="/terms" className="text-on-surface-variant hover:text-primary transition-colors">الشروط والأحكام</a>
+          <div className="hidden md:flex gap-8 justify-center mb-8 pb-8 border-b border-border-light dark:border-slate-700">
+            <a href="/" className="text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-yellow-400 transition-colors">عن كارنا</a>
+            <a href="/contact" className="text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-yellow-400 transition-colors">اتصل بنا</a>
+            <a href="/privacy" className="text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-yellow-400 transition-colors">سياسة الخصوصية</a>
+            <a href="/terms" className="text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-yellow-400 transition-colors">الشروط والأحكام</a>
           </div>
           <div className="text-center">
-            <div className="font-bold text-primary text-lg mb-2">CARNA</div>
-            <p className="text-on-surface-variant">© 2026 كارنا - كافة الحقوق محفوظة</p>
+            <div className="font-bold text-primary dark:text-yellow-400 text-lg mb-2">CARNA</div>
+            <p className="text-on-surface-variant dark:text-slate-400">© 2026 كارنا - كافة الحقوق محفوظة</p>
           </div>
         </div>
       </footer>
