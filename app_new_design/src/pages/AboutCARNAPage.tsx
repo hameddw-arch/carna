@@ -149,12 +149,13 @@ export default function AboutCARNAPage() {
                 كارنا ليست مجرد موقع إعلانات، بل هي نظام متكامل يربط بين البائع والمشتري وبين صاحب السيارة وخبراء الصيانة، مع التركيز التام على تلبية احتياجات السوق المحلي بمعايير عالمية.
               </p>
             </div>
-            <div className="rounded-xl overflow-hidden border border-border-light dark:border-slate-700 h-80 bg-gradient-to-br from-primary/10 to-yellow-400/10 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center">
-              <div className="text-center px-6">
-                <div className="text-6xl mb-4">🚗</div>
-                <p className="text-on-surface-variant dark:text-slate-400 font-semibold">منصة سورية موثوقة</p>
-                <p className="text-on-surface-variant dark:text-slate-400 text-sm mt-2">لبيع وشراء السيارات</p>
-              </div>
+            <div className="rounded-xl overflow-hidden border border-border-light dark:border-slate-700 h-80 bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRe7Pmv-uausgCO9nVynpcVDrV1nvpTH9hX9k_Zlxkm3etuHtRPblF3Ne-3MpVf-rRsbGSj-uk8jdArl1JFPsEV_SdqL2nzQdf7DbXz68Xh7-x-GQ2jE9C1TdlU84D-iNF3RNeKFNT1aUsfCPcro4QByXeTaXiuakagbby-NoU1oeF1kUqQStZWoUKJCY0MgJ464tAVRK7G8098f9E7HbWOCnwRyH5vxPCJT0QfHBKgxvdiDAB6ZOBjaLzaZZWLK4-7LPy9OYPNMvE"
+                alt="سيارة سيدان حديثة"
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
