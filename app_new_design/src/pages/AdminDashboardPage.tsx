@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  fetchAdminStats, 
-  fetchAllListingsForAdmin, 
-  updateListingStatus, 
-  deleteListing, 
-  fetchPendingTransactions, 
+import {
+  fetchAdminStats,
+  fetchAllListingsForAdmin,
+  updateListingStatus,
+  deleteListing,
+  fetchPendingTransactions,
   approveTransaction,
   fetchAllServicesForAdmin,
   updateServiceStatus,
