@@ -2,6 +2,7 @@
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import { useAuth } from './contexts/AuthContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
@@ -54,43 +55,45 @@ export default function App() {
   const hideHeaderFooter = location.pathname.startsWith('/admin') || location.pathname.startsWith('/workshop-admin');
 
   return (
-    <div dir="rtl" className="bg-surface-white font-body-md text-body-md text-on-surface">
-      <ScrollToTop />
-      {!hideHeaderFooter && <Header />}
+    <ErrorBoundary>
+      <div dir="rtl" className="bg-surface-white font-body-md text-body-md text-on-surface">
+        <ScrollToTop />
+        {!hideHeaderFooter && <Header />}
 
-      <main className="min-h-screen">
-        <Suspense fallback={<LoadingPage />}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/browse" element={<BrowseCarsPage />} />
-            <Route path="/car/:id" element={<CarDetailPage />} />
-            <Route path="/workshops" element={<WorkshopsDirectoryPage />} />
-            <Route path="/compare" element={<CarComparisonPage />} />
-            <Route path="/post-ad" element={<ProtectedRoute><PostAdPage /></ProtectedRoute>} />
-            <Route path="/edit-ad/:id" element={<ProtectedRoute><EditAdPage /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-            <Route path="/wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
-            <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
-            <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
-            <Route path="/workshop/:id" element={<WorkshopDetailsPage />} />
-            <Route path="/workshop-registration" element={<WorkshopRegistrationPage />} />
-            <Route path="/subscription" element={<ProtectedRoute><SubscriptionManagementPage /></ProtectedRoute>} />
-            <Route path="/account-settings" element={<ProtectedRoute><AccountSettingsPage /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
-            <Route path="/workshop-admin" element={<ProtectedRoute><WorkshopDashboardPage /></ProtectedRoute>} />
-            <Route path="/plans" element={<SubscriptionPlansPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-          </Routes>
-        </Suspense>
-      </main>
+        <main className="min-h-screen">
+          <Suspense fallback={<LoadingPage />}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/browse" element={<BrowseCarsPage />} />
+              <Route path="/car/:id" element={<CarDetailPage />} />
+              <Route path="/workshops" element={<WorkshopsDirectoryPage />} />
+              <Route path="/compare" element={<CarComparisonPage />} />
+              <Route path="/post-ad" element={<ProtectedRoute><PostAdPage /></ProtectedRoute>} />
+              <Route path="/edit-ad/:id" element={<ProtectedRoute><EditAdPage /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+              <Route path="/wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
+              <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
+              <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
+              <Route path="/workshop/:id" element={<WorkshopDetailsPage />} />
+              <Route path="/workshop-registration" element={<WorkshopRegistrationPage />} />
+              <Route path="/subscription" element={<ProtectedRoute><SubscriptionManagementPage /></ProtectedRoute>} />
+              <Route path="/account-settings" element={<ProtectedRoute><AccountSettingsPage /></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
+              <Route path="/workshop-admin" element={<ProtectedRoute><WorkshopDashboardPage /></ProtectedRoute>} />
+              <Route path="/plans" element={<SubscriptionPlansPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+            </Routes>
+          </Suspense>
+        </main>
 
-      {!hideHeaderFooter && <Footer />}
-      <InstallPrompt />
-    </div>
+        {!hideHeaderFooter && <Footer />}
+        <InstallPrompt />
+      </div>
+    </ErrorBoundary>
   );
 }
 
