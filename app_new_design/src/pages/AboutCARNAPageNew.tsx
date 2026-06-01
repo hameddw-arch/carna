@@ -64,7 +64,7 @@ export default function AboutCARNAPageNew() {
     })
 
     return () => timers.forEach(t => clearInterval(t))
-  }, [statsInView])
+  }, [statsInView, stats])
 
   return (
     <div dir="rtl" className="min-h-screen bg-surface-white dark:bg-background text-on-surface dark:text-on-surface overflow-x-hidden">
@@ -240,7 +240,7 @@ export default function AboutCARNAPageNew() {
             <button className="bg-on-background dark:bg-surface text-white dark:text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition-opacity">
               أضف إعلانك الآن
             </button>
-            <button className="bg-surface-white dark:bg-slate-100 text-on-background dark:text-black border border-on-background dark:border-slate-300 px-8 py-3 rounded-lg font-bold hover:bg-surface dark:hover:bg-slate-200 transition-colors">
+            <button className="bg-surface-white dark:bg-surface-white text-on-background dark:text-on-background border border-on-background dark:border-border-light px-8 py-3 rounded-lg font-bold hover:bg-surface dark:hover:bg-surface transition-colors">
               انضم كصاحب ورشة
             </button>
           </div>

@@ -15,6 +15,12 @@ export default function Header() {
   useEffect(() => {
     const isDarkMode = document.documentElement.classList.contains('dark');
     setIsDark(isDarkMode);
+
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
   }, []);
 
   const toggleDarkMode = () => {
@@ -53,6 +59,8 @@ export default function Header() {
           <button
             className="md:hidden flex items-center justify-center p-2 rounded-full hover:bg-surface-container dark:hover:bg-surface active:scale-95 dark:text-on-surface"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
+            aria-expanded={isMobileMenuOpen}
           >
             <span className="material-symbols-outlined">{isMobileMenuOpen ? 'close' : 'menu'}</span>
           </button>
@@ -71,6 +79,7 @@ export default function Header() {
             onClick={toggleDarkMode}
             className="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-yellow-400 transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-container dark:hover:bg-surface active:scale-95"
             title={isDark ? "الوضع الفاتح" : "الوضع الليلي"}
+            aria-label={isDark ? "تبديل إلى الوضع الفاتح" : "تبديل إلى الوضع الليلي"}
           >
             <span className="material-symbols-outlined text-[24px]">
               {isDark ? 'light_mode' : 'dark_mode'}
@@ -96,6 +105,7 @@ export default function Header() {
                 onClick={handleLogout}
                 className="flex items-center gap-1 text-error dark:text-red-400 hover:bg-error-container/30 dark:hover:bg-red-900/30 px-2 md:px-3 py-1.5 rounded-lg transition-colors font-bold text-xs md:text-label-md"
                 title="تسجيل الخروج"
+                aria-label="تسجيل الخروج"
               >
                 <span className="material-symbols-outlined text-[18px]">logout</span>
                 <span className="hidden md:inline">خروج</span>
@@ -114,14 +124,14 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-surface-white dark:bg-slate-900 border-b border-border-light dark:border-border-light shadow-lg">
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-surface-white dark:bg-background border-b border-border-light dark:border-border-light shadow-lg">
           <nav className="flex flex-col p-md gap-4">
             <Link onClick={() => setIsMobileMenuOpen(false)} className={linkClass('/')} to="/">السيارات</Link>
             <Link onClick={() => setIsMobileMenuOpen(false)} className={linkClass('/workshops')} to="/workshops">الورشات</Link>
             <Link onClick={() => setIsMobileMenuOpen(false)} className={linkClass('/about')} to="/about">حول كارنا</Link>
             {user && (
               <>
-                <Link onClick={() => setIsMobileMenuOpen(false)} to="/messages" className="text-center bg-surface-container-low dark:bg-slate-800 text-on-surface dark:text-on-surface px-sm py-xs rounded-lg font-label-lg hover:bg-surface-container dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
+                <Link onClick={() => setIsMobileMenuOpen(false)} to="/messages" className="text-center bg-surface-container-low dark:bg-surface text-on-surface dark:text-on-surface px-sm py-xs rounded-lg font-label-lg hover:bg-surface-container dark:hover:bg-surface transition-all flex items-center justify-center gap-2">
                   <span className="material-symbols-outlined text-[18px]">chat</span>
                   الرسائل
                 </Link>

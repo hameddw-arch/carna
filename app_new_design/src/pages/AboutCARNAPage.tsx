@@ -76,7 +76,7 @@ export default function AboutCARNAPage() {
   const statsInView = useInView(statsRef)
 
   return (
-    <div dir="rtl" className="min-h-screen bg-surface dark:bg-background text-on-surface dark:text-slate-50 overflow-x-hidden transition-colors duration-300">
+    <div dir="rtl" className="min-h-screen bg-surface dark:bg-background text-on-surface dark:text-on-surface overflow-x-hidden transition-colors duration-300">
 
       <style>{`
         @keyframes fadeInUp {
@@ -148,7 +148,7 @@ export default function AboutCARNAPage() {
                 كارنا ليست مجرد موقع إعلانات، بل هي نظام متكامل يربط بين البائع والمشتري وبين صاحب السيارة وخبراء الصيانة، مع التركيز التام على تلبية احتياجات السوق المحلي بمعايير عالمية.
               </p>
             </div>
-            <div className="rounded-xl overflow-hidden border border-border-light dark:border-border-light h-80 bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700">
+            <div className="rounded-xl overflow-hidden border border-border-light dark:border-border-light h-80 bg-gradient-to-br from-surface-white to-surface-container-low dark:from-surface dark:to-surface">
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRe7Pmv-uausgCO9nVynpcVDrV1nvpTH9hX9k_Zlxkm3etuHtRPblF3Ne-3MpVf-rRsbGSj-uk8jdArl1JFPsEV_SdqL2nzQdf7DbXz68Xh7-x-GQ2jE9C1TdlU84D-iNF3RNeKFNT1aUsfCPcro4QByXeTaXiuakagbby-NoU1oeF1kUqQStZWoUKJCY0MgJ464tAVRK7G8098f9E7HbWOCnwRyH5vxPCJT0QfHBKgxvdiDAB6ZOBjaLzaZZWLK4-7LPy9OYPNMvE"
                 alt="سيارة سيدان حديثة"
@@ -232,7 +232,7 @@ export default function AboutCARNAPage() {
             <a href="/post-ad" className="bg-on-background dark:bg-surface text-white dark:text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition-opacity">
               أضف إعلانك الآن
             </a>
-            <a href="/workshops" className="bg-surface-white dark:bg-slate-100 text-on-background dark:text-black border border-on-background dark:border-slate-300 px-8 py-3 rounded-lg font-bold hover:bg-surface dark:hover:bg-slate-200 transition-colors">
+            <a href="/workshops" className="bg-surface-white dark:bg-surface-white text-on-background dark:text-black border border-on-background dark:border-border-light px-8 py-3 rounded-lg font-bold hover:bg-surface dark:hover:bg-surface transition-colors">
               انضم كصاحب ورشة
             </a>
           </div>

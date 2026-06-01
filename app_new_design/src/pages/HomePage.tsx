@@ -407,7 +407,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-surface-container dark:bg-slate-950 py-md">
+      <section className="bg-surface-container dark:bg-background py-md">
         <div className="max-w-container-max mx-auto px-margin-desktop">
           <div className="bg-secondary-container/10 dark:bg-blue-900/30 border border-secondary-container/30 dark:border-blue-800/50 rounded-lg p-sm flex items-center justify-between text-secondary dark:text-blue-400">
             <div className="flex items-center gap-sm">
@@ -425,7 +425,7 @@ export default function HomePage() {
           <div className="w-full h-32 md:h-48 bg-surface-container-highest dark:bg-surface rounded-xl flex items-center justify-between px-lg overflow-hidden relative border border-border-light dark:border-border-light shadow-sm">
             <div className="z-10 text-right">
               <h3 className="font-headline-md text-headline-md text-text-primary dark:text-on-surface mb-xs">إعلانك هنا يراه آلاف المهتمين</h3>
-              <p className="font-body-md text-body-md text-tertiary dark:text-slate-300">روّج لورشتك أو قطع غيارك بأقل التكاليف.</p>
+              <p className="font-body-md text-body-md text-tertiary dark:text-on-surface-variant">روّج لورشتك أو قطع غيارك بأقل التكاليف.</p>
             </div>
             <div className="hidden md:flex flex-col items-center justify-center bg-accent-yellow px-xl py-md transform rotate-12 -ml-20">
               <span className="font-headline-lg text-headline-lg font-black text-on-primary-container">AD SPACE</span>
@@ -510,15 +510,15 @@ export default function HomePage() {
           <h2 className="font-headline-md text-headline-md text-text-primary dark:text-on-surface mb-md">باقات اشتراك الورشات والمعارض</h2>
           <p className="font-body-lg text-body-lg text-text-muted dark:text-on-surface-variant mb-xl max-w-2xl mx-auto">انضم إلى أكبر منصة سيارات في المنطقة وعزز مبيعاتك وأعمالك عبر باقاتنا الاحترافية</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-lg max-w-5xl mx-auto">
-            <div className="bg-surface-white dark:bg-surface border border-border-light dark:border-border-light rounded-xl p-lg flex flex-col items-center hover:border-text-muted dark:hover:border-slate-600 transition-all">
+            <div className="bg-surface-white dark:bg-surface border border-border-light dark:border-border-light rounded-xl p-lg flex flex-col items-center hover:border-text-muted dark:hover:border-border-light transition-all">
               <h3 className="font-headline-sm text-headline-sm text-text-primary dark:text-on-surface mb-xs">باقة مجانية</h3>
               <div className="text-display-lg font-display-lg text-text-primary dark:text-on-surface mb-md">$0 <span className="text-body-sm font-body-sm text-text-muted dark:text-on-surface-variant">/شهرياً</span></div>
               <ul className="text-right w-full space-y-sm mb-lg">
                 <li className="flex items-center gap-xs font-body-md text-body-md dark:text-on-surface"><span className="material-symbols-outlined text-verification-blue dark:text-blue-400">check</span> 3 إعلانات سيارات</li>
                 <li className="flex items-center gap-xs font-body-md text-body-md dark:text-on-surface"><span className="material-symbols-outlined text-verification-blue dark:text-blue-400">check</span> ملف ورشة أساسي</li>
-                <li className="flex items-center gap-xs font-body-md text-body-md opacity-40 dark:text-slate-500"><span className="material-symbols-outlined">close</span> ترويج الإعلانات</li>
+                <li className="flex items-center gap-xs font-body-md text-body-md opacity-40 dark:text-on-surface-variant"><span className="material-symbols-outlined">close</span> ترويج الإعلانات</li>
               </ul>
-              <button className="mt-auto w-full border border-border-light dark:border-border-light dark:text-on-surface py-xs rounded-lg font-label-lg text-label-lg hover:bg-surface-container dark:hover:bg-slate-700 transition-all">ابدأ الآن</button>
+              <button className="mt-auto w-full border border-border-light dark:border-border-light dark:text-on-surface py-xs rounded-lg font-label-lg text-label-lg hover:bg-surface-container dark:hover:bg-surface transition-all">ابدأ الآن</button>
             </div>
             <div className="bg-surface-white dark:bg-surface border-2 border-secondary dark:border-blue-600 rounded-xl p-lg flex flex-col items-center relative overflow-hidden scale-105 shadow-md">
               <div className="absolute top-4 left-[-35px] bg-secondary dark:bg-blue-600 text-white py-1 px-10 -rotate-45 font-label-sm text-label-sm">رائجة</div>
