@@ -10,7 +10,7 @@ import BrowseCarsPage from './pages/BrowseCarsPage';
 import CarDetailPage from './pages/CarDetailPage';
 import WorkshopsDirectoryPage from './pages/WorkshopsDirectoryPage';
 import SubscriptionPlansPage from './pages/SubscriptionPlansPage';
-import AboutCARNAPage from './pages/AboutCARNAPage';
+import AboutCARNAPage from './pages/AboutCARNAPageNew';
 import Login from './pages/Login';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
@@ -56,7 +56,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div dir="rtl" className="bg-surface-white font-body-md text-body-md text-on-surface">
+      <div dir="rtl" className="bg-surface-white dark:bg-background font-body-md text-body-md text-on-surface dark:text-on-surface">
         <ScrollToTop />
         {!hideHeaderFooter && <Header />}
 
