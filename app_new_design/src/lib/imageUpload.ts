@@ -15,9 +15,9 @@ const API_ENDPOINT = import.meta.env.VITE_R2_API_URL || 'https://api.carna.onlin
 /**
  * Upload single image to R2
  * @param file - Image file to upload
- * @returns Image URL or null on error
+ * @returns {url, key} or null on error
  */
-export async function uploadImage(file: File): Promise<string | null> {
+export async function uploadImage(file: File): Promise<{ url: string; key: string } | null> {
   try {
     // Validate file
     if (!file) {
@@ -40,7 +40,10 @@ export async function uploadImage(file: File): Promise<string | null> {
     }
 
     const data: UploadResponse = await response.json()
-    return data.url || null
+    if (data.url && data.key) {
+      return { url: data.url, key: data.key }
+    }
+    return null
   } catch (error) {
     console.error('Upload error:', error)
     return null
@@ -50,9 +53,9 @@ export async function uploadImage(file: File): Promise<string | null> {
 /**
  * Upload multiple images
  * @param files - Array of image files
- * @returns Array of image URLs (null for failed uploads)
+ * @returns Array of {url, key} (null for failed uploads)
  */
-export async function uploadImages(files: File[]): Promise<(string | null)[]> {
+export async function uploadImages(files: File[]): Promise<(({ url: string; key: string } | null))[]> {
   return Promise.all(files.map(file => uploadImage(file)))
 }
 

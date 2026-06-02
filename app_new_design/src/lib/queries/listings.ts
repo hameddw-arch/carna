@@ -219,35 +219,20 @@ export async function deleteListing(id: string) {
   return true
 }
 
-export async function uploadListingImages(listingId: string, files: File[]) {
-  if (!files || files.length === 0) return []
+export async function uploadListingImages(listingId: string, imageUrls: string[], imageKeys?: string[]) {
+  if (!imageUrls || imageUrls.length === 0) return []
 
-  const uploadPromises = files.map(async (file, index) => {
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${listingId}/${Math.random()}.${fileExt}`
-    const filePath = `${fileName}`
-
-    const { error: uploadError } = await supabase.storage
-      .from('workshop-images')
-      .upload(filePath, file)
-
-    if (uploadError) throw uploadError
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('workshop-images')
-      .getPublicUrl(filePath)
-
+  const uploadPromises = imageUrls.map(async (url, index) => {
     const { error: dbError } = await supabase
       .from('listing_images')
       .insert({
         listing_id: listingId,
-        url: publicUrl,
+        url: url,
         order: index
       })
 
     if (dbError) throw dbError
-
-    return publicUrl
+    return url
   })
 
   return Promise.all(uploadPromises)

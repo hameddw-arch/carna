@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { uploadImage, validateImage, fileToBase64, deleteImage } from '../lib/imageUpload'
 
 interface ImageUploaderProps {
-  onImageUpload: (url: string) => void
+  onImageUpload: (url: string, key?: string) => void
   onImageDelete?: (url: string) => void
   maxImages?: number
   className?: string
@@ -43,12 +43,12 @@ export default function ImageUploader({
         const preview = await fileToBase64(file)
 
         // Upload to R2
-        const url = await uploadImage(file)
+        const uploadResult = await uploadImage(file)
 
-        if (url) {
-          const newImage = { url, preview }
+        if (uploadResult) {
+          const newImage = { url: uploadResult.url, key: uploadResult.key, preview }
           setImages(prev => [...prev, newImage])
-          onImageUpload(url)
+          onImageUpload(uploadResult.url, uploadResult.key)
         } else {
           setError('Failed to upload image')
         }

@@ -59,8 +59,16 @@ async function handleImageUpload(
   headers: Record<string, string>
 ): Promise<Response> {
   try {
+    const url = new URL(request.url)
     const formData = await request.formData()
-    const file = formData.get('file') as File
+    let file: File | null = null
+
+    for (const [_, value] of formData) {
+      if (value instanceof File) {
+        file = value
+        break
+      }
+    }
 
     if (!file) {
       return new Response(
@@ -92,7 +100,8 @@ async function handleImageUpload(
     // Generate unique filename
     const ext = file.name.split('.').pop()
     const filename = `${randomUUID()}.${ext}`
-    const key = `listings/${new Date().getFullYear()}/${String(new Date().getMonth() + 1).padStart(2, '0')}/${filename}`
+    const imageType = url.searchParams.get('type') || 'listings'
+    const key = `${imageType}/${new Date().getFullYear()}/${String(new Date().getMonth() + 1).padStart(2, '0')}/${filename}`
 
     // Upload to R2
     const arrayBuffer = await file.arrayBuffer()
