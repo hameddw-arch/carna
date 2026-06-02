@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import ImageUploader from '../components/ImageUploader';
 import { fetchListing, updateListing, uploadListingImages, fetchGovernorates } from '../lib/queries/index';
 
 export default function EditAdPage() {
@@ -12,26 +13,18 @@ export default function EditAdPage() {
   const [error, setError] = useState<string | null>(null);
   const [listing, setListing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageKeys, setImageKeys] = useState<string[]>([]);
   const [dbGovernorates, setDbGovernorates] = useState<string[]>([]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const newFiles = Array.from(e.target.files);
-      const combinedFiles = [...selectedImages, ...newFiles].slice(0, 5);
-      setSelectedImages(combinedFiles);
-      
-      const newPreviews = combinedFiles.map(file => URL.createObjectURL(file));
-      setImagePreviewUrls(prev => [...prev, ...newPreviews].slice(0, 5));
-    }
+  const handleImageUpload = (url: string, key?: string) => {
+    setImageUrls(prev => [...prev, url]);
+    if (key) setImageKeys(prev => [...prev, key]);
   };
 
-  const handleRemoveImage = (index: number) => {
-    // Note: This only removes from UI preview, full deletion from storage requires backend logic
-    const newPreviews = [...imagePreviewUrls];
-    newPreviews.splice(index, 1);
-    setImagePreviewUrls(newPreviews);
+  const handleImageDelete = (url: string) => {
+    setImageUrls(prev => prev.filter(u => u !== url));
+    setImageKeys(prev => prev.filter((_, i) => imageUrls[i] !== url));
   };
 
   useEffect(() => {
@@ -48,7 +41,7 @@ export default function EditAdPage() {
         } else {
           setListing(data);
           if (data.images && data.images[0] !== '/placeholder-car.svg') {
-            setImagePreviewUrls(data.images);
+            setImageUrls(data.images);
           }
         }
       })
@@ -91,9 +84,9 @@ export default function EditAdPage() {
 
     try {
       await updateListing(id, listingData);
-      
-      if (selectedImages.length > 0) {
-        await uploadListingImages(id, selectedImages);
+
+      if (imageUrls.length > 0) {
+        await uploadListingImages(id, imageUrls, imageKeys);
       }
 
       setShowSuccess(true);
@@ -262,49 +255,7 @@ export default function EditAdPage() {
               </div>
 
               {/* Section 4: Photo Upload */}
-              <div className="bg-surface-white border border-border-light rounded-xl p-lg flex flex-col gap-md">
-                <div className="flex items-center gap-xs text-primary">
-                  <span className="material-symbols-outlined">photo_camera</span>
-                  <h2 className="font-headline-sm text-headline-sm">صور السيارة</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
-                  {/* Main Photo (or Input) */}
-                  {imagePreviewUrls.length > 0 ? (
-                    <div className="md:col-span-2 aspect-video relative rounded-xl overflow-hidden group">
-                      <img src={imagePreviewUrls[0]} alt="Main" className="w-full h-full object-cover" />
-                      <button type="button" onClick={() => handleRemoveImage(0)} className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="material-symbols-outlined text-sm">close</span>
-                      </button>
-                      <div className="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs">الصورة الرئيسية</div>
-                    </div>
-                  ) : (
-                    <label className="md:col-span-2 aspect-video bg-surface-container-low border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-accent-yellow transition-all gap-xs group">
-                      <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
-                      <span className="material-symbols-outlined text-outline text-[48px] group-hover:text-accent-yellow">add_a_photo</span>
-                      <span className="font-label-lg text-label-lg text-tertiary">الصورة الرئيسية (اضغط للرفع)</span>
-                    </label>
-                  )}
-                  
-                  {/* Secondary Photos */}
-                  <div className="grid grid-cols-2 md:grid-cols-2 md:col-span-2 gap-sm">
-                    {[1, 2, 3, 4].map((i) => (
-                      imagePreviewUrls[i] ? (
-                        <div key={i} className="aspect-square relative rounded-lg overflow-hidden group border border-border-light">
-                          <img src={imagePreviewUrls[i]} alt={`Extra ${i}`} className="w-full h-full object-cover" />
-                          <button type="button" onClick={() => handleRemoveImage(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span className="material-symbols-outlined text-xs">close</span>
-                          </button>
-                        </div>
-                      ) : (
-                        <label key={i} className="aspect-square bg-surface border-2 border-dashed border-outline-variant rounded-lg flex items-center justify-center cursor-pointer hover:border-accent-yellow transition-all">
-                          <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
-                          <span className="material-symbols-outlined text-outline">add</span>
-                        </label>
-                      )
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <ImageUploader onImageUpload={handleImageUpload} onImageDelete={handleImageDelete} maxImages={5} />
 
             </div>
 
