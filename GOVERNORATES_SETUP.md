@@ -4,11 +4,20 @@
 
 فلتر المحافظات في صفحة تصفح السيارات لا يظهر أي محافظات لأن جدول `governorates` في قاعدة البيانات **فارغ تماماً**.
 
-### الملفات المتأثرة
+### الملفات المتأثرة (7 صفحات)
+
+#### 🚗 صفحات السيارات
 - `src/pages/BrowseCarsPage.tsx` - فلتر المحافظات (السطر 164-168)
-- `src/pages/PostAdPage.tsx` - عند إضافة إعلان
-- `src/pages/EditAdPage.tsx` - عند تعديل إعلان
-- `src/pages/WorkshopRegistrationPage.tsx` - عند تسجيل ورشة
+- `src/pages/PostAdPage.tsx` - عند إضافة إعلان سيارة
+- `src/pages/EditAdPage.tsx` - عند تعديل إعلان سيارة
+
+#### 🔧 صفحات الورشات
+- `src/pages/WorkshopsDirectoryPage.tsx` - دليل الورشات (السطر 21-23)
+- `src/pages/WorkshopRegistrationPage.tsx` - عند تسجيل ورشة جديدة
+
+#### 📊 صفحات إدارية
+- `src/pages/AdminDashboardPage.tsx` - لوحة تحكم المسؤول
+- `src/pages/HomePage.tsx` - الصفحة الرئيسية (خريطة الورشات)
 
 ---
 
