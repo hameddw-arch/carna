@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'crypto'
+import { randomUUID } from 'node:crypto'
 
 export interface Env {
-  R2_BUCKET: R2Bucket
+  R2_BUCKET: any
   R2_ACCOUNT_ID: string
   R2_PUBLIC_URL: string
 }
@@ -91,7 +91,7 @@ async function handleImageUpload(
 
     // Generate unique filename
     const ext = file.name.split('.').pop()
-    const filename = `${uuidv4()}.${ext}`
+    const filename = `${randomUUID()}.${ext}`
     const key = `listings/${new Date().getFullYear()}/${String(new Date().getMonth() + 1).padStart(2, '0')}/${filename}`
 
     // Upload to R2

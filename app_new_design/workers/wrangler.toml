@@ -1,29 +1,21 @@
 name = "carna-api"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
-type = "service"
+compatibility_flags = ["nodejs_compat"]
 
-# R2 Bucket Bindings
-[[r2_buckets]]
-binding = "R2_BUCKET"
-bucket_name = "carna-images"
-preview_bucket_name = "carna-images-preview"
-
-# Environment Variables
 [env.production]
 vars = { R2_ACCOUNT_ID = "", R2_PUBLIC_URL = "https://images.carna.online" }
+
+[[env.production.r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "carna-images"
 
 [env.development]
 vars = { R2_ACCOUNT_ID = "", R2_PUBLIC_URL = "http://localhost:8787" }
 
-# Routes
-routes = [
-  { pattern = "api.carna.online/upload*", zone_name = "carna.online" }
-]
+[[env.development.r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "carna-images-preview"
 
-# Build
 [build]
 command = "npm install && npm run build"
-
-[build.upload]
-format = "service-worker"
