@@ -136,6 +136,8 @@ export default function ImageUploader({
                   src={image.preview}
                   alt={`Upload ${index + 1}`}
                   className="w-full h-32 object-cover rounded-lg"
+                  loading="lazy"
+                  decoding="async"
                 />
 
                 {/* Delete Button */}
